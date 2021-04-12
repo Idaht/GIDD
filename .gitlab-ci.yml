@@ -16,9 +16,6 @@ trigger_frontend:
   rules:
     - changes:
       - frontend/**
-  only:
-    - dev
-    - master
 
 trigger_backend:
   stage: triggers
@@ -27,7 +24,4 @@ trigger_backend:
   rules:
     - changes:
       - backend/**
-  -only:
-    - dev
-    - master
 

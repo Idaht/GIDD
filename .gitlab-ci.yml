@@ -1,13 +1,12 @@
 stages:
   - triggers
 
-
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+    - if:  $CI_MERGE_REQUEST
     - when: never
-
 
 trigger_frontend:
   stage: triggers

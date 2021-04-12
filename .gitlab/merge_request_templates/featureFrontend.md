@@ -1,0 +1,16 @@
+# Description
+
+What issue does the branch handle.  
+Add comments and pictures if necessary.
+
+# Mandatory checklist
+
+Remove space, and enter x in brackets to check of items. All items have to be checked of.
+
+- [ ] Merge request only handles one feature.
+- [ ] Request passed all unit tests.
+- [ ] Written unit test for component if necessary.
+- [ ] Formatted all edited files with prettier.
+- [ ] Checked code with ESLint, and made necessary changes.
+- [ ] Component names are written in Pascal case (ExampleName.vue).
+- [ ] Checked that the client still works as expected.

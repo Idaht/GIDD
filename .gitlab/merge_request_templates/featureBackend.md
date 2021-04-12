@@ -16,3 +16,4 @@ Remove space and enter x in brackets to check of items.
 - [ ] Methods and variables are written in Camel case (exampleName)
 - [ ] Documented code with Java Documentation.
 - [ ] Used self explanatory variable and function names.
+- [ ] Implemented logging if necessary

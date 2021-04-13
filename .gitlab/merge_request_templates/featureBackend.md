@@ -7,6 +7,7 @@ Add comments and pictures if necessary.
 
 Remove space and enter x in brackets to check of items.
 
+- [ ] Merge title has name of type: feat(name): more complete name
 - [ ] Merge request only handles one feature.
 - [ ] Request passed all tests.
 - [ ] Written unit test for feature

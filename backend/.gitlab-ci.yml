@@ -1,0 +1,12 @@
+stages:
+  - test
+
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+
+test_1:
+  stage: test
+  script:
+    - |
+      echo "Hello"

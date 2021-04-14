@@ -21,7 +21,28 @@ public class Chat {
     @OneToMany(mappedBy = "chat", targetEntity = Message.class)
     private Set<Message> messages;
 
+    public Chat(Activity activity, Set<Message> messages) {
+        this.activity = activity;
+        this.messages = messages;
+    }
+
     public Chat() {
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Set<Message> messages) {
+        this.messages = messages;
     }
 
     public long getChatId() {

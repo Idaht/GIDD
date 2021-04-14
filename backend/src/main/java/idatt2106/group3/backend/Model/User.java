@@ -33,20 +33,16 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-        name = "User_Activity",
-        joinColumns = @JoinColumn(name = "userId"),
-        inverseJoinColumns = @JoinColumn(name = "activityId")
+            name = "User_Activity",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "activityId")
     )
     Set<Activity> activities;
 
     @OneToMany(mappedBy = "organizer")
     Set<Activity> organizedActivities;
 
-
-    public User(String username,
-                String forename,
-                String surname,
-                String email, String hash, String salt, int score, int rating, String role, int faults) {
+    public User(String username, String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities) {
         this.username = username;
         this.forename = forename;
         this.surname = surname;
@@ -57,9 +53,37 @@ public class User {
         this.rating = rating;
         this.role = role;
         this.faults = faults;
+        this.session = session;
+        this.activities = activities;
+        this.organizedActivities = organizedActivities;
     }
 
-    public User(){}
+    public User() {
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    public Set<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(Set<Activity> activities) {
+        this.activities = activities;
+    }
+
+    public Set<Activity> getOrganizedActivities() {
+        return organizedActivities;
+    }
+
+    public void setOrganizedActivities(Set<Activity> organizedActivities) {
+        this.organizedActivities = organizedActivities;
+    }
 
     public long getUserId() {
         return userId;

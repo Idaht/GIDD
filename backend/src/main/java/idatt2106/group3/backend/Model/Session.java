@@ -14,11 +14,19 @@ public class Session {
     @JoinColumn(name = "userId", referencedColumnName = "userId", nullable = false)
     private User user;
 
-    public Session(String sessionId) {
-        this.sessionId = sessionId;
+    public Session(User user) {
+        this.user = user;
     }
 
     public Session(){}
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getSessionId() {
         return sessionId;

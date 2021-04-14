@@ -49,9 +49,9 @@ public class User {
     Set<Report> reportsReceived;
 
     @OneToMany(mappedBy = "user", targetEntity = Message.class)
-    private Set<Message> messages;
+    Set<Message> messages;
 
-    public User(String username, String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities) {
+    public User(String username, String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages) {
         this.username = username;
         this.forename = forename;
         this.surname = surname;
@@ -65,9 +65,36 @@ public class User {
         this.session = session;
         this.activities = activities;
         this.organizedActivities = organizedActivities;
+        this.reportsSent = reportsSent;
+        this.reportsReceived = reportsReceived;
+        this.messages = messages;
     }
 
     public User() {
+    }
+
+    public Set<Report> getReportsSent() {
+        return reportsSent;
+    }
+
+    public void setReportsSent(Set<Report> reportsSent) {
+        this.reportsSent = reportsSent;
+    }
+
+    public Set<Report> getReportsReceived() {
+        return reportsReceived;
+    }
+
+    public void setReportsReceived(Set<Report> reportsReceived) {
+        this.reportsReceived = reportsReceived;
+    }
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Set<Message> messages) {
+        this.messages = messages;
     }
 
     public Session getSession() {

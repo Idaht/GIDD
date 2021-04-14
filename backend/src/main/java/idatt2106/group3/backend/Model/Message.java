@@ -21,6 +21,10 @@ public class Message {
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
 
+    @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    private User user;
+
     public Message(String message, LocalDateTime timeSent, Chat chat) {
         this.message = message;
         this.timeSent = timeSent;

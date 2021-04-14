@@ -42,6 +42,15 @@ public class User {
     @OneToMany(mappedBy = "organizer")
     Set<Activity> organizedActivities;
 
+    @OneToMany(mappedBy = "reportWriter", targetEntity = Report.class)
+    Set<Report> reportsSent;
+
+    @OneToMany(mappedBy = "reportedUser", targetEntity = Report.class)
+    Set<Report> reportsReceived;
+
+    @OneToMany(mappedBy = "user", targetEntity = Message.class)
+    private Set<Message> messages;
+
     public User(String username, String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities) {
         this.username = username;
         this.forename = forename;

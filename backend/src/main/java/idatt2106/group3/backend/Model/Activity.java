@@ -35,14 +35,14 @@ public class Activity {
     private Set<User> users;
 
     @ManyToOne
-    @JoinColumn(name="userId", referencedColumnName = "userId")
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User organizer;
 
     @OneToOne
     @JoinColumn(name = "chatId", referencedColumnName = "chatId", nullable = false)
     private Chat chat;
 
-    public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, long organizerId, boolean isPrivateActivity) {
+    public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, long organizerId, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat) {
         this.description = description;
         this.equipment = equipment;
         this.difficulty = difficulty;
@@ -54,9 +54,36 @@ public class Activity {
         this.durationMinutes = durationMinutes;
         this.organizerId = organizerId;
         this.isPrivateActivity = isPrivateActivity;
+        this.users = users;
+        this.organizer = organizer;
+        this.chat = chat;
     }
 
     public Activity() {
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 
     public long getActivityId() {

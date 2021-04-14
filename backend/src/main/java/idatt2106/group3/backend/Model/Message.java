@@ -21,12 +21,21 @@ public class Message {
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
 
-    public Message(String message, LocalDateTime timeSent) {
+    public Message(String message, LocalDateTime timeSent, Chat chat) {
         this.message = message;
         this.timeSent = timeSent;
+        this.chat = chat;
     }
 
     public Message() {
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 
     public long getMessageId() {

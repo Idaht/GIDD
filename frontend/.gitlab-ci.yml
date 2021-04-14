@@ -1,0 +1,16 @@
+stages:
+  - test
+
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+
+unit test:
+  stage: test
+  image: node:latest
+  script:
+    - cd frontend
+    - npm install node-sass --force
+    - npm rebuild node-sass --force
+    - npm install
+    - npm run test:unit

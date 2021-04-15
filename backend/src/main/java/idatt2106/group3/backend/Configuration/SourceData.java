@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 /**
  * Configuration for Database
@@ -20,6 +21,7 @@ public class SourceData {
      * @return DataSource object
      */
     @Bean
+    @Profile("dev")
     public DataSource getDataSource() {
         DriverManagerDataSource dataSourceBuilder = new DriverManagerDataSource();
         

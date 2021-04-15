@@ -32,6 +32,11 @@ public class Message {
         this.user = user;
     }
 
+    public Message(String message, LocalDateTime timeSent) {
+        this.message = message;
+        this.timeSent = timeSent;
+    }
+
     public Message() {
     }
 

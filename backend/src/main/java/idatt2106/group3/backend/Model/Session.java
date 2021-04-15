@@ -18,6 +18,10 @@ public class Session {
         this.user = user;
     }
 
+    public Session(String sessionId){
+        this.sessionId = sessionId;
+    }
+
     public Session(){}
 
     public User getUser() {

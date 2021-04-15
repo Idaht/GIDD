@@ -28,7 +28,6 @@ public class Activity {
     private double latitude;
     private LocalDateTime startTime;
     private int durationMinutes;
-    private long organizerId;
     private boolean isPrivateActivity;
 
     @ManyToMany(mappedBy = "activities")
@@ -42,7 +41,7 @@ public class Activity {
     @JoinColumn(name = "chatId", referencedColumnName = "chatId", nullable = false)
     private Chat chat;
 
-    public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, long organizerId, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat) {
+    public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat) {
         this.description = description;
         this.equipment = equipment;
         this.difficulty = difficulty;
@@ -52,11 +51,23 @@ public class Activity {
         this.latitude = latitude;
         this.startTime = startTime;
         this.durationMinutes = durationMinutes;
-        this.organizerId = organizerId;
         this.isPrivateActivity = isPrivateActivity;
         this.users = users;
         this.organizer = organizer;
         this.chat = chat;
+    }
+
+    public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity) {
+        this.description = description;
+        this.equipment = equipment;
+        this.difficulty = difficulty;
+        this.city = city;
+        this.place = place;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.startTime = startTime;
+        this.durationMinutes = durationMinutes;
+        this.isPrivateActivity = isPrivateActivity;
     }
 
     public Activity() {
@@ -164,14 +175,6 @@ public class Activity {
 
     public void setDurationMinutes(int durationMinutes) {
         this.durationMinutes = durationMinutes;
-    }
-
-    public long getOrganizerId() {
-        return organizerId;
-    }
-
-    public void setOrganizerId(long organizerId) {
-        this.organizerId = organizerId;
     }
 
     public boolean isPrivateActivity() {

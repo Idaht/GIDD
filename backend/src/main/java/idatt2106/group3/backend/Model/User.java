@@ -70,6 +70,19 @@ public class User {
         this.messages = messages;
     }
 
+    public User(String username, String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults) {
+        this.username = username;
+        this.forename = forename;
+        this.surname = surname;
+        this.email = email;
+        this.hash = hash;
+        this.salt = salt;
+        this.score = score;
+        this.rating = rating;
+        this.role = role;
+        this.faults = faults;
+    }
+
     public User() {
     }
 

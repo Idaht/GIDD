@@ -28,6 +28,10 @@ public class Report {
         this.reportedUser = reportedUser;
     }
 
+    public Report(String description) {
+        this.description = description;
+    }
+
     public Report(){}
 
     public long getReportId() {

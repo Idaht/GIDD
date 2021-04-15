@@ -1,6 +1,7 @@
 package idatt2106.group3.backend.Model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ public class Activity {
     private int durationMinutes;
     private boolean isPrivateActivity;
 
-    @ManyToMany(mappedBy = "activities")
+    @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
     private Set<User> users;
 
     @ManyToOne

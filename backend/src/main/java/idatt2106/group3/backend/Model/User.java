@@ -3,6 +3,7 @@ package idatt2106.group3.backend.Model;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Session session;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "User_Activity",
             joinColumns = @JoinColumn(name = "userId"),

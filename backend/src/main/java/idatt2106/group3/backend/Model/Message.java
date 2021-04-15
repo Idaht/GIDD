@@ -25,13 +25,22 @@ public class Message {
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
 
-    public Message(String message, LocalDateTime timeSent, Chat chat) {
+    public Message(String message, LocalDateTime timeSent, Chat chat, User user) {
         this.message = message;
         this.timeSent = timeSent;
         this.chat = chat;
+        this.user = user;
     }
 
     public Message() {
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Chat getChat() {

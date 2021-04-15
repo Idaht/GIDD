@@ -1,6 +1,11 @@
 package idatt2106.group3.backend.Model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Report {
@@ -17,8 +22,10 @@ public class Report {
     @JoinColumn(name="userId", referencedColumnName = "userId")
     private User reportedUser;
 
-    public Report(String description) {
+    public Report(String description, User reportWriter, User reportedUser) {
         this.description = description;
+        this.reportWriter = reportWriter;
+        this.reportedUser = reportedUser;
     }
 
     public Report(){}
@@ -37,5 +44,21 @@ public class Report {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getReportWriter() {
+        return reportWriter;
+    }
+
+    public void setReportWriter(User reportWriter) {
+        this.reportWriter = reportWriter;
+    }
+
+    public User getReportedUser() {
+        return reportedUser;
+    }
+
+    public void setReportedUser(User reportedUser) {
+        this.reportedUser = reportedUser;
     }
 }

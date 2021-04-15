@@ -1,26 +1,29 @@
 stages:
   - triggers
 
+# Only runs pipelines if merge request has been created or is open for that branch
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
-    - if:  $CI_MERGE_REQUEST
+    - if: $CI_MERGE_REQUEST
     - when: never
 
+# Triggers a frontend CI, if changes have been made in that folder
 trigger_frontend:
   stage: triggers
   trigger:
     include: frontend/.gitlab-ci.yml
+    strategy: depend
   rules:
     - changes:
-      - frontend/**
-
+      - frontend/**/*
+    
+# Triggers a backend CI, if changes have been made in that folder
 trigger_backend:
   stage: triggers
   trigger:
     include: backend/.gitlab-ci.yml
+    strategy: depend
   rules:
     - changes:
-      - backend/**
-
+      - backend/**/*

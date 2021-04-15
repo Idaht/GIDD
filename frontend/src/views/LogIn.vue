@@ -5,7 +5,7 @@
     <input v-model="email" type="email" placeholder="E-post" />
     <input v-model="password" type="password" placeholder="Passord" />
     <button @click="login">LOGG INN</button>
-    <p id="feedback" v-if="feedback.trim() !== ''">{{ feedback }}</p>
+    <p id="feedback" v-if="isThereFeedback">{{ feedback }}</p>
     <router-link to="/forgotten-password">Glemt passord?</router-link>
   </div>
 </template>

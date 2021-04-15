@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 export default defineComponent({
   name: "LogIn",
@@ -21,11 +21,14 @@ export default defineComponent({
     const email = ref("");
     const password = ref("");
 
+    const isThereFeedback = computed(() => {
+      return feedback.value.trim() !== "";
+    });
     const login = (): void => {
       feedback.value = "";
       //TODO add store.dispatch when backend is ready, and remove booelan
       const placeholderRemoveThis = false;
-      if (placeholderRemoveThis) router.push("/activityFeed");
+      if (placeholderRemoveThis) router.push("/activity-feed");
       //TODO maybe add better error message
       else feedback.value = "Kan ikke logge på!";
     };
@@ -35,6 +38,7 @@ export default defineComponent({
       login,
       email,
       password,
+      isThereFeedback,
     };
   },
 });

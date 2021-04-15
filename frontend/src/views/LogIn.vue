@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="login">
     <!--Add TheHeader component -->
     <h1>LOGG IN</h1>
     <input v-model="email" type="email" placeholder="E-post" />
@@ -44,4 +44,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style lang="scss">
+#login {
+  width: 340px;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+}
+
+</style>

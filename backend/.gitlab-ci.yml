@@ -7,6 +7,8 @@ workflow:
 
 test_1:
   stage: test
+  image: openjdk:11-jdk-slim
   script:
     - |
-      echo "Hello"
+      cd backend
+      ./mvnw test

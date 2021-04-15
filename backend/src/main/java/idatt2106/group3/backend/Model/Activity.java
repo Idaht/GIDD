@@ -31,7 +31,7 @@ public class Activity {
 
     @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
     private Set<User> users;
-
+    
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User organizer;

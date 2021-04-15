@@ -6,6 +6,7 @@ import idatt2106.group3.backend.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -16,7 +17,9 @@ public class UserService
 
     public User getUser(long userId)
     {
-        return userRepository.getOne(userId);
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()) return user.get();
+        return null;
     }
 
     public boolean createUser(User user)
@@ -41,7 +44,9 @@ public class UserService
 
     public Set<Activity> getUserActivities(long userId)
     {
-        return userRepository.getOne(userId).getActivities();
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()) return user.get().getActivities();
+        return null;
     }
 
     /**
@@ -52,6 +57,8 @@ public class UserService
      */
     public boolean removeUserFromActivity(long userId, Activity activity)
     {
-        return userRepository.getOne(userId).getActivities().remove(activity);
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()) return user.get().getActivities().remove(activity);
+        return false;
     }
 }

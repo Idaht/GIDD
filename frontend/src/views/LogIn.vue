@@ -1,17 +1,17 @@
 <template>
-  <div>
+  <div id="login">
     <!--Add TheHeader component -->
     <h1>LOGG IN</h1>
     <input v-model="email" type="email" placeholder="E-post" />
     <input v-model="password" type="password" placeholder="Passord" />
     <button @click="login">LOGG INN</button>
-    <p id="feedback" v-if="feedback.trim() !== ''">{{ feedback }}</p>
+    <p id="feedback" v-if="isThereFeedback">{{ feedback }}</p>
     <router-link to="/forgotten-password">Glemt passord?</router-link>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 export default defineComponent({
   name: "LogIn",
@@ -21,11 +21,14 @@ export default defineComponent({
     const email = ref("");
     const password = ref("");
 
+    const isThereFeedback = computed(() => {
+      return feedback.value.trim() !== "";
+    });
     const login = (): void => {
       feedback.value = "";
       //TODO add store.dispatch when backend is ready, and remove booelan
       const placeholderRemoveThis = false;
-      if (placeholderRemoveThis) router.push("/activityFeed");
+      if (placeholderRemoveThis) router.push("/activity-feed");
       //TODO maybe add better error message
       else feedback.value = "Kan ikke logge på!";
     };
@@ -35,9 +38,18 @@ export default defineComponent({
       login,
       email,
       password,
+      isThereFeedback,
     };
   },
 });
 </script>
 
-<style scoped></style>
+<style lang="scss">
+#login {
+  width: 340px;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+}
+
+</style>

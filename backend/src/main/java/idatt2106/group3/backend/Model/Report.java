@@ -15,11 +15,11 @@ public class Report {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name="userId", referencedColumnName = "userId")
+    @JoinColumn(name="userId", referencedColumnName = "userId", insertable = false, updatable = false)
     private User reportWriter;
 
     @ManyToOne
-    @JoinColumn(name="userId", referencedColumnName = "userId")
+    @JoinColumn(name="userId", referencedColumnName = "userId", insertable = false, updatable = false)
     private User reportedUser;
 
     public Report(String description, User reportWriter, User reportedUser) {

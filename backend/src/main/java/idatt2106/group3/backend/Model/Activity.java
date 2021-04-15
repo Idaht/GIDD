@@ -13,8 +13,6 @@ import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-enum Difficulty {EASY, MEDIUM, HARD}
-
 @Entity
 public class Activity {
     @Id

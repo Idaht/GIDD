@@ -1,5 +1,7 @@
 package idatt2106.group3.backend.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,6 +32,7 @@ public class Activity {
     private boolean isPrivateActivity;
 
     @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<User> users;
     
     @ManyToOne

@@ -52,7 +52,7 @@ button {
 }
 
 input {
-  background: #FFFFFF;
+  background: #ffffff;
   box-sizing: border-box;
   border: 1px solid #9f9f9f;
   border-radius: 20px;

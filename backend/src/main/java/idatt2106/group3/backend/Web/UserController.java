@@ -74,7 +74,7 @@ public class UserController
 
     @DeleteMapping("/{user_id}/activities/{activity_id}")
     public ResponseEntity<String> removeUserFromActivity(@PathVariable("user_id") long userId, @PathVariable("activity_id") long activityId) {
-        if (userService.removeUserFromActivity(userId, activityService.getActivity(activityId)))
+        if (userService.removeUserFromActivity(userId, activityId))
         {
             return new ResponseEntity<>(HttpStatus.OK);
         }

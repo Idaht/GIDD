@@ -65,4 +65,15 @@ public class Report {
     public void setReportedUser(User reportedUser) {
         this.reportedUser = reportedUser;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Report{" +
+                "reportId=" + reportId +
+                ", description='" + description + '\'' +
+                ", reportWriter=" + reportWriter +
+                ", reportedUser=" + reportedUser +
+                '}';
+    }
 }

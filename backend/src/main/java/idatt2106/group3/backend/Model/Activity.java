@@ -186,4 +186,25 @@ public class Activity {
     public void setPrivateActivity(boolean privateActivity) {
         isPrivateActivity = privateActivity;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Activity{" +
+                "activityId=" + activityId +
+                ", description='" + description + '\'' +
+                ", equipment='" + equipment + '\'' +
+                ", difficulty=" + difficulty +
+                ", city='" + city + '\'' +
+                ", place='" + place + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", startTime=" + startTime +
+                ", durationMinutes=" + durationMinutes +
+                ", isPrivateActivity=" + isPrivateActivity +
+                ", users=" + users +
+                ", organizer=" + organizer +
+                ", chat=" + chat +
+                '}';
+    }
 }

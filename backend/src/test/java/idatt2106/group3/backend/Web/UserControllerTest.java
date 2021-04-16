@@ -27,7 +27,6 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.*;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,9 +48,9 @@ public class UserControllerTest
     public void setup()
     {
         Activity activity1 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        User user1 = new User("Username1", "1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        User user2 = new User("Username1", "1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        User user3 = new User("Username1", "1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user1 = new User("1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user2 = new User("1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user3 = new User("1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
         activityRepository.save(activity1);
         userRepository.save(user1);
         userService.addUserToActivity(1, 1);
@@ -65,7 +64,6 @@ public class UserControllerTest
     {
         this.mockMvc.perform(get("/api/v1/users/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username", containsStringIgnoringCase("Username")))
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test@test.com")))
@@ -82,14 +80,13 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        User user = new User("Username", "Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
 
         String userJson = objectMapper.writeValueAsString(user);
 
         this.mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username", containsStringIgnoringCase("Username")))
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test@test.com")))
@@ -105,13 +102,12 @@ public class UserControllerTest
     @Test
     public void editUser_UpdateUserGetResponse_StatusOk() throws Exception
     {
-        User user = new User("Username1", "Forename1", "Surname1", "test1@test1.com", "test1 hash", "test1 salt", 100, 4, "Organizer1", 2);
+        User user = new User("Forename1", "Surname1", "test1@test1.com", "test1 hash", "test1 salt", 100, 4, "Organizer1", 2);
         String userJson = objectMapper.writeValueAsString(user);
 
         this.mockMvc.perform(put("/api/v1/users/2")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username", containsStringIgnoringCase("Username1")))
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename1")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname1")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test1.com")))
@@ -124,7 +120,6 @@ public class UserControllerTest
                 .andReturn();
 
         this.mockMvc.perform(get("/api/v1/users/2"))
-                .andExpect(jsonPath("$.username", containsStringIgnoringCase("Username1")))
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename1")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname1")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test1.com")))

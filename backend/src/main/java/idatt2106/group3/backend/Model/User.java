@@ -1,6 +1,5 @@
 package idatt2106.group3.backend.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Set;
 
@@ -20,7 +19,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
-    private String username;
     private String forename;
     private String surname;
     private String email;
@@ -54,8 +52,7 @@ public class User {
     @OneToMany(mappedBy = "user", targetEntity = Message.class)
     Set<Message> messages;
 
-    public User(String username, String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages) {
-        this.username = username;
+    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -73,8 +70,7 @@ public class User {
         this.messages = messages;
     }
 
-    public User(String username, String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults) {
-        this.username = username;
+    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -143,14 +139,6 @@ public class User {
 
     public void setUserId(long userId) {
         this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getForename() {
@@ -230,7 +218,6 @@ public class User {
     {
         return "User{" +
                 "userId=" + userId +
-                ", username='" + username + '\'' +
                 ", forename='" + forename + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +

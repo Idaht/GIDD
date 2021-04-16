@@ -1,5 +1,6 @@
 package idatt2106.group3.backend;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,15 @@ import idatt2106.group3.backend.Repository.UserRepository;
 public class BackendApplication {
 
 	public static void main(String[] args) {
+		// Generates the keystore using the makefile
+		try {
+			Runtime.getRuntime().exec("make keystore");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Runs the spring-boot application
 		SpringApplication.run(BackendApplication.class, args);
 	}
 

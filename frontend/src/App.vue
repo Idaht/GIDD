@@ -27,15 +27,6 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
 
 #nav {
   padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 
 button {
@@ -46,7 +37,7 @@ button {
   padding: $padding;
   font-variant: small-caps;
   font-family: "mulish";
-  font-weight: 600;
+  font-weight: 500;
   color: white;
   font-size: 0.833rem;
 }
@@ -66,4 +57,16 @@ input {
 a:link {
   color: $primary-color;
 }
+
+.router-link-button {
+  color: #ffffff;
+  background-color: $secondary-color;
+  border-radius: 40px;
+  text-transform: uppercase;
+  padding: $padding;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.6em;
+}
+
 </style>

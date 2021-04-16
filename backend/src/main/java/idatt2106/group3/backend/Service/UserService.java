@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ public class UserService
 {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ActivityRepository activityRepository;
 
     public User getUser(long userId)
     {
@@ -54,10 +57,32 @@ public class UserService
      * @param activity
      * @return
      */
-    public boolean removeUserFromActivity(long userId, Activity activity)
+    public boolean removeUserFromActivity(long userId, long activityId)
     {
         Optional<User> user = userRepository.findById(userId);
-        if(user.isPresent()) return user.get().getActivities().remove(activity);
+        if(user.isPresent()) {
+            for(Activity activity : user.get().getActivities()) {
+                if(activity.getActivityId() == activityId) return user.get().getActivities().remove(activity);
+            }
+        }
         return false;
+    }
+
+    /**
+     * Adds a user to an activity. Returns true if successful, else false
+     * @param userId
+     * @param activityId
+     * @return
+     */
+    public Activity addUserToActivity(long userId, long activityId){
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Activity> activity = activityRepository.findById(activityId);
+        if(user.isPresent() && activity.isPresent()){
+            User temp = user.get();
+            temp.getActivities().add(activity.get());
+            userRepository.save(temp);
+            return activity.get();
+        }
+        return null;
     }
 }

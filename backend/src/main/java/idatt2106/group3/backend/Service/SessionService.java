@@ -22,6 +22,7 @@ public class SessionService
         return null;
     }
 
+
     public Session loginToGetSession(String username, String password)
     {
         //Her må det skje litt logikk

@@ -39,7 +39,6 @@ public class UserService
     {
         userRepository.deleteById(userId);
         return !userRepository.existsById(userId);
-
     }
 
     public Set<Activity> getUserActivities(long userId)

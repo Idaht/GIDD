@@ -52,4 +52,14 @@ public class Chat {
     public void setChatId(long chatId) {
         this.chatId = chatId;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Chat{" +
+                "chatId=" + chatId +
+                ", activity=" + activity +
+                ", messages=" + messages +
+                '}';
+    }
 }

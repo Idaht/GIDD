@@ -30,12 +30,14 @@ public class BackendApplication {
 	// @Bean
 	// public CommandLineRunner run(){
 	// 	return args -> {
-			
+	// 		// User user = new User("test", "test","test","test@test.com","hash","salt",123,123,"role",1);
+	// 		// userRepo.save(user);
 	// 		// Activity acitivty = new Activity("desc","equip", Difficulty.EASY,"bergen","place",1.2,1.2,LocalDateTime.now(),123,false);
+	// 		// acitivityRepo.save(acitivty);
 	// 		Activity activity = acitivityRepo.findById(1L).get();
-	// 		User user = userRepo.findById(1L).get();
-	// 		user.getActivities().add(activity);
-	// 		userRepo.save(user);
+	// 		User user1 = userRepo.findById(1L).get();
+	// 		user1.getActivities().add(activity);
+	// 		userRepo.save(user1);
 
 	// 	};
 	// }

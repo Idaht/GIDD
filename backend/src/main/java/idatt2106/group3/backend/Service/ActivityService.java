@@ -23,6 +23,7 @@ public class ActivityService
     public Activity getActivity(long activityId)
     {
         Optional<Activity> activity = activityRepository.findById(activityId);
+        System.out.println(activity.get().getActivityId());
         if(activity.isPresent()) return activity.get();
         return null;
     }

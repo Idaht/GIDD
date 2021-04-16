@@ -23,7 +23,7 @@ public class UserController
     @Autowired
     private ActivityService activityService;
 
-    @RequestMapping("/{user_id}")
+    @GetMapping("/{user_id}")
     public ResponseEntity<User> getUser(@PathVariable("user_id") long userId) {
         User returnUser = userService.getUser(userId);
         if (returnUser == null)
@@ -34,10 +34,10 @@ public class UserController
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         if (userService.createUser(user))
         {
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }

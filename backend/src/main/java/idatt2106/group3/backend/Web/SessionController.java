@@ -21,10 +21,10 @@ public class SessionController {
     }
 
     @PostMapping
-    public ResponseEntity<Session> loginToGetSession(@RequestBody String username, String password) {
+    public ResponseEntity<Session> loginToGetSession(@RequestBody String email, String password) {
 
-        //TODO: Implementer logikken som faktsik validerer passord og brukernavn, da hashing og salting
-        Session session = sessionService.loginToGetSession(username, password);
+        //TODO: Implementer logikken som faktsik validerer passord og email, da hashing og salting
+        Session session = sessionService.loginToGetSession(email, password);
         ResponseEntity<Session> returnSession;
         if (1 == 1) {
             returnSession = new ResponseEntity<>(session, HttpStatus.OK);

@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity
+@Entity(name = "activity")
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ public class Activity {
     private User organizer;
 
     @OneToOne
-    @JoinColumn(name = "chatId", referencedColumnName = "chatId", nullable = false)
+    @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
 
     public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat) {

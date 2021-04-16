@@ -75,7 +75,7 @@ public class ChatController
 
     @PostMapping("/{chat_id}/messages")
     public ResponseEntity<String> createMessage(@RequestParam("chat_id") long chatId, @RequestBody Message message) {
-        if (messageService.createMessage(chatService.getChat(chatId), message))
+        if (messageService.createMessage(chatId, message))
         {
             return new ResponseEntity<>(HttpStatus.OK);
         }

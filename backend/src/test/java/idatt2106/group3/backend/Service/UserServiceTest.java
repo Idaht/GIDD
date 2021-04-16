@@ -41,7 +41,6 @@ public class UserServiceTest
     {
         User user1 = new User(), user2 = new User(), user3;
         user1.setUserId(0l);
-        user1.setUsername("testUsername");
         user1.setForename("testForename");
         user1.setSurname("testSurname");
         user1.setEmail("testMail");
@@ -84,7 +83,6 @@ public class UserServiceTest
         long userId = 0l;
         User user = userService.getUser(userId);
         assertThat(user.getUserId()).isEqualTo(0l);
-        assertThat(user.getUsername()).isEqualTo("testUsername");
         assertThat(user.getForename()).isEqualTo("testForename");
         assertThat(user.getSurname()).isEqualTo("testSurname");
         assertThat(user.getEmail()).isEqualTo("testMail");
@@ -128,7 +126,6 @@ public class UserServiceTest
 
         assertThat(user).isNotNull();
         assertThat(user.getUserId()).isEqualTo(0l);
-        assertThat(user.getUsername()).isEqualTo(tempUser.getUsername());
         assertThat(user.getForename()).isEqualTo(tempUser.getForename());
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());

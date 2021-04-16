@@ -17,6 +17,5 @@ public class MessageService
         message.setChat(chat);
         Message returnMessage = messageRepository.save(message);
         return messageRepository.existsById(returnMessage.getMessageId());
-
     }
 }

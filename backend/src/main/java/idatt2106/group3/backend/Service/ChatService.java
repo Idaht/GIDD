@@ -41,9 +41,9 @@ public class ChatService {
         return null;
     }
 
+
     public boolean deleteChat(long chatId) {
         chatRepository.deleteById(chatId);
         return !chatRepository.existsById(chatId);
-
     }
 }

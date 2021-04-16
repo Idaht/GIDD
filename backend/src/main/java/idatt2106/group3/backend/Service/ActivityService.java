@@ -63,6 +63,5 @@ public class ActivityService
 
         userRepository.save(user);
         return true;
-
     }
 }

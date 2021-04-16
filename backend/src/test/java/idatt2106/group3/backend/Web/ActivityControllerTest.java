@@ -46,7 +46,7 @@ public class ActivityControllerTest {
         Activity activity = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity1 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity2 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        User user1 = new User("Username", "Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
         activityRepo.save(activity2);
         activityRepo.save(activity1);
         activityRepo.save(activity);
@@ -147,10 +147,6 @@ public class ActivityControllerTest {
     @Test
     public void addUserToActivity_ExistingUserAdded_StatusCreated() throws Exception
     {
-        User user1 = new User("Username", "Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        String activityJson = objectMapper.writeValueAsString(user1);
-
-
         this.mockMvc.perform(post("/api/v1/activities/1/users/1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username", containsStringIgnoringCase("Username")))

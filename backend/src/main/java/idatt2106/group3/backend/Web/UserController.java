@@ -2,7 +2,6 @@ package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Service.ActivityService;
 import idatt2106.group3.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +18,6 @@ public class UserController
 {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ActivityService activityService;
 
     @GetMapping("/{user_id}")
     public ResponseEntity<User> getUser(@PathVariable("user_id") long userId) {

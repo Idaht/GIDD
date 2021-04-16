@@ -39,4 +39,13 @@ public class Session {
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Session{" +
+                "sessionId='" + sessionId + '\'' +
+                ", user=" + user +
+                '}';
+    }
 }

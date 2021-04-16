@@ -224,4 +224,28 @@ public class User {
     public void setFaults(int faults) {
         this.faults = faults;
     }
+
+    @Override
+    public String toString()
+    {
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", forename='" + forename + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", hash='" + hash + '\'' +
+                ", salt='" + salt + '\'' +
+                ", score=" + score +
+                ", rating=" + rating +
+                ", role='" + role + '\'' +
+                ", faults=" + faults +
+                ", session=" + session +
+                ", activities=" + activities +
+                ", organizedActivities=" + organizedActivities +
+                ", reportsSent=" + reportsSent +
+                ", reportsReceived=" + reportsReceived +
+                ", messages=" + messages +
+                '}';
+    }
 }

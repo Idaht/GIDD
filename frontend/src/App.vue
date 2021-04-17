@@ -1,10 +1,20 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <TheHeader />
   </div>
   <router-view />
 </template>
+
+<script>
+import TheHeader from './components/TheHeader.vue'
+export default {
+  name: 'App',
+  components: {
+    TheHeader
+  }
+}
+
+</script>
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Mulish&display=swap");
@@ -13,6 +23,10 @@ $font-stack: "Mulish", sans-serif;
 $primary-color: #282828;
 $secondary-color: #ea4b4b;
 $padding: 0.6rem 1rem 0.6rem 1rem;
+
+body {
+ margin: 0;
+}
 
 #app {
   font-family: "Mulish", sans-serif;
@@ -26,7 +40,6 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
 }
 
 #nav {
-  padding: 30px;
 }
 
 button {

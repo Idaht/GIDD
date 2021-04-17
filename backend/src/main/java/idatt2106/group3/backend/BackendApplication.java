@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
@@ -29,6 +31,19 @@ public class BackendApplication {
 
 		// Runs the spring-boot application
 		SpringApplication.run(BackendApplication.class, args);
+	}
+
+	/**
+	 * Allows CORS to frontend
+	 */
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/api/**").allowedOrigins("http://localhost:3000");
+			}
+		};
 	}
 
 	// @Autowired

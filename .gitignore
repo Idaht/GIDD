@@ -35,5 +35,8 @@ build/
 ### KeyStore ###
 keystore/**
 
-
+### Configuration Properties ###
 config.properties
+
+### Logs ###
+logs/

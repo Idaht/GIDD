@@ -18,6 +18,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/LogIn.vue"),
   },
   {
+    path: "/activity-feed",
+    name: "ActivityFeed",
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import("../views/ActivityFeed.vue"),
+  },
+  {
     //Catch all makes router redirect all unknown URLs to the PageNotFound view
     path: "/:catchAll(.*)",
     name: "PageNotFound",

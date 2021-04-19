@@ -1,6 +1,7 @@
 package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Activity;
+import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Service.ActivityService;
 import idatt2106.group3.backend.Service.UserService;
@@ -71,5 +72,14 @@ public class ActivityController
             return new ResponseEntity<>(userService.getUser(userId),HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/{activity_id}/chat")
+    public ResponseEntity<Chat> getActivityChat(@PathVariable("activity_id") long activityId) {
+        Chat returnChat = activityService.getActivity(activityId).getChat();
+        if (returnChat == null) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(returnChat, HttpStatus.OK);
     }
 }

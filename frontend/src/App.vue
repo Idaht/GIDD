@@ -5,15 +5,15 @@
   <router-view />
 </template>
 
-<script>
-import TheHeader from './components/TheHeader.vue'
-export default {
-  name: 'App',
+<script lang="ts">
+import { defineComponent } from "vue";
+import TheHeader from "@/components/TheHeader.vue";
+export default defineComponent({
+  name: "App",
   components: {
-    TheHeader
-  }
-}
-
+    TheHeader,
+  },
+});
 </script>
 
 <style lang="scss">
@@ -25,7 +25,7 @@ $secondary-color: #ea4b4b;
 $padding: 0.6rem 1rem 0.6rem 1rem;
 
 body {
- margin: 0;
+  margin: 0;
 }
 
 #app {
@@ -40,6 +40,7 @@ body {
 }
 
 #nav {
+  //TODO dont have empty nav
 }
 
 button {
@@ -81,5 +82,4 @@ a:link {
   text-decoration: none;
   font-size: 0.6em;
 }
-
 </style>

@@ -15,14 +15,14 @@
     <div class="menu-box">
       <span v-if="loggedIn">
         <a href="#" class="icon" @click="toggleMenu">
-            <i class="fa fa-bars"></i>
-          </a>
+          <i class="fa fa-bars"></i>
+        </a>
         <!--Change to logged in menu img-->
       </span>
       <span v-else>
         <a href="#" class="icon" @click="toggleMenu">
-            <i class="fa fa-bars"></i>
-          </a>
+          <i class="fa fa-bars"></i>
+        </a>
         <!--Changed to logged out menu img-->
       </span>
 
@@ -40,7 +40,11 @@
           <div id="close-menu" @click="toggleMenu">
             <i class="fa fa-times"></i>
           </div>
-          <div v-for="(option, index) in loggedOutOptions" :key="index" class="menu-options">
+          <div
+            v-for="(option, index) in loggedOutOptions"
+            :key="index"
+            class="menu-options"
+          >
             {{ option.title }}
           </div>
         </span>
@@ -51,7 +55,7 @@
 
 <script lang="ts">
 import { defineComponent, Ref, ref } from "vue";
-import MenuOption from "../interface/MenuOption.interface";
+import MenuOption from "../interfaces/MenuOption.interface";
 
 /**
  * Defines components to be used
@@ -116,13 +120,12 @@ $secondary-color: #ea4b4b;
 #menu-toggle {
   position: absolute;
   height: 100%;
-  background-color: #F9F9F9;
+  background-color: #f9f9f9;
   width: 200px;
-  float:right;
+  float: right;
   z-index: 1;
   right: 0px;
   top: -5px;
-
 }
 
 .logo-nav {
@@ -144,12 +147,9 @@ $secondary-color: #ea4b4b;
 #close-menu {
   padding: 33px;
   text-align: right;
-
 }
 
 .fa-times {
   font-size: 1.2em;
 }
-
-
 </style>

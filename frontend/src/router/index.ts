@@ -18,6 +18,13 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/LogIn.vue"),
   },
   {
+    path: "/activity/:id",
+    name: "ActivityInfo",
+    component: () => import("../views/ActivityInformation.vue"),
+    props: true,
+    meta: { requiresAuth : true  },
+  },
+  {
     path: "/edit-profile",
     name: "EditProfile",
     component: () => import("../views/EditProfile.vue"),

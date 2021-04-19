@@ -47,15 +47,16 @@ export const store = createStore<State>({
       try {
         const response = await axios.post("/login", user);
         const token = response.data.token;
-        const userResponse = await axios.get(`/users/${response.data.userId}`);
-        const currentUser = userResponse.data.user;
         localStorage.setItem("token", token);
         axios.defaults.headers.common["Authorization"] = token;
+        const userResponse = await axios.get(`/users/${response.data.userId}`);
+        const currentUser = userResponse.data.user;
         commit("authenticationSuccess", { currentUser, token });
         return true;
       } catch (error) {
         commit("authenticationError");
         localStorage.removeItem("token");
+        delete axios.defaults.headers.common["Authorization"];
         return false;
       }
     },
@@ -65,15 +66,16 @@ export const store = createStore<State>({
         //TODO create and add interface to user param
         const response = await axios.post("/users", user);
         const token = response.data.token;
-        const userResponse = await axios.get(`/users/${response.data.userId}`);
-        const currentUser = userResponse.data.user;
         localStorage.setItem("token", token);
         axios.defaults.headers["Authorization"] = token;
+        const userResponse = await axios.get(`/users/${response.data.userId}`);
+        const currentUser = userResponse.data.user;
         commit("authenticationSuccess", { currentUser, token });
         return true;
       } catch (error) {
         commit("authenticationError");
         localStorage.removeItem("token");
+        delete axios.defaults.headers["Authorization"];
         return false;
       }
     },

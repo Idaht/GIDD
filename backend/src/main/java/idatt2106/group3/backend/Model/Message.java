@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,10 +20,12 @@ public class Message {
     private String message;
     private LocalDateTime timeSent;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
 
+    @JsonIgnoreProperties({"messages","reportsSent","reportsReceived","activities","session","faults","role","rating","score","salt","hash","email","surname","organizedActivities"})
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;

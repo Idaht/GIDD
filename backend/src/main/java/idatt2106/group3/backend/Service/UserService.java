@@ -2,12 +2,14 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.UserPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +23,8 @@ public class UserService
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private ActivityRepository activityRepository;
 
     public User getUser(long userId)
@@ -31,11 +35,18 @@ public class UserService
         return null;
     }
 
-    public boolean createUser(User user)
+    public User createUser(UserPasswordDTO user)
     {
-        LOGGER.info("createUser(User user) called with userId: {}", user.getUserId());
-        User createdUser = userRepository.save(user);
-        return userRepository.existsById(createdUser.getUserId());
+        //TODO: sende en melding at email eksisterer til frontend
+        LOGGER.info("createUser(UserPasswordDTO user) called with email: {}", user.getEmail());
+        if(userRepository.findUserByEmail(user.getEmail()).isPresent()) return null;
+        User createdUser = new User();
+        createdUser.setForename(user.getForename());
+        createdUser.setSurname(user.getSurname());
+        createdUser.setEmail(user.getEmail());
+        createdUser.setHash(passwordEncoder.encode(user.getHash())); //encodes password on registration
+        createdUser.setRole("ROLE_USER");
+        return userRepository.save(createdUser);
     }
 
     public User editUser(long userId, User user)
@@ -63,7 +74,7 @@ public class UserService
     /**
      * Removes a user from an activity. Returns true if successful, else false
      * @param userId
-     * @param activity
+     * @param activityId
      * @return
      */
     public boolean removeUserFromActivity(long userId, long activityId)
@@ -77,6 +88,7 @@ public class UserService
         }
         return false;
     }
+
 
     /**
      * Adds a user to an activity. Returns true if successful, else false

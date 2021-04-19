@@ -17,7 +17,6 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class UserController
 {
     @Autowired

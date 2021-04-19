@@ -33,7 +33,7 @@ build/
 .vscode/
 
 ### KeyStore ###
-keystore/**
+keystore/
 
 ### Configuration Properties ###
 config.properties

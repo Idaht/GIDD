@@ -19,7 +19,6 @@ import idatt2106.group3.backend.Service.UserSecurityDetailsService;
 
 @Profile("!test")
 @Configuration
-@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -31,6 +30,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        http
+        .requiresChannel()
+        .anyRequest()
+        .requiresSecure();
         http.csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))

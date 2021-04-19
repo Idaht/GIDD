@@ -3,14 +3,12 @@ package idatt2106.group3.backend.Web;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserPasswordDTO;
-import idatt2106.group3.backend.Model.UserSecurityDetails;
 import idatt2106.group3.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -28,8 +26,6 @@ public class UserController
     @GetMapping("/{user_id}")
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
     public ResponseEntity<User> getUser(@PathVariable("user_id") long userId) {
-        UserSecurityDetails user = (UserSecurityDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(user.getUserId());
         User returnUser = userService.getUser(userId);
         if (returnUser == null)
         {

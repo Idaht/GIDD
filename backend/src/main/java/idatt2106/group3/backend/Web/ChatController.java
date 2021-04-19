@@ -23,7 +23,7 @@ public class ChatController
     @Autowired
     private MessageService messageService;
 
-    @RequestMapping
+    @GetMapping
     public ResponseEntity<List<Chat>> getChats() {
         List<Chat> chats = chatService.getChats();
         if (chats == null)
@@ -33,7 +33,7 @@ public class ChatController
         return new ResponseEntity<>(chats, HttpStatus.OK);
     }
 
-    @RequestMapping("/{chat_id}")
+    @GetMapping("/{chat_id}")
     public ResponseEntity<Chat> getChat(@PathVariable("chat_id") long chatId) {
         Chat chat = chatService.getChat(chatId);
         if (chat == null)
@@ -63,7 +63,7 @@ public class ChatController
         return new ResponseEntity<>(returnChat, HttpStatus.OK);
     }
 
-    @RequestMapping("/{chat_id}/messages")
+    @GetMapping("/{chat_id}/messages")
     public ResponseEntity<Set<Message>> getMessages(@RequestParam("chat_id") long chatId) {
         Set<Message> messages = chatService.getMessages(chatId);
         if (messages == null)

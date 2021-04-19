@@ -23,19 +23,6 @@ public class BackendApplication {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
-	/**
-	 * Allows CORS to frontend
-	 */
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/**").allowedOrigins("http://localhost:3000");
-			}
-		};
-	}
-
 	// @Autowired
 	// private UserRepository userRepo;
 

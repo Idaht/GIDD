@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { defineComponent, Ref, ref } from "vue";
-import MenuOption from "../interface/menuOption.interface";
+import MenuOption from "../interface/MenuOption.interface";
 
 /**
  * Defines components to be used

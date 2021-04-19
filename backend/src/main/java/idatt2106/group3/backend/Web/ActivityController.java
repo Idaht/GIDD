@@ -68,7 +68,7 @@ public class ActivityController
 
     @PostMapping("/{activity_id}/users/{user_id}")
     public ResponseEntity<User> addUserToActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId) {
-        if (activityService.addUserToActivity(activityId, userService.getUser(userId))) {
+        if (activityService.addUserToActivity(activityId, userId)) {
             return new ResponseEntity<>(userService.getUser(userId),HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

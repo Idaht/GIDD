@@ -28,18 +28,22 @@ public class UserSecurityDetailsService implements UserDetailsService{
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * Overrides the method from UserDetailsService interface. We use email as user's username in our case.
+     */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        LOGGER.info("loadUserByUsername(String username) was called with email: {}", username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        LOGGER.info("loadUserByEmail(String email) was called with email: {}", email);
 
-        Optional<User> userOptional = userRepository.findUserByEmail(username);
+        Optional<User> userOptional = userRepository.findUserByEmail(email);
         if(userOptional.isPresent()){
             User user = userOptional.get();
             List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority(user.getRole()));
             return new UserSecurityDetails(user.getHash(), user.getEmail(), user.getUserId(), grantedAuthorities);
         }
         else{
-            throw new UsernameNotFoundException("Email: " + username + "was not found");
+            LOGGER.warn("Could not find user with email: {}. Throwing exception", email);
+            throw new UsernameNotFoundException("Email: " + email + "was not found");
         }
     }
 

@@ -17,6 +17,32 @@ const routes: Array<RouteRecordRaw> = [
     name: "LogIn",
     component: () => import("../views/LogIn.vue"),
   },
+  {
+    path: "/activity/:id",
+    name: "ActivityInfo",
+    component: () => import("../views/ActivityInformation.vue"),
+    props: true,
+    meta: { requiresAuth : true  },
+  },
+  {
+    path: "/edit-profile",
+    name: "EditProfile",
+    component: () => import("../views/EditProfile.vue"),
+  },
+  {
+    path: "/activity-feed",
+    name: "ActivityFeed",
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import("../views/ActivityFeed.vue"),
+  },
+  {
+    //Catch all makes router redirect all unknown URLs to the PageNotFound view
+    path: "/:catchAll(.*)",
+    name: "PageNotFound",
+    component: () => import("../views/PageNotFound.vue"),
+  },
 ];
 
 const router = createRouter({

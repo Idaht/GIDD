@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.UserDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
@@ -59,17 +60,28 @@ public class ActivityService
         return !activityRepository.existsById(activityId);
     }
 
-    public boolean addUserToActivity(long activityId, User user)
+    public boolean addUserToActivity(long activityId, long userId)
     {
-        LOGGER.info("addUserToActivity(long activityId, User user) called with activityId: {}, and userId: {}", activityId, user.getUserId());
+        LOGGER.info("addUserToActivity(long activityId) called with activityId: {}, and userId: {}", activityId, userId);
+
         Optional<Activity> activity = activityRepository.findById(activityId);
-        if(!activity.isPresent()) return false;
+        if(!activity.isPresent()) {
+            LOGGER.warn("Did not find activity with activityId: {}. Returning false", activityId);
+            return false;
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(!userOptional.isPresent()) {
+            LOGGER.warn("Did not find user with userId: {}. Returning false", userId);
+            return false;
+        }
+        User user = userOptional.get();
+
         Set<Activity> activities = user.getActivities();
         if (activities == null) {
             return false;
         }
         user.getActivities().add(activity.get());
-
 
         userRepository.save(user);
         return true;

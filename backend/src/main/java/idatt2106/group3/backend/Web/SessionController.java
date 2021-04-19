@@ -15,7 +15,7 @@ public class SessionController {
     private SessionService sessionService;
 
 
-    @RequestMapping("/{session_id}")
+    @GetMapping("/{session_id}")
     public Session getSession(@PathVariable("session_id") long sessionId) {
         return sessionService.getSession(sessionId);
     }

@@ -2,7 +2,8 @@ package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.UserPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.UserDTO;
+import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
 import idatt2106.group3.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,8 +46,8 @@ public class UserController
 
     @PutMapping("/{user_id}")
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<User> editUser( @PathVariable("user_id") long userId, @RequestBody User user) {
-        User returnUser = userService.editUser(userId, user);
+    public ResponseEntity<User> editUser( @PathVariable("user_id") long userId, @RequestBody UserDTO userDTO) {
+        User returnUser = userService.editUser(userId, userDTO);
         if (returnUser == null)
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

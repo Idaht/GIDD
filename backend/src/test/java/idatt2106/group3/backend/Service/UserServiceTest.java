@@ -2,7 +2,8 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.UserPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.UserDTO;
+import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -126,17 +127,22 @@ public class UserServiceTest
     @Test
     public void editUser_updatesUser_ReturnsUpdatedUser()
     {
+        UserDTO tempUserDTO = new UserDTO("Test", "Name", "email@email.com", 10, 4, "Random Role");
         User tempUser = new User();
-        tempUser.setUserId(5l);
+        tempUser.setForename(tempUserDTO.getForename());
+        tempUser.setSurname(tempUserDTO.getSurname());
+        tempUser.setEmail(tempUserDTO.getEmail());
+        tempUser.setScore(tempUserDTO.getScore());
+        tempUser.setRating(tempUserDTO.getRating());
+        tempUser.setRole(tempUserDTO.getRole());
 
         Mockito.lenient()
-                .when(userRepository.save(tempUser))
+                .when(userRepository.save(any()))
                 .thenReturn(tempUser);
 
-        User user = userService.editUser(0l, tempUser);
+        User user = userService.editUser(0l, tempUserDTO);
 
         assertThat(user).isNotNull();
-        assertThat(user.getUserId()).isEqualTo(0l);
         assertThat(user.getForename()).isEqualTo(tempUser.getForename());
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());

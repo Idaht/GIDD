@@ -2,7 +2,8 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.UserPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.UserDTO;
+import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,11 +51,22 @@ public class UserService
         return userRepository.save(createdUser);
     }
 
-    public User editUser(long userId, User user)
+    public User editUser(long userId, UserDTO userDTO)
     {
-        LOGGER.info("editUser(long userId, User user) called with userId: {}", userId);
-        user.setUserId(userId);
-        return userRepository.save(user);
+        LOGGER.info("editUser(long userId, UserDTO userDTO) called with userId: {}", userId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setForename(userDTO.getForename());
+            user.setSurname(userDTO.getSurname());
+            user.setEmail(userDTO.getEmail());
+            user.setScore(userDTO.getScore());
+            user.setRating(userDTO.getRating());
+            user.setRole(userDTO.getRole());
+            return userRepository.save(user);
+        }
+        LOGGER.warn("Did not find user with userId: {}, while running editUser(long userId, UserDTO userDTO). Returning null", userId);
+        return null;
     }
 
     public boolean deleteUser(long userId)
@@ -68,7 +81,8 @@ public class UserService
         LOGGER.info("getUserActivities(long userId) called with userId: {}", userId);
         Optional<User> user = userRepository.findById(userId);
         if(user.isPresent()) return user.get().getActivities();
-        return null;
+        LOGGER.warn("Did not find user with userId: {}, while running getUserActivities(long userId). Returning empty set", userId);
+        return Collections.emptySet();
     }
 
     /**

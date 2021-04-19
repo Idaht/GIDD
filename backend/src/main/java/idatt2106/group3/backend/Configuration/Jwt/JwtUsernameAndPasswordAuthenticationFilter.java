@@ -68,8 +68,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .signWith(Keys.hmacShaKeyFor(JwtSigningKey.getInstance())).compact();
 
         // Writes the token and userId as JSON
+        response.setHeader("Content-Type", "application/json;charset=utf-8");
         response.getWriter().write("{\n\t\"token\": \"" + token + "\",\n\t\"userId\": " + user.getUserId() + " \n}");
         response.getWriter().flush();
-        // response.setHeader("authorization", token);
     }
 }

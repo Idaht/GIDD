@@ -1,6 +1,8 @@
+import { store } from "@/store";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 
+//Declaring the routes for the router
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -22,12 +24,13 @@ const routes: Array<RouteRecordRaw> = [
     name: "ActivityInfo",
     component: () => import("../views/ActivityInformation.vue"),
     props: true,
-    meta: { requiresAuth : true  },
+    meta: { requiresAuth: true },
   },
   {
     path: "/edit-profile",
     name: "EditProfile",
     component: () => import("../views/EditProfile.vue"),
+    //TODO make it so that you cannot edit anyone elses profile
   },
   {
     path: "/activity-feed",
@@ -45,9 +48,25 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
+//Initiating router with history mode and the routes defined above
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+//Telling the router to check if the user is logged in if a page is marked as requiring authorization before every route change.
+//If the user is logged in it can continue
+//If not the user will be sent to the log in page
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (store.getters.isLoggedIn) {
+      next();
+      return;
+    }
+    next("/log-in");
+    return;
+  }
+  next();
 });
 
 export default router;

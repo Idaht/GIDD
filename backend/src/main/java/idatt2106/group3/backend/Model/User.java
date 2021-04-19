@@ -1,6 +1,5 @@
 package idatt2106.group3.backend.Model;
 
-
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -14,6 +13,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class User {
     @Id
@@ -22,7 +23,9 @@ public class User {
     private String forename;
     private String surname;
     private String email;
+    @JsonIgnore
     private String hash;
+    @JsonIgnore
     private String salt;
     private int score;
     private int rating;

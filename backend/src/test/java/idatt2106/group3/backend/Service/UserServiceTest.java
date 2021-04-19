@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.UserPasswordDTO;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +15,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
@@ -35,6 +39,9 @@ public class UserServiceTest
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setup()
@@ -73,6 +80,9 @@ public class UserServiceTest
         Mockito.lenient()
                 .when(userRepository.existsById(user1.getUserId()))
                 .thenReturn(true);
+        Mockito.lenient()
+        .when(passwordEncoder.encode(anyString()))
+        .thenReturn("testHashed");
     }
 
     //Format: methodName_StateUnderTest_ExpectedBehavior
@@ -103,13 +113,14 @@ public class UserServiceTest
     @Test
     public void createUser_userGetsAdded_ReturnsTrue()
     {
-        User user = userService.getUser(0l);
+        UserPasswordDTO user = new UserPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, "role", 0);
+        User user1 = userService.getUser(0l);
         Mockito.lenient()
-                .when(userRepository.save(user))
-                .thenReturn(user);
+                .when(userRepository.save(any()))
+                .thenReturn(user1);
 
 
-        assertThat(userService.createUser(user)).isTrue();
+        assertThat(userService.createUser(user)).isNotNull();
     }
 
     @Test

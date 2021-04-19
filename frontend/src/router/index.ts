@@ -17,6 +17,12 @@ const routes: Array<RouteRecordRaw> = [
     name: "LogIn",
     component: () => import("../views/LogIn.vue"),
   },
+  {
+    //Catch all makes router redirect all unknown URLs to the PageNotFound view
+    path: "/:catchAll(.*)",
+    name: "PageNotFound",
+    component: () => import("../views/PageNotFound.vue"),
+  },
 ];
 
 const router = createRouter({

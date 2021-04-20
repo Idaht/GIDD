@@ -41,7 +41,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/error").permitAll().antMatchers("/api/v1/activities/**").hasAnyRole("USER", "ADMIN")
         .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
-        .anyRequest().authenticated();
+        .anyRequest().authenticated()
+        .and()
+        .cors();
     }
 
     @Override

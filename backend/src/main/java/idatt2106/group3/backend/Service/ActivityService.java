@@ -2,7 +2,6 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.UserDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 

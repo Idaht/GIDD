@@ -20,6 +20,7 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long activityId;
+    private String title;
     private String description;
     private String equipment;
     private Difficulty difficulty;
@@ -31,20 +32,22 @@ public class Activity {
     private int durationMinutes;
     private boolean isPrivateActivity;
 
-    @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
     @JsonIgnore
+    @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
     private Set<User> users;
     
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User organizer;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
 
-    public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat) {
+    public Activity(String title, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat) {
         this.description = description;
+        this.title = title;
         this.equipment = equipment;
         this.difficulty = difficulty;
         this.city = city;
@@ -59,8 +62,9 @@ public class Activity {
         this.chat = chat;
     }
 
-    public Activity(String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity) {
+    public Activity(String title, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity) {
         this.description = description;
+        this.title = title;
         this.equipment = equipment;
         this.difficulty = difficulty;
         this.city = city;
@@ -113,6 +117,14 @@ public class Activity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getEquipment() {
@@ -193,6 +205,7 @@ public class Activity {
         return "Activity{" +
                 "activityId=" + activityId +
                 ", description='" + description + '\'' +
+                ", title='" + title + '\'' +
                 ", equipment='" + equipment + '\'' +
                 ", difficulty=" + difficulty +
                 ", city='" + city + '\'' +

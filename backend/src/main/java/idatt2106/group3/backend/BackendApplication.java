@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import idatt2106.group3.backend.Service.UserService;
@@ -24,24 +25,24 @@ public class BackendApplication {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
-	// @Autowired
-	// private UserRepository userRepo;
-	// @Autowired
-	// private UserService userService;
+	@Autowired
+	private UserRepository userRepo;
+	@Autowired
+	private UserService userService;
 
-	// @Autowired
-	// private ActivityRepository acitivityRepo;
+	@Autowired
+	private ActivityRepository acitivityRepo;
 	@Bean
 	public CommandLineRunner run(){
 		return args -> {
-			// User user = new User("test","test","test@test.com","hash","salt",123,123,"role",1);
-			// userService.createUser(user);
-			// Activity acitivty = new Activity("desc","equip", Difficulty.EASY,"bergen","place",1.2,1.2,LocalDateTime.now(),123,false);
-			// acitivityRepo.save(acitivty);
-			// Activity activity = acitivityRepo.findById(1L).get();
-			// User user1 = userRepo.findById(1L).get();
-			// user1.getActivities().add(activity);
-			// userRepo.save(user1);
+			UserWithPasswordDTO user = new UserWithPasswordDTO("test","test","test@test.com","hash",123,123,"role",null);
+			userService.createUser(user);
+			Activity acitivty = new Activity("title","desc","equip", Difficulty.EASY,"bergen","place",1.2,1.2,LocalDateTime.now(),123,false);
+			acitivityRepo.save(acitivty);
+			Activity activity = acitivityRepo.findById(1L).get();
+			User user1 = userRepo.findById(1L).get();
+			user1.getActivities().add(activity);
+			userRepo.save(user1);
 
 		};
 	}

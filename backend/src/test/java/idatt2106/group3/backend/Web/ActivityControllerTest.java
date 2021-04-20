@@ -18,7 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,11 +47,10 @@ public class ActivityControllerTest {
         Activity activity = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity1 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity2 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
         activityRepository.save(activity2);
         activityRepository.save(activity1);
         activityRepository.save(activity);
-        userRepository.save(user1);
+        
     }
 
     @AfterEach
@@ -145,7 +149,7 @@ public class ActivityControllerTest {
     @Test
     public void deleteActivity_ShouldDeleteActivity_StatusOk() throws Exception //Brude fungere, men får ikke testet da ingen entitet med id 0 eksisterer
     {
-        long id = activityRepository.findAll().get(2).getActivityId();
+        long id = activityRepository.findAll().get(1).getActivityId();
         this.mockMvc.perform(delete("/api/v1/activities/" + id))
                 .andExpect(status().isOk());
     }
@@ -153,6 +157,8 @@ public class ActivityControllerTest {
     @Test
     public void addUserToActivity_ExistingUserAdded_StatusCreated() throws Exception
     {
+        User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        userRepository.save(user1);
         long userId = userRepository.findAll().get(0).getUserId();
         long activityId = activityRepository.findAll().get(0).getActivityId();
         this.mockMvc.perform(post("/api/v1/activities/" + activityId + "/users/" + userId))

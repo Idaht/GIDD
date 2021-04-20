@@ -15,10 +15,10 @@ public class UserDTO {
     private int score;
     private int rating;
     private String role;
-    private Blob profilePic;
+    private Blob profilePicture;
 
 
-    public UserDTO(long userId, String forename, String surname, String email, int score, int rating, String role, Blob profilePic) {
+    public UserDTO(long userId, String forename, String surname, String email, int score, int rating, String role, Blob profilePicture) {
         this.userId = userId;
         this.forename = forename;
         this.surname = surname;
@@ -26,7 +26,7 @@ public class UserDTO {
         this.score = score;
         this.rating = rating;
         this.role = role;
-        this.profilePic = profilePic;
+        this.profilePicture = profilePicture;
     }
 
     public UserDTO() {
@@ -40,7 +40,7 @@ public class UserDTO {
         this.score = user.getScore();
         this.rating = user.getRating();
         this.role = user.getRole();
-        this.profilePic = user.getProfilePic();
+        this.profilePicture = user.getProfilePicture();
     }
 
     public long getUserId() {
@@ -99,12 +99,12 @@ public class UserDTO {
         this.role = role;
     }
 
-    public Blob getProfilePic() {
-        return profilePic;
+    public Blob getProfilePicture() {
+        return profilePicture;
     }
 
-    public void setProfilePic(Blob profilePic) {
-        this.profilePic = profilePic;
+    public void setProfilePicture(Blob profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     @Override

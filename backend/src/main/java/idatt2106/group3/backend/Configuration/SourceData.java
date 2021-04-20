@@ -30,7 +30,6 @@ public class SourceData {
             dataSourceBuilder.setUrl("jdbc:mysql://mysql.stud.iie.ntnu.no:3306/diderikk");
             dataSourceBuilder.setUsername(reader.readLine());
             dataSourceBuilder.setPassword(reader.readLine());
-            reader.close();
 
         } catch (IOException ex) {
             ex.printStackTrace();

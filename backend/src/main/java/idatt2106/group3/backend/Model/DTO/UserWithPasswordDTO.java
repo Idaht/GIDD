@@ -1,9 +1,11 @@
 package idatt2106.group3.backend.Model.DTO;
 
+import java.sql.Blob;
+
 /**
  * DTO class for User POST-requests: POST api/v1/users
  */
-public class UserPasswordDTO {
+public class UserWithPasswordDTO {
     private String forename;
     private String surname;
     private String email;
@@ -11,10 +13,10 @@ public class UserPasswordDTO {
     private int score;
     private int rating;
     private String role;
-    private int faults;
+    private Blob profilePicture;
 
 
-    public UserPasswordDTO(String forename, String surname, String email, String hash, int score, int rating, String role, int faults) {
+    public UserWithPasswordDTO(String forename, String surname, String email, String hash, int score, int rating, String role, Blob profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -22,10 +24,10 @@ public class UserPasswordDTO {
         this.score = score;
         this.rating = rating;
         this.role = role;
-        this.faults = faults;
+        this.profilePicture = profilePicture;
     }
 
-    public UserPasswordDTO() {
+    public UserWithPasswordDTO() {
     }
 
 
@@ -86,12 +88,12 @@ public class UserPasswordDTO {
         this.role = role;
     }
 
-    public int getFaults() {
-        return faults;
+    public Blob getProfilePicture() {
+        return profilePicture;
     }
 
-    public void setFaults(int faults) {
-        this.faults = faults;
+    public void setProfilePicture(Blob profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     @Override
@@ -105,7 +107,6 @@ public class UserPasswordDTO {
                 ", score=" + score +
                 ", rating=" + rating +
                 ", role='" + role + '\'' +
-                ", faults=" + faults +
                 '}';
     }
 }

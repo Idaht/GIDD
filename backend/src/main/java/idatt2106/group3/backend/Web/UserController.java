@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.RegistrationDTO;
 import idatt2106.group3.backend.Model.DTO.UserDTO;
 import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
 import idatt2106.group3.backend.Service.UserService;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,7 +24,7 @@ public class UserController
     private UserService userService;
 
     @GetMapping("/{user_id}")
-    @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<User> getUser(@PathVariable("user_id") long userId) {
         User returnUser = userService.getUser(userId);
         if (returnUser == null)
@@ -35,11 +35,11 @@ public class UserController
     }
 
     @PostMapping
-    public ResponseEntity<UserPasswordDTO> createUser(@RequestBody UserPasswordDTO user) {
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<RegistrationDTO> createUser(@RequestBody UserPasswordDTO user) {
+        RegistrationDTO createdUser = userService.createUser(user);
         if (createdUser != null)
         {
-            return new ResponseEntity<>(user, HttpStatus.CREATED);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -65,7 +65,7 @@ public class UserController
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @RequestMapping("/{user_id}/activities")
+    @GetMapping("/{user_id}/activities")
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Set<Activity>> getUserActivities(@PathVariable("user_id") long userId) {
         Set<Activity> activities = userService.getUserActivities(userId);

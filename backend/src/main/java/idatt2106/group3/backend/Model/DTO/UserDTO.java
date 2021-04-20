@@ -4,6 +4,7 @@ package idatt2106.group3.backend.Model.DTO;
  * DTO class for sending User information to frontend
  */
 public class UserDTO {
+    private long userId;
     private String forename;
     private String surname;
     private String email;
@@ -12,7 +13,8 @@ public class UserDTO {
     private String role;
 
 
-    public UserDTO(String forename, String surname, String email, int score, int rating, String role) {
+    public UserDTO(long userId, String forename, String surname, String email, int score, int rating, String role) {
+        this.userId = userId;
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -24,6 +26,13 @@ public class UserDTO {
     public UserDTO() {
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 
     public String getForename() {
         return forename;

@@ -122,7 +122,7 @@ public class UserServiceTest
     @Test
     public void editUser_updatesUser_ReturnsUpdatedUser()
     {
-        UserDTO tempUserDTO = new UserDTO("Test", "Name", "email@email.com", 10, 4, "Random Role");
+        UserDTO tempUserDTO = new UserDTO(1,"Test", "Name", "email@email.com", 10, 4, "Random Role");
         User tempUser = new User();
         tempUser.setForename(tempUserDTO.getForename());
         tempUser.setSurname(tempUserDTO.getSurname());

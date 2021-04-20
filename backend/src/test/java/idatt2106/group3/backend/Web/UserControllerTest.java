@@ -89,13 +89,13 @@ public class UserControllerTest
         this.mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename")))
-                .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
-                .andExpect(jsonPath("$.email", containsStringIgnoringCase("test@test.com")))
-                .andExpect(jsonPath("$.score", is(100)))
-                .andExpect(jsonPath("$.rating", is(4)))
-                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
-                .andExpect(jsonPath("$.faults", is(2)))
+                .andExpect(jsonPath("$.token", isA(String.class)))
+                .andExpect(jsonPath("$.user.forename", containsStringIgnoringCase("Forename")))
+                .andExpect(jsonPath("$.user.surname", containsStringIgnoringCase("Surname")))
+                .andExpect(jsonPath("$.user.email", containsStringIgnoringCase("test@test.com")))
+                .andExpect(jsonPath("$.user.score", is(100)))
+                .andExpect(jsonPath("$.user.rating", is(4)))
+                .andExpect(jsonPath("$.user.role", containsStringIgnoringCase("Organizer")))
                 .andReturn();
     }
 

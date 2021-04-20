@@ -53,8 +53,8 @@ public class ChatController
         return new ResponseEntity<>(returnChat, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{chat_id}")
-    public ResponseEntity<Chat> updateChat(@RequestParam("chat_id") long chatId, @RequestBody Chat chat) {
+    @PutMapping("/{chat_id}")
+    public ResponseEntity<Chat> updateChat(@PathVariable("chat_id") long chatId, @RequestBody Chat chat) {
         Chat returnChat = chatService.updateChat(chatId, chat);
         if (returnChat == null)
         {
@@ -64,7 +64,7 @@ public class ChatController
     }
 
     @GetMapping("/{chat_id}/messages")
-    public ResponseEntity<Set<Message>> getMessages(@RequestParam("chat_id") long chatId) {
+    public ResponseEntity<Set<Message>> getMessages(@PathVariable("chat_id") long chatId) {
         Set<Message> messages = chatService.getMessages(chatId);
         if (messages == null)
         {
@@ -74,25 +74,23 @@ public class ChatController
     }
 
     @PostMapping("/{chat_id}/messages")
-    public ResponseEntity<String> createMessage(@RequestParam("chat_id") long chatId, @RequestBody Message message) {
-        if (messageService.createMessage(chatId, message))
+    public ResponseEntity<Message> createMessage(@PathVariable("chat_id") long chatId, @RequestBody Message message) {
+        Message messageCreated = messageService.createMessage(chatId, message);
+        if (messageCreated != null)
         {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(message, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
     @DeleteMapping("/{chat_id}")
-    public ResponseEntity<String> deleteChat(@RequestParam("user_id") long chatId) {
+    public ResponseEntity<String> deleteChat(@PathVariable("chat_id") long chatId) {
         if (chatService.deleteChat(chatId))
         {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
-
 
 }

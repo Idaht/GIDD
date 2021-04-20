@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class Chat {
@@ -21,6 +22,7 @@ public class Chat {
     @OneToOne(mappedBy = "chat", targetEntity = Activity.class)
     private Activity activity;
 
+    @JsonIgnoreProperties({"chat"})
     @OneToMany(mappedBy = "chat", targetEntity = Message.class)
     private Set<Message> messages;
 
@@ -45,6 +47,7 @@ public class Chat {
     }
 
     public void setMessages(Set<Message> messages) {
+        messages.stream().forEach(m -> m.setChat(this));
         this.messages = messages;
     }
 

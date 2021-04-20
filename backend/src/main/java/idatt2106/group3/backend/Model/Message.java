@@ -20,7 +20,7 @@ public class Message {
     private String message;
     private LocalDateTime timeSent;
 
-    @JsonIgnore
+    //@JsonIgnoreProperties({"messages"})
     @ManyToOne
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
@@ -83,5 +83,17 @@ public class Message {
 
     public void setTimeSent(LocalDateTime timeSent) {
         this.timeSent = timeSent;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Message{" +
+                "messageId=" + messageId +
+                ", message='" + message + '\'' +
+                ", timeSent=" + timeSent +
+                ", chat=" + chat +
+                ", user=" + user +
+                '}';
     }
 }

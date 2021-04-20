@@ -37,6 +37,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .addFilter(getJWTAuthenticationFilter(authenticationManager()))
         .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
+        .addFilterAfter(new ExceptionHandlerFilter(), JwtTokenVerifier.class)
         .authorizeRequests()
         .antMatchers("/error").permitAll().antMatchers("/api/v1/activities/**").hasAnyRole("USER", "ADMIN")
         .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()

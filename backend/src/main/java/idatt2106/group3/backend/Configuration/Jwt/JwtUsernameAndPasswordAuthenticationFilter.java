@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +26,8 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenVerifier.class);
 
     public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -46,7 +51,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             return auth;
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOGGER.info("Something went wrong trying to authenticate. Exception: {}", ex.getLocalizedMessage());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
         return null;
     }

@@ -25,25 +25,25 @@ public class BackendApplication {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
-	@Autowired
-	private UserRepository userRepo;
-	@Autowired
-	private UserService userService;
+	// @Autowired
+	// private UserRepository userRepo;
+	// @Autowired
+	// private UserService userService;
 
-	@Autowired
-	private ActivityRepository acitivityRepo;
-	@Bean
-	public CommandLineRunner run(){
-		return args -> {
-			UserWithPasswordDTO user = new UserWithPasswordDTO("test","test","test@test.com","hash",123,123,"role",null);
-			userService.createUser(user);
-			Activity acitivty = new Activity("title","desc","equip", Difficulty.EASY,"bergen","place",1.2,1.2,LocalDateTime.now(),123,false);
-			acitivityRepo.save(acitivty);
-			Activity activity = acitivityRepo.findById(1L).get();
-			User user1 = userRepo.findById(1L).get();
-			user1.getActivities().add(activity);
-			userRepo.save(user1);
+	// @Autowired
+	// private ActivityRepository acitivityRepo;
+	// @Bean
+	// public CommandLineRunner run(){
+	// 	return args -> {
+	// 		UserWithPasswordDTO user = new UserWithPasswordDTO("test","test","test@test.com","hash",123,123,"role",null);
+	// 		userService.createUser(user);
+	// 		Activity acitivty = new Activity("title","desc","equip", Difficulty.EASY,"bergen","place",1.2,1.2,LocalDateTime.now(),123,false);
+	// 		acitivityRepo.save(acitivty);
+	// 		Activity activity = acitivityRepo.findById(1L).get();
+	// 		User user1 = userRepo.findById(1L).get();
+	// 		user1.getActivities().add(activity);
+	// 		userRepo.save(user1);
 
-		};
-	}
+	// 	};
+	// }
 }	

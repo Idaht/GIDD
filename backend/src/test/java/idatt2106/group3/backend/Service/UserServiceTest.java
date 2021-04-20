@@ -20,10 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -107,7 +112,7 @@ public class UserServiceTest
     public void createUser_userGetsAdded_ReturnsTrue()
     {
         UserPasswordDTO user = new UserPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, "role", 0);
-        User returnUser = new User("test","test", "213", "hash","salt",1,1,",",1);
+        User returnUser = new User("test","test", "213", "hash","salt",1,1,",",1, null);
         returnUser.setUserId(1);
         Mockito.lenient()
                 .when(userRepository.save(any()))
@@ -118,9 +123,10 @@ public class UserServiceTest
     }
 
     @Test
-    public void editUser_updatesUser_ReturnsUpdatedUser()
+    public void editUser_updatesUser_ReturnsUpdatedUser() throws SerialException, SQLException
     {
-        UserDTO tempUserDTO = new UserDTO(1,"Test", "Name", "email@email.com", 10, 4, "Random Role");
+        Blob blob = new SerialBlob(new byte[256]);
+        UserDTO tempUserDTO = new UserDTO(1,"Test", "Name", "email@email.com", 10, 4, "Random Role", blob);
         User tempUser = new User();
         tempUser.setForename(tempUserDTO.getForename());
         tempUser.setSurname(tempUserDTO.getSurname());
@@ -128,6 +134,7 @@ public class UserServiceTest
         tempUser.setScore(tempUserDTO.getScore());
         tempUser.setRating(tempUserDTO.getRating());
         tempUser.setRole(tempUserDTO.getRole());
+        tempUser.setProfilePic(tempUserDTO.getProfilePic());
 
         Mockito.lenient()
                 .when(userRepository.save(any()))
@@ -141,6 +148,7 @@ public class UserServiceTest
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
         assertThat(user.getScore()).isEqualTo(tempUser.getScore());
         assertThat(user.getRating()).isEqualTo(tempUser.getRating());
+        assertThat(user.getProfilePic()).isEqualTo(tempUser.getProfilePic());
     }
 
     @Test

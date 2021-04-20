@@ -42,7 +42,7 @@ public class ActivityControllerTest {
         Activity activity = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity1 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity2 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
         activityRepository.save(activity2);
         activityRepository.save(activity1);
         activityRepository.save(activity);

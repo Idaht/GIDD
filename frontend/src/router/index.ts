@@ -41,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/ActivityFeed.vue"),
   },
   {
+    path: "/forgotten-password",
+    name: "ForgottenPassword",
+    component: () => import("../views/ForgottenPassword.vue"),
+  },
+  {
     //Catch all makes router redirect all unknown URLs to the PageNotFound view
     path: "/:catchAll(.*)",
     name: "PageNotFound",

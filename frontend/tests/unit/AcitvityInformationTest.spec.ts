@@ -7,11 +7,11 @@ import getWrapper from "./utils/factory";
  */
 describe("ActivityInformation.vue", () => {
   it("increases number of participants and shows other buttons when true", () => {
-    const signedUp = true;
     const wrapper = getWrapper(
       ActivityInformation,
       {},
-      { isSignedUp: signedUp }
+      { isSignedUp: true },
+      {}
     );
     expect(wrapper.find("#signing-up").exists()).toBeTruthy;
   });

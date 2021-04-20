@@ -8,7 +8,7 @@ import { BackendStatus } from "@/enums/BackendStatus.enum";
 //The interface describing the State of th Vuex store
 export interface State {
   status: BackendStatus;
-  user: User;
+  user: string;
   token: string;
 }
 
@@ -19,8 +19,8 @@ export const key: InjectionKey<Store<State>> = Symbol();
 export const store = createStore<State>({
   state: {
     status: BackendStatus.OK,
-    user: new Object() as User,
     token: localStorage.getItem("token") || "",
+    user: localStorage.getItem("user") || "",
   },
   //The mutators methods, to mutate the state
   mutations: {
@@ -28,7 +28,7 @@ export const store = createStore<State>({
       state.status = BackendStatus.PENDING;
     },
     authenticationSuccess(state: State, { user, token }) {
-      state.user = user;
+      state.user = JSON.stringify(user);
       state.token = token;
       state.status = BackendStatus.OK;
     },
@@ -38,7 +38,7 @@ export const store = createStore<State>({
     authenticationLogout(state) {
       state.status = BackendStatus.OK;
       state.token = "";
-      state.user = new Object() as User;
+      state.user = "";
     },
   },
   actions: {
@@ -50,12 +50,13 @@ export const store = createStore<State>({
         localStorage.setItem("token", token);
         axios.defaults.headers.common["Authorization"] = token;
         const userResponse = await axios.get(`/users/${response.data.userId}`);
-        const currentUser = userResponse.data.user;
-        commit("authenticationSuccess", { currentUser, token });
+        localStorage.setItem("user", JSON.stringify(userResponse.data));
+        commit("authenticationSuccess", { user: userResponse.data, token });
         return true;
       } catch (error) {
         commit("authenticationError");
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         delete axios.defaults.headers.common["Authorization"];
         return false;
       }
@@ -68,13 +69,14 @@ export const store = createStore<State>({
         const token = response.data.token;
         localStorage.setItem("token", token);
         axios.defaults.headers["Authorization"] = token;
-        const userResponse = await axios.get(`/users/${response.data.userId}`);
-        const currentUser = userResponse.data.user;
-        commit("authenticationSuccess", { currentUser, token });
+        const currentUser = response.data.user;
+        localStorage.setItem("user", JSON.stringify(currentUser));
+        commit("authenticationSuccess", { user: currentUser, token });
         return true;
       } catch (error) {
         commit("authenticationError");
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         delete axios.defaults.headers["Authorization"];
         return false;
       }
@@ -82,13 +84,14 @@ export const store = createStore<State>({
     logout({ commit }) {
       commit("authenticationLogout");
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       delete axios.defaults.headers["Authorization"];
     },
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
     authenticationStatus: (state) => state.status,
-    user: (state) => state.user,
+    user: (state): User => JSON.parse(state.user),
   },
   modules: {},
 });

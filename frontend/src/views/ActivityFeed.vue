@@ -114,7 +114,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 div {
   border: 1px black solid;
   margin: 5px;

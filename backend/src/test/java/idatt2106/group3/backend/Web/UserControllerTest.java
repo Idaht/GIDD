@@ -5,20 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import idatt2106.group3.backend.Service.UserService;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -27,8 +26,6 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.*;
 
-
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -45,29 +42,35 @@ public class UserControllerTest
     @Autowired
     private UserService userService;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         Activity activity1 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        User user1 = new User("1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        User user2 = new User("1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        User user3 = new User("1Forename", "1Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user1 = new User("1Forename", "1Surname", "test1@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user2 = new User("1Forename", "1Surname", "test2@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user3 = new User("1Forename", "1Surname", "test3@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
         activityRepository.save(activity1);
         userRepository.save(user1);
-        userService.addUserToActivity(1, 1);
         userRepository.save(user2);
         userRepository.save(user3);
     }
 
+    @AfterEach
+    public void teardown() {
+        userService.removeUserFromActivity(1, 1);
+        userRepository.deleteAll();
+        activityRepository.deleteAll();
+    }
 
     @Test
     public void getUser_ReturnFirstUserAndStatus_StatusOk() throws Exception
     {
-        this.mockMvc.perform(get("/api/v1/users/1"))
+        long id = userRepository.findAll().get(0).getUserId();
+        this.mockMvc.perform(get("/api/v1/users/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
-                .andExpect(jsonPath("$.email", containsStringIgnoringCase("test@test.com")))
+                .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test.com")))
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
@@ -79,9 +82,9 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        User user = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        UserPasswordDTO userPasswordDTO = new UserPasswordDTO("Forename", "Surname", "test@test.com", "test hash", 100, 4, "Organizer", 2);
 
-        String userJson = objectMapper.writeValueAsString(user);
+        String userJson = objectMapper.writeValueAsString(userPasswordDTO);
 
         this.mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
@@ -102,7 +105,8 @@ public class UserControllerTest
         User user = new User("Forename1", "Surname1", "test1@test1.com", "test1 hash", "test1 salt", 100, 4, "Organizer1", 2);
         String userJson = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(put("/api/v1/users/2")
+        long id = userRepository.findAll().get(1).getUserId();
+        this.mockMvc.perform(put("/api/v1/users/" + id)
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename1")))
@@ -114,7 +118,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.faults", is(2)))
                 .andReturn();
 
-        this.mockMvc.perform(get("/api/v1/users/2"))
+        this.mockMvc.perform(get("/api/v1/users/" + id))
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename1")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname1")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test1.com")))
@@ -128,14 +132,18 @@ public class UserControllerTest
     @Test
     public void deleteUser_ShouldDeleteUser_StatusOk() throws Exception
     {
-        this.mockMvc.perform(delete("/api/v1/users/3"))
+        long id = userRepository.findAll().get(2).getUserId();
+        this.mockMvc.perform(delete("/api/v1/users/" + id))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void getUserActivities_getActivitiesAndRespons_StatusOk() throws Exception
     {
-        this.mockMvc.perform(get("/api/v1/users/1/activities"))
+        long userId = userRepository.findAll().get(0).getUserId();
+        long activityId = activityRepository.findAll().get(0).getActivityId();
+        userService.addUserToActivity(userId, activityId);
+        this.mockMvc.perform(get("/api/v1/users/" + userId + "/activities"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].description", containsStringIgnoringCase("Football")))
                 .andExpect(jsonPath("$.[0].equipment", containsStringIgnoringCase("A football")))
@@ -153,7 +161,10 @@ public class UserControllerTest
     @Test
     public void removeUserFromActivity_ShouldRemoveUserAndGetResponse_StatusOk() throws Exception
     {
-        this.mockMvc.perform(delete("/api/v1/users/1/activities/1"))
+        long userId = userRepository.findAll().get(0).getUserId();
+        long activityId = activityRepository.findAll().get(0).getActivityId();
+        userService.addUserToActivity(userId, activityId);
+        this.mockMvc.perform(delete("/api/v1/users/" + userId + "/activities/" + activityId))
                 .andExpect(status().isOk());
     }
 }

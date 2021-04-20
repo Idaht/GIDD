@@ -8,16 +8,14 @@ import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -26,8 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
 
-
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -37,25 +33,32 @@ public class ActivityControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private ActivityRepository activityRepo;
+    private ActivityRepository activityRepository;
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepository;
 
-    @Before
+    @BeforeEach
     public void setup(){
         Activity activity = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity1 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity2 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        activityRepo.save(activity2);
-        activityRepo.save(activity1);
-        activityRepo.save(activity);
-        userRepo.save(user1);
+        activityRepository.save(activity2);
+        activityRepository.save(activity1);
+        activityRepository.save(activity);
+        userRepository.save(user1);
+    }
+
+    @AfterEach
+    public void teardown() {
+        userRepository.deleteAll();
+        activityRepository.deleteAll();
     }
 
     @Test
     public void getActivity_ReturnFirstActivityAndStatus_StatusOk() throws Exception {
-        this.mockMvc.perform(get("/api/v1/activities/1"))
+        long id = activityRepository.findAll().get(0).getActivityId();
+        this.mockMvc.perform(get("/api/v1/activities/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("A football")))
@@ -106,7 +109,8 @@ public class ActivityControllerTest {
         Activity activity = new Activity("Football and games1", "Two footballs", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, null, 60, false);
         String activityJson = objectMapper.writeValueAsString(activity);
 
-        this.mockMvc.perform(put("/api/v1/activities/3")
+        long id = activityRepository.findAll().get(2).getActivityId();
+        this.mockMvc.perform(put("/api/v1/activities/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(activityJson))
                 .andExpect(status().isOk())
@@ -122,7 +126,7 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.privateActivity", is(false)))
                 .andReturn();
 
-        this.mockMvc.perform(get("/api/v1/activities/3"))
+        this.mockMvc.perform(get("/api/v1/activities/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football and games1")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("Two footballs")))
@@ -140,24 +144,23 @@ public class ActivityControllerTest {
     @Test
     public void deleteActivity_ShouldDeleteActivity_StatusOk() throws Exception //Brude fungere, men får ikke testet da ingen entitet med id 0 eksisterer
     {
-        this.mockMvc.perform(delete("/api/v1/activities/2"))
+        long id = activityRepository.findAll().get(2).getActivityId();
+        this.mockMvc.perform(delete("/api/v1/activities/" + id))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void addUserToActivity_ExistingUserAdded_StatusCreated() throws Exception
     {
-        this.mockMvc.perform(post("/api/v1/activities/1/users/1"))
+        long userId = userRepository.findAll().get(0).getUserId();
+        long activityId = activityRepository.findAll().get(0).getActivityId();
+        this.mockMvc.perform(post("/api/v1/activities/" + activityId + "/users/" + userId))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username", containsStringIgnoringCase("Username")))
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test@test.com")))
-                .andExpect(jsonPath("$.hash", containsStringIgnoringCase("test hash")))
-                .andExpect(jsonPath("$.salt", containsStringIgnoringCase("test salt")))
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
-                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
-                .andExpect(jsonPath("$.faults", is(2)));
+                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")));
     }
 }

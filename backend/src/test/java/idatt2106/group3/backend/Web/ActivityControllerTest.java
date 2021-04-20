@@ -39,9 +39,9 @@ public class ActivityControllerTest {
 
     @BeforeEach
     public void setup(){
-        Activity activity = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        Activity activity1 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        Activity activity2 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
+        Activity activity = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
+        Activity activity1 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
+        Activity activity2 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
         activityRepository.save(activity2);
         activityRepository.save(activity1);
@@ -60,6 +60,7 @@ public class ActivityControllerTest {
         long id = activityRepository.findAll().get(0).getActivityId();
         this.mockMvc.perform(get("/api/v1/activities/" + id))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", containsStringIgnoringCase("Playing")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("A football")))
                 .andExpect(jsonPath("$.difficulty", is("EASY")))
@@ -84,21 +85,21 @@ public class ActivityControllerTest {
     @Test
     public void createActivity_PostActivity_StatusCreated() throws Exception
     {
-        Activity activity = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
+        Activity activity = new Activity("Playing","Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         String activityJson = objectMapper.writeValueAsString(activity);
 
         this.mockMvc.perform(post("/api/v1/activities")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(activityJson))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title", containsStringIgnoringCase("Playing")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("A football")))
-                // .andExpect(jsonPath("$.difficulty", is(Difficulty.EASY)))
+                .andExpect(jsonPath("$.difficulty", is("EASY")))
                 .andExpect(jsonPath("$.city", containsStringIgnoringCase("Trondheim")))
                 .andExpect(jsonPath("$.place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.longitude", is(50.30)))
                 .andExpect(jsonPath("$.latitude", is(50.50)))
-                //.andExpect(jsonPath("$.startTime", is(null)))
                 .andExpect(jsonPath("$.durationMinutes", is(60)))
                 .andExpect(jsonPath("$.privateActivity", is(false)));
     }
@@ -106,7 +107,7 @@ public class ActivityControllerTest {
     @Test
     public void editActivity_UpdateActivity_StatusOk() throws Exception
     {
-        Activity activity = new Activity("Football and games1", "Two footballs", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, null, 60, false);
+        Activity activity = new Activity("Title", "Football and games1", "Two footballs", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, null, 60, false);
         String activityJson = objectMapper.writeValueAsString(activity);
 
         long id = activityRepository.findAll().get(2).getActivityId();
@@ -114,6 +115,7 @@ public class ActivityControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(activityJson))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", containsStringIgnoringCase("title")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football and games1")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("Two footballs")))
                 .andExpect(jsonPath("$.difficulty", is("EASY")))
@@ -121,13 +123,13 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.longitude", is(50.30)))
                 .andExpect(jsonPath("$.latitude", is(50.50)))
-                //.andExpect(jsonPath("$.startTime", is(null)))
                 .andExpect(jsonPath("$.durationMinutes", is(60)))
                 .andExpect(jsonPath("$.privateActivity", is(false)))
                 .andReturn();
 
         this.mockMvc.perform(get("/api/v1/activities/" + id))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", containsStringIgnoringCase("title")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football and games1")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("Two footballs")))
                 .andExpect(jsonPath("$.difficulty", is("EASY")))
@@ -135,7 +137,6 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.longitude", is(50.30)))
                 .andExpect(jsonPath("$.latitude", is(50.50)))
-                // .andExpect(jsonPath("$.startTime", is(null)))
                 .andExpect(jsonPath("$.durationMinutes", is(60)))
                 .andExpect(jsonPath("$.privateActivity", is(false)))
                 .andReturn();

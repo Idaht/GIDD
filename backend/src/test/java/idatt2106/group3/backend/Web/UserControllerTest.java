@@ -45,7 +45,7 @@ public class UserControllerTest
     @BeforeEach
     public void setup()
     {
-        Activity activity1 = new Activity("Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
+        Activity activity1 = new Activity("Football", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         User user1 = new User("1Forename", "1Surname", "test1@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
         User user2 = new User("1Forename", "1Surname", "test2@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
         User user3 = new User("1Forename", "1Surname", "test3@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
@@ -145,7 +145,8 @@ public class UserControllerTest
         userService.addUserToActivity(userId, activityId);
         this.mockMvc.perform(get("/api/v1/users/" + userId + "/activities"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].description", containsStringIgnoringCase("Football")))
+                .andExpect(jsonPath("$.[0].title", containsStringIgnoringCase("Football")))
+                .andExpect(jsonPath("$.[0].description", containsStringIgnoringCase("Playing")))
                 .andExpect(jsonPath("$.[0].equipment", containsStringIgnoringCase("A football")))
                 .andExpect(jsonPath("$.[0].difficulty", is("EASY")))
                 .andExpect(jsonPath("$.[0].city", containsStringIgnoringCase("Trondheim")))

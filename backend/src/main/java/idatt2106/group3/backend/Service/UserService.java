@@ -3,9 +3,9 @@ package idatt2106.group3.backend.Service;
 import idatt2106.group3.backend.Configuration.Jwt.JwtSigningKey;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.RegistrationDTO;
+import idatt2106.group3.backend.Model.DTO.UserRegistrationCallbackDTO;
 import idatt2106.group3.backend.Model.DTO.UserDTO;
-import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import io.jsonwebtoken.Jwts;
@@ -45,7 +45,7 @@ public class UserService
         return null;
     }
 
-    public RegistrationDTO createUser(UserPasswordDTO user)
+    public UserRegistrationCallbackDTO createUser(UserWithPasswordDTO user)
     {
         //TODO: sende en melding at email eksisterer til frontend
         LOGGER.info("createUser(UserPasswordDTO user) called with email: {}", user.getEmail());
@@ -60,7 +60,7 @@ public class UserService
         String token = createJWtToken(createdUser);
 
         
-        return new RegistrationDTO(token, createdUser.getUserId(), user);
+        return new UserRegistrationCallbackDTO(token, createdUser.getUserId(), user);
     }
 
     public UserDTO editUser(long userId, UserDTO userDTO)
@@ -75,7 +75,7 @@ public class UserService
             user.setScore(userDTO.getScore());
             user.setRating(userDTO.getRating());
             user.setRole(userDTO.getRole());
-            user.setProfilePic(userDTO.getProfilePic());
+            user.setProfilePicture(userDTO.getProfilePicture());
             userRepository.save(user);
             return userDTO;
         }

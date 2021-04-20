@@ -3,7 +3,7 @@ package idatt2106.group3.backend.Service;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.UserDTO;
-import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -111,7 +111,7 @@ public class UserServiceTest
     @Test
     public void createUser_userGetsAdded_ReturnsTrue()
     {
-        UserPasswordDTO user = new UserPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, "role", 0);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, "role", null);
         User returnUser = new User("test","test", "213", "hash","salt",1,1,",",1, null);
         returnUser.setUserId(1);
         Mockito.lenient()
@@ -134,7 +134,7 @@ public class UserServiceTest
         tempUser.setScore(tempUserDTO.getScore());
         tempUser.setRating(tempUserDTO.getRating());
         tempUser.setRole(tempUserDTO.getRole());
-        tempUser.setProfilePic(tempUserDTO.getProfilePic());
+        tempUser.setProfilePicture(tempUserDTO.getProfilePicture());
 
         Mockito.lenient()
                 .when(userRepository.save(any()))
@@ -148,7 +148,7 @@ public class UserServiceTest
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
         assertThat(user.getScore()).isEqualTo(tempUser.getScore());
         assertThat(user.getRating()).isEqualTo(tempUser.getRating());
-        assertThat(user.getProfilePic()).isEqualTo(tempUser.getProfilePic());
+        assertThat(user.getProfilePicture()).isEqualTo(tempUser.getProfilePicture());
     }
 
     @Test

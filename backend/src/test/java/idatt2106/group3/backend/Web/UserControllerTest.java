@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import idatt2106.group3.backend.Service.UserService;
@@ -83,7 +83,7 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        UserPasswordDTO userPasswordDTO = new UserPasswordDTO("Forename", "Surname", "test@test.com", "test hash", 100, 4, "Organizer", 2);
+        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", "test hash", 100, 4, "Organizer",null);
 
         String userJson = objectMapper.writeValueAsString(userPasswordDTO);
 

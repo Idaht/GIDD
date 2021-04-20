@@ -52,9 +52,9 @@ public class User {
     Set<Message> messages;
 
     @Lob
-    private Blob profilePic;
+    private Blob profilePicture;
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, Blob profilePic) {
+    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, Blob profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -69,10 +69,10 @@ public class User {
         this.reportsSent = reportsSent;
         this.reportsReceived = reportsReceived;
         this.messages = messages;
-        this.profilePic = profilePic;
+        this.profilePicture = profilePicture;
     }
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Blob profilePic) {
+    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Blob profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -82,7 +82,7 @@ public class User {
         this.rating = rating;
         this.role = role;
         this.faults = faults;
-        this.profilePic = profilePic;
+        this.profilePicture = profilePicture;
     }
 
     public User() {
@@ -208,12 +208,12 @@ public class User {
         this.faults = faults;
     }
 
-    public Blob getProfilePic() {
-        return profilePic;
+    public Blob getProfilePicture() {
+        return profilePicture;
     }
 
-    public void setProfilePic(Blob profilePic) {
-        this.profilePic = profilePic;
+    public void setProfilePicture(Blob profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     @Override

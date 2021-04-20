@@ -87,13 +87,10 @@ public class UserServiceTest
     public void getUser_IdExists_UserIsCorrect()
     {
         long userId = 0l;
-        User user = userService.getUser(userId);
-        assertThat(user.getUserId()).isEqualTo(0l);
+        UserDTO user = userService.getUser(userId);
         assertThat(user.getForename()).isEqualTo("testForename");
         assertThat(user.getSurname()).isEqualTo("testSurname");
         assertThat(user.getEmail()).isEqualTo("testMail");
-        assertThat(user.getHash()).isEqualTo("testHash");
-        assertThat(user.getSalt()).isEqualTo("testSalt");
         assertThat(user.getScore()).isEqualTo(10);
         assertThat(user.getRating()).isEqualTo(4);
     }
@@ -102,7 +99,7 @@ public class UserServiceTest
     public void getUser_IdDoesNotExists_ReturnsNull()
     {
         long userId = -1l;
-        User user = userService.getUser(userId);
+        UserDTO user = userService.getUser(userId);
         assertThat(user).isNull();
     }
 
@@ -110,10 +107,11 @@ public class UserServiceTest
     public void createUser_userGetsAdded_ReturnsTrue()
     {
         UserPasswordDTO user = new UserPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, "role", 0);
-        User user1 = userService.getUser(0l);
+        User returnUser = new User("test","test", "213", "hash","salt",1,1,",",1);
+        returnUser.setUserId(1);
         Mockito.lenient()
                 .when(userRepository.save(any()))
-                .thenReturn(user1);
+                .thenReturn(returnUser);
 
 
         assertThat(userService.createUser(user)).isNotNull();
@@ -135,14 +133,12 @@ public class UserServiceTest
                 .when(userRepository.save(any()))
                 .thenReturn(tempUser);
 
-        User user = userService.editUser(0l, tempUserDTO);
+        UserDTO user = userService.editUser(0l, tempUserDTO);
 
         assertThat(user).isNotNull();
         assertThat(user.getForename()).isEqualTo(tempUser.getForename());
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
-        assertThat(user.getHash()).isEqualTo(tempUser.getHash());
-        assertThat(user.getSalt()).isEqualTo(tempUser.getSalt());
         assertThat(user.getScore()).isEqualTo(tempUser.getScore());
         assertThat(user.getRating()).isEqualTo(tempUser.getRating());
     }

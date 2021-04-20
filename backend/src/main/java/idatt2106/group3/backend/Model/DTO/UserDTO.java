@@ -1,5 +1,7 @@
 package idatt2106.group3.backend.Model.DTO;
 
+import idatt2106.group3.backend.Model.User;
+
 /**
  * DTO class for sending User information to frontend
  */
@@ -24,6 +26,16 @@ public class UserDTO {
     }
 
     public UserDTO() {
+    }
+
+    public UserDTO(User user){
+        this.userId = user.getUserId();
+        this.forename = user.getForename();
+        this.surname = user.getSurname();
+        this.email = user.getEmail();
+        this.score = user.getScore();
+        this.rating = user.getRating();
+        this.role = user.getRole();
     }
 
     public long getUserId() {

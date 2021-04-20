@@ -74,7 +74,6 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
-                .andExpect(jsonPath("$.faults", is(2)))
                 .andReturn();
     }
 
@@ -115,7 +114,6 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer1")))
-                .andExpect(jsonPath("$.faults", is(2)))
                 .andReturn();
 
         this.mockMvc.perform(get("/api/v1/users/" + id))
@@ -125,7 +123,6 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer1")))
-                .andExpect(jsonPath("$.faults", is(2)))
                 .andReturn();
     }
 
@@ -153,7 +150,6 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.[0].place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.[0].longitude", is(50.30)))
                 .andExpect(jsonPath("$.[0].latitude", is(50.50)))
-                // .andExpect(jsonPath("$.[0].startTime", is(null)))
                 .andExpect(jsonPath("$.[0].durationMinutes", is(60)))
                 .andExpect(jsonPath("$.[0].privateActivity", is(false)))
                 .andReturn();

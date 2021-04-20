@@ -37,11 +37,11 @@ public class UserService
     @Autowired
     private ActivityRepository activityRepository;
 
-    public User getUser(long userId)
+    public UserDTO getUser(long userId)
     {
         LOGGER.info("getUser(long userId) called with userId: {}", userId);
         Optional<User> user = userRepository.findById(userId);
-        if(user.isPresent()) return user.get();
+        if(user.isPresent()) return new UserDTO(user.get());
         return null;
     }
 
@@ -49,7 +49,7 @@ public class UserService
     {
         //TODO: sende en melding at email eksisterer til frontend
         LOGGER.info("createUser(UserPasswordDTO user) called with email: {}", user.getEmail());
-        if(userRepository.findUserByEmail(user.getEmail()).isPresent()) return null;
+
         User createdUser = new User();
         createdUser.setForename(user.getForename());
         createdUser.setSurname(user.getSurname());
@@ -63,7 +63,7 @@ public class UserService
         return new RegistrationDTO(token, createdUser.getUserId(), user);
     }
 
-    public User editUser(long userId, UserDTO userDTO)
+    public UserDTO editUser(long userId, UserDTO userDTO)
     {
         LOGGER.info("editUser(long userId, UserDTO userDTO) called with userId: {}", userId);
         Optional<User> userOptional = userRepository.findById(userId);
@@ -75,7 +75,8 @@ public class UserService
             user.setScore(userDTO.getScore());
             user.setRating(userDTO.getRating());
             user.setRole(userDTO.getRole());
-            return userRepository.save(user);
+            userRepository.save(user);
+            return userDTO;
         }
         LOGGER.warn("Did not find user with userId: {}, while running editUser(long userId, UserDTO userDTO). Returning null", userId);
         return null;
@@ -138,6 +139,13 @@ public class UserService
             return activity.get();
         }
         return null;
+    }
+
+
+    public boolean doesEmailAlreadyExist(String email){
+        boolean existsEmail = userRepository.findUserByEmail(email).isPresent();
+        if(existsEmail) LOGGER.info("Email: {} already exists", email);
+        return existsEmail;
     }
 
     /**

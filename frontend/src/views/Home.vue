@@ -8,7 +8,8 @@
     <div id="header-read-more">
       <div id="header-read-more-signup">
         <router-link class="router-link-button" to="/sign-up"
-          >Opprett bruker</router-link>
+          >Opprett bruker</router-link
+        >
       </div>
       <div id="header-read-more-login">
         Har du allerede bruker?
@@ -32,7 +33,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@700&display=swap");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 
 $primary-color: #282828;
@@ -44,12 +45,12 @@ header {
   margin-top: -84px;
   z-index: -1;
   @media only screen and (min-width: 600px) {
-      grid-template-rows: 100% 20%;
+    grid-template-rows: 100% 20%;
   }
 }
 
 #header-intro {
-  background: url("../../img/bg2.png");
+  background: url("../../img/background.png");
   background-position: center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -72,9 +73,9 @@ h4 {
   color: #282828;
   letter-spacing: 0cm;
   line-height: 2.1rem;
-    @media only screen and (min-width: 600px) {
-      color: #ffffff;;
-    }
+  @media only screen and (min-width: 600px) {
+    color: #ffffff;
+  }
 }
 
 #header-read-more {
@@ -83,12 +84,12 @@ h4 {
 }
 
 #header-read-more-signup {
-    padding: 1rem;
+  padding: 1rem;
 }
 
 #header-read-more-login {
-    padding: 0.5rem;
-    font-size: 0.833rem;
+  padding: 0.5rem;
+  font-size: 0.833rem;
 }
 
 #header-read-more-scroll {

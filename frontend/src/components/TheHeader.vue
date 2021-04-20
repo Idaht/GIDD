@@ -27,26 +27,29 @@
       </span>
 
       <span id="menu-toggle" v-if="menuVisible">
+        <div id="close-menu" class="icon" @click="toggleMenu">
+          <i class="fa fa-times"></i>
+        </div>
         <span v-if="loggedIn">
-          <span
+          <router-link
             id="logged-in-option"
             v-for="(option, index) in loggedInOptions"
             :key="index"
+            class="menu-options"
+            :to="option.path"
+            >{{ option.title }}</router-link
           >
-            {{ option.title }}
-          </span>
+          <div class="menu-options" @click="logout">Logg ut</div>
         </span>
         <span v-else>
-          <div id="close-menu" @click="toggleMenu">
-            <i class="fa fa-times"></i>
-          </div>
-          <div
+          <router-link
             v-for="(option, index) in loggedOutOptions"
             :key="index"
             class="menu-options"
+            :to="option.path"
           >
             {{ option.title }}
-          </div>
+          </router-link>
         </span>
       </span>
     </div>
@@ -54,7 +57,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from "vue";
+import { useStore } from "@/store";
+import { computed, defineComponent, Ref, ref } from "vue";
+import { useRouter } from "vue-router";
 import MenuOption from "../interfaces/MenuOption.interface";
 
 /**
@@ -69,20 +74,30 @@ import MenuOption from "../interfaces/MenuOption.interface";
 export default defineComponent({
   name: "TheHeader",
   setup() {
-    const loggedInOptions: Ref<MenuOption[]> = ref([
-      { title: "Min profil", path: "/my-profile" },
-      { title: "Innstiller", path: "/settings" },
-      { title: "Finn aktivitet", path: "/find-acitivity" },
-    ]);
+    const store = useStore();
+    const router = useRouter();
+    const loggedInOptions: Ref<MenuOption[]> = computed(() => {
+      return [
+        { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
+        { title: "Innstillinger", path: "/settings" },
+        { title: "Finn aktivitet", path: "/acitivity-feed" },
+      ];
+    });
     const loggedOutOptions: Ref<MenuOption[]> = ref([
-      { title: "Logg inn", path: "/log-out" },
+      { title: "Logg inn", path: "/log-in" },
       { title: "Opprett bruker", path: "/log-out" },
     ]);
-    const loggedIn = ref(false);
+    //Have to use optional ?, to make the unit tests run.
+    const loggedIn = computed(() => store?.getters?.isLoggedIn);
     const menuVisible = ref(false);
 
     const toggleMenu = (): void => {
       menuVisible.value = !menuVisible.value;
+    };
+
+    const logout = (): void => {
+      store.dispatch("logout");
+      router.replace("/log-in");
     };
 
     return {
@@ -91,6 +106,7 @@ export default defineComponent({
       loggedIn,
       menuVisible,
       toggleMenu,
+      logout,
     };
   },
 });
@@ -137,6 +153,9 @@ $secondary-color: #ea4b4b;
   margin: 10px;
   text-align: left;
   border-radius: 5px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
 }
 
 .menu-options:hover {
@@ -147,6 +166,7 @@ $secondary-color: #ea4b4b;
 #close-menu {
   padding: 33px;
   text-align: right;
+  cursor: pointer;
 }
 
 .fa-times {

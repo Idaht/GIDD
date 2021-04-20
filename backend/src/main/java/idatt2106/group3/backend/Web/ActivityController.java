@@ -3,6 +3,7 @@ package idatt2106.group3.backend.Web;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.UserDTO;
 import idatt2106.group3.backend.Service.ActivityService;
 import idatt2106.group3.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class ActivityController
     }
 
     @PostMapping("/{activity_id}/users/{user_id}")
-    public ResponseEntity<User> addUserToActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId) {
+    public ResponseEntity<UserDTO> addUserToActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId) {
         if (activityService.addUserToActivity(activityId, userId)) {
             return new ResponseEntity<>(userService.getUser(userId),HttpStatus.CREATED);
         }

@@ -25,8 +25,8 @@ public class UserController
 
     @GetMapping("/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<User> getUser(@PathVariable("user_id") long userId) {
-        User returnUser = userService.getUser(userId);
+    public ResponseEntity<UserDTO> getUser(@PathVariable("user_id") long userId) {
+        UserDTO returnUser = userService.getUser(userId);
         if (returnUser == null)
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -36,6 +36,8 @@ public class UserController
 
     @PostMapping
     public ResponseEntity<RegistrationDTO> createUser(@RequestBody UserPasswordDTO user) {
+        if(userService.doesEmailAlreadyExist(user.getEmail())) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        
         RegistrationDTO createdUser = userService.createUser(user);
         if (createdUser != null)
         {
@@ -46,8 +48,8 @@ public class UserController
 
     @PutMapping("/{user_id}")
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<User> editUser( @PathVariable("user_id") long userId, @RequestBody UserDTO userDTO) {
-        User returnUser = userService.editUser(userId, userDTO);
+    public ResponseEntity<UserDTO> editUser( @PathVariable("user_id") long userId, @RequestBody UserDTO userDTO) {
+        UserDTO returnUser = userService.editUser(userId, userDTO);
         if (returnUser == null)
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

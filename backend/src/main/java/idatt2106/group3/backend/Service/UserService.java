@@ -94,10 +94,15 @@ public class UserService
     public boolean removeUserFromActivity(long userId, long activityId)
     {
         LOGGER.info("removeUserFromActivity(long userId, long activityId) called with userId: {}, and activityId: {}", userId, activityId);
-        Optional<User> user = userRepository.findById(userId);
-        if(user.isPresent()) {
-            for(Activity activity : user.get().getActivities()) {
-                if(activity.getActivityId() == activityId) return user.get().getActivities().remove(activity);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()) {
+            for(Activity activity : userOptional.get().getActivities()) {
+                if(activity.getActivityId() == activityId) {
+                    User user = userOptional.get();
+                    user.getActivities().remove(activity);
+                    userRepository.save(user);
+                    return true;
+                } 
             }
         }
         return false;

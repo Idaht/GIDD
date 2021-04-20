@@ -1,7 +1,6 @@
 package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Repository.SessionRepository;
-import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

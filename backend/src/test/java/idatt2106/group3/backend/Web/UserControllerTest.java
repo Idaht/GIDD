@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.sql.Blob;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.*;
@@ -46,9 +47,9 @@ public class UserControllerTest
     public void setup()
     {
         Activity activity1 = new Activity("Football", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
-        User user1 = new User("1Forename", "1Surname", "test1@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        User user2 = new User("1Forename", "1Surname", "test2@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
-        User user3 = new User("1Forename", "1Surname", "test3@test.com", "test hash", "test salt", 100, 4, "Organizer", 2);
+        User user2 = new User("1Forename", "1Surname", "test2@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        User user3 = new User("1Forename", "1Surname", "test3@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        User user1 = new User("1Forename", "1Surname", "test1@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
         activityRepository.save(activity1);
         userRepository.save(user1);
         userRepository.save(user2);
@@ -74,6 +75,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
+                //.andExpect(jsonPath("$.profilePic", instanceOf(Blob.class)))               
                 .andReturn();
     }
 
@@ -101,7 +103,7 @@ public class UserControllerTest
     @Test
     public void editUser_UpdateUserGetResponse_StatusOk() throws Exception
     {
-        User user = new User("Forename1", "Surname1", "test1@test1.com", "test1 hash", "test1 salt", 100, 4, "Organizer1", 2);
+        User user = new User("Forename1", "Surname1", "test1@test1.com", "test1 hash", "test1 salt", 100, 4, "Organizer1", 2, null);
         String userJson = objectMapper.writeValueAsString(user);
 
         long id = userRepository.findAll().get(1).getUserId();

@@ -1,5 +1,6 @@
 package idatt2106.group3.backend.Model;
 
+import java.sql.Blob;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
@@ -49,7 +51,10 @@ public class User {
     @OneToMany(mappedBy = "user", targetEntity = Message.class)
     Set<Message> messages;
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages) {
+    @Lob
+    private Blob profilePic;
+
+    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, Blob profilePic) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -64,9 +69,10 @@ public class User {
         this.reportsSent = reportsSent;
         this.reportsReceived = reportsReceived;
         this.messages = messages;
+        this.profilePic = profilePic;
     }
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults) {
+    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Blob profilePic) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -76,6 +82,7 @@ public class User {
         this.rating = rating;
         this.role = role;
         this.faults = faults;
+        this.profilePic = profilePic;
     }
 
     public User() {
@@ -199,6 +206,14 @@ public class User {
 
     public void setFaults(int faults) {
         this.faults = faults;
+    }
+
+    public Blob getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(Blob profilePic) {
+        this.profilePic = profilePic;
     }
 
     @Override

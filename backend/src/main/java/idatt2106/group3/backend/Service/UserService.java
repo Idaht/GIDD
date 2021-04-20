@@ -75,6 +75,7 @@ public class UserService
             user.setScore(userDTO.getScore());
             user.setRating(userDTO.getRating());
             user.setRole(userDTO.getRole());
+            user.setProfilePic(userDTO.getProfilePic());
             userRepository.save(user);
             return userDTO;
         }

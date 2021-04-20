@@ -1,5 +1,7 @@
 package idatt2106.group3.backend.Model.DTO;
 
+import java.sql.Blob;
+
 import idatt2106.group3.backend.Model.User;
 
 /**
@@ -13,9 +15,10 @@ public class UserDTO {
     private int score;
     private int rating;
     private String role;
+    private Blob profilePic;
 
 
-    public UserDTO(long userId, String forename, String surname, String email, int score, int rating, String role) {
+    public UserDTO(long userId, String forename, String surname, String email, int score, int rating, String role, Blob profilePic) {
         this.userId = userId;
         this.forename = forename;
         this.surname = surname;
@@ -23,6 +26,7 @@ public class UserDTO {
         this.score = score;
         this.rating = rating;
         this.role = role;
+        this.profilePic = profilePic;
     }
 
     public UserDTO() {
@@ -36,6 +40,7 @@ public class UserDTO {
         this.score = user.getScore();
         this.rating = user.getRating();
         this.role = user.getRole();
+        this.profilePic = user.getProfilePic();
     }
 
     public long getUserId() {
@@ -92,6 +97,14 @@ public class UserDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Blob getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(Blob profilePic) {
+        this.profilePic = profilePic;
     }
 
     @Override

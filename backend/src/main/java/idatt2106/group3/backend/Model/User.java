@@ -12,9 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class User {
@@ -31,9 +28,6 @@ public class User {
     private int rating;
     private String role;
     private int faults;
-
-    @OneToOne(mappedBy = "user")
-    private Session session;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -55,7 +49,7 @@ public class User {
     @OneToMany(mappedBy = "user", targetEntity = Message.class)
     Set<Message> messages;
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages) {
+    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -65,7 +59,6 @@ public class User {
         this.rating = rating;
         this.role = role;
         this.faults = faults;
-        this.session = session;
         this.activities = activities;
         this.organizedActivities = organizedActivities;
         this.reportsSent = reportsSent;
@@ -110,14 +103,6 @@ public class User {
 
     public void setMessages(Set<Message> messages) {
         this.messages = messages;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
     }
 
     public Set<Activity> getActivities() {
@@ -230,7 +215,6 @@ public class User {
                 ", rating=" + rating +
                 ", role='" + role + '\'' +
                 ", faults=" + faults +
-                ", session=" + session +
                 ", activities=" + activities +
                 ", organizedActivities=" + organizedActivities +
                 ", reportsSent=" + reportsSent +

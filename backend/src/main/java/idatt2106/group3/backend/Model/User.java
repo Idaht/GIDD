@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Model;
 
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,10 +23,9 @@ public class User {
     private long userId;
     private String forename;
     private String surname;
+    @Column(unique = true)
     private String email;
-    @JsonIgnore
     private String hash;
-    @JsonIgnore
     private String salt;
     private int score;
     private int rating;

@@ -1,19 +1,27 @@
 package idatt2106.group3.backend.Service;
 
+import idatt2106.group3.backend.Configuration.Jwt.JwtSigningKey;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.RegistrationDTO;
 import idatt2106.group3.backend.Model.DTO.UserDTO;
 import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -37,7 +45,7 @@ public class UserService
         return null;
     }
 
-    public User createUser(UserPasswordDTO user)
+    public RegistrationDTO createUser(UserPasswordDTO user)
     {
         //TODO: sende en melding at email eksisterer til frontend
         LOGGER.info("createUser(UserPasswordDTO user) called with email: {}", user.getEmail());
@@ -48,7 +56,11 @@ public class UserService
         createdUser.setEmail(user.getEmail());
         createdUser.setHash(passwordEncoder.encode(user.getHash())); //encodes password on registration
         createdUser.setRole("ROLE_USER");
-        return userRepository.save(createdUser);
+        createdUser = userRepository.save(createdUser);
+        String token = createJWtToken(createdUser);
+
+        
+        return new RegistrationDTO(token, createdUser.getUserId(), user);
     }
 
     public User editUser(long userId, UserDTO userDTO)
@@ -126,5 +138,17 @@ public class UserService
             return activity.get();
         }
         return null;
+    }
+
+    /**
+     * Creates a JWT token for registration of user, POST api/v1/users
+     * @return JWT token
+     */
+    private String createJWtToken(User user){
+        List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+        return Jwts.builder().setSubject(user.getEmail()).claim("authorities", grantedAuthorities)
+                .claim("userId", user.getUserId())
+                .setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 1800000))
+                .signWith(Keys.hmacShaKeyFor(JwtSigningKey.getInstance())).compact();
     }
 }

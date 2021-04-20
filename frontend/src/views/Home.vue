@@ -49,7 +49,7 @@ header {
 }
 
 #header-intro {
-  background: url("../../img/bg2.png");
+  background: url("../../img/background.png");
   background-position: center;
   -webkit-background-size: cover;
   -moz-background-size: cover;

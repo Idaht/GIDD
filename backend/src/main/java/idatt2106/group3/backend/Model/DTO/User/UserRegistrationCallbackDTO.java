@@ -1,4 +1,4 @@
-package idatt2106.group3.backend.Model.DTO;
+package idatt2106.group3.backend.Model.DTO.User;
 
 /**
  * DTO class for sending User and token back to client when creating a user

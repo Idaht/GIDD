@@ -2,8 +2,8 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.UserDTO;
-import idatt2106.group3.backend.Model.DTO.UserWithPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

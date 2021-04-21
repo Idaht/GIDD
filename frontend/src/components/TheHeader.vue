@@ -79,7 +79,7 @@ export default defineComponent({
     const loggedInOptions: Ref<MenuOption[]> = computed(() => {
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
-        { title: "Innstillinger", path: "/settings" },
+        { title: "Profilinnstillinger", path: "/edit-profile" },
         { title: "Finn aktivitet", path: "/acitivity-feed" },
       ];
     });

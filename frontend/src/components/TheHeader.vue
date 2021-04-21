@@ -7,7 +7,7 @@
       </router-link>
     </span>
     <span v-else class="logo-nav">
-      <router-link to="/homepage">
+      <router-link to="/">
         <!-- Add proper link -->
         <img src="../../img/logo.png" alt="Logo" height="20" />
       </router-link>

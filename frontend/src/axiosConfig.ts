@@ -5,6 +5,9 @@ import { BackendStatus } from "./enums/BackendStatus.enum";
 
 const instance = axios.create({
   baseURL: "http://localhost:8080/api/v1",
+  validateStatus: (status) => {
+    return status >= 200 && status < 300;
+  },
 });
 const token = localStorage.getItem("token");
 instance.defaults.headers.common["Authorization"] = token;

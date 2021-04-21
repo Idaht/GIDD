@@ -15,15 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
 
 @Service
 public class ActivityService
@@ -34,8 +31,6 @@ public class ActivityService
     private ActivityRepository activityRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private EntityManager entityManager;
 
     public ActivityDTO getActivity(long activityId)
     {
@@ -69,6 +64,7 @@ public class ActivityService
         if(optionalActivity.isPresent()){
             Activity activity = optionalActivity.get();
             activity.setTitle(activityRegDTO.getTitle());
+            activity.setType(activityRegDTO.getType());
             activity.setDescription(activityRegDTO.getDescription());
             activity.setEquipment(activityRegDTO.getEquipment());
             activity.setDifficulty(activityRegDTO.getDifficulty());
@@ -79,6 +75,7 @@ public class ActivityService
             activity.setStartTime(activityRegDTO.getStartTime());
             activity.setDurationMinutes(activityRegDTO.getDurationMinutes());
             activity.setPrivateActivity(activityRegDTO.isPrivateActivity());
+            activity.setMaxParticipants(activityRegDTO.getMaxParticipants());
             return new ActivityDTO(activityRepository.save(activity));
         }
         return null;

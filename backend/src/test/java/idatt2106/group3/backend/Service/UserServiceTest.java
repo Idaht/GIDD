@@ -3,6 +3,7 @@ package idatt2106.group3.backend.Service;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -128,29 +129,26 @@ public class UserServiceTest
     @Test
     public void editUser_updatesUser_ReturnsUpdatedUser() throws SerialException, SQLException
     {
-        UserDTO tempUserDTO = new UserDTO(1,"Test", "Name", "email@email.com", LocalDate.of(2005, 1, 1), 10, 4, "Random Role", null);
+        UserEditDTO userEditDTO = new UserEditDTO("Forename", "surname", "email", LocalDate.now(), "newHash", "oldHash", null);
         User tempUser = new User();
-        tempUser.setForename(tempUserDTO.getForename());
-        tempUser.setSurname(tempUserDTO.getSurname());
-        tempUser.setEmail(tempUserDTO.getEmail());
-        tempUser.setDateOfBirth(tempUserDTO.getDateOfBirth());
-        tempUser.setScore(tempUserDTO.getScore());
-        tempUser.setRating(tempUserDTO.getRating());
-        tempUser.setRole(tempUserDTO.getRole());
+        tempUser.setForename(userEditDTO.getForename());
+        tempUser.setSurname(userEditDTO.getSurname());
+        tempUser.setEmail(userEditDTO.getEmail());
+        tempUser.setDateOfBirth(userEditDTO.getDateOfBirth());
+        tempUser.setHash(userEditDTO.getOldPassword());
+        tempUser.setProfilePicture(userEditDTO.getProfilePicture());
 
         Mockito.lenient()
                 .when(userRepository.save(any()))
                 .thenReturn(tempUser);
 
-        UserDTO user = userService.editUser(0l, tempUserDTO);
+        UserDTO user = userService.editUser(0l, userEditDTO);
 
         assertThat(user).isNotNull();
         assertThat(user.getForename()).isEqualTo(tempUser.getForename());
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
         assertThat(user.getDateOfBirth()).isEqualTo(tempUser.getDateOfBirth());
-        assertThat(user.getScore()).isEqualTo(tempUser.getScore());
-        assertThat(user.getRating()).isEqualTo(tempUser.getRating());
         assertThat(user.getProfilePicture()).isEqualTo(tempUser.getProfilePicture());
     }
 

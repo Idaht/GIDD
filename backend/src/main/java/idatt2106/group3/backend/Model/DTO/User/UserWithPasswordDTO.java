@@ -11,8 +11,8 @@ public class UserWithPasswordDTO extends UserSuperclassDTO{
     private Blob profilePicture;
 
 
-    public UserWithPasswordDTO(String forename, String surname, String email, LocalDate dateOfBirth, String hash, int score, int rating, Blob profilePicture) {
-        super(forename, surname, email, dateOfBirth, score, rating);
+    public UserWithPasswordDTO(String forename, String surname, String email, LocalDate dateOfBirth, String hash, Blob profilePicture) {
+        super(forename, surname, email, dateOfBirth);
         this.hash = hash;
         this.profilePicture = profilePicture;
     }

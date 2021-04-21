@@ -10,13 +10,17 @@ import idatt2106.group3.backend.Model.User;
  */
 public class UserDTO extends UserSuperclassDTO {
     private long userId;
+    private int score;
+    private int rating;
     private String role;
     private Blob profilePicture;
 
 
     public UserDTO(long userId, String forename, String surname, String email, LocalDate dateOfBirth, int score, int rating, String role, Blob profilePicture) {
-        super(forename, surname, email, dateOfBirth, score, rating);
+        super(forename, surname, email, dateOfBirth);
         this.userId = userId;
+        this.score = score;
+        this.rating = rating;
         this.role = role;
         this.profilePicture = profilePicture;
     }
@@ -26,8 +30,10 @@ public class UserDTO extends UserSuperclassDTO {
     }
 
     public UserDTO(User user){
-        super(user.getForename(), user.getSurname(), user.getEmail(), user.getDateOfBirth(), user.getScore(), user.getRating());
+        super(user.getForename(), user.getSurname(), user.getEmail(), user.getDateOfBirth());
         this.userId = user.getUserId();
+        this.score = user.getScore();
+        this.rating = user.getRating();
         this.role = user.getRole();
         this.profilePicture = user.getProfilePicture();
     }
@@ -38,6 +44,22 @@ public class UserDTO extends UserSuperclassDTO {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public String getRole() {
@@ -60,6 +82,9 @@ public class UserDTO extends UserSuperclassDTO {
     public String toString()
     {
         return super.toString() + '\'' +
+                ", userId='" + userId + '\'' +
+                ", score='" + score + '\'' +
+                ", rating='" + rating + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }

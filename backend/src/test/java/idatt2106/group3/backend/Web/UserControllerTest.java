@@ -84,7 +84,7 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash", 100, 4,null);
+        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash",null);
 
         String userJson = objectMapper.writeValueAsString(userPasswordDTO);
 
@@ -96,8 +96,6 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.user.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.user.email", containsStringIgnoringCase("test@test.com")))
                 .andExpect(jsonPath("$.user.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
-                .andExpect(jsonPath("$.user.score", is(100)))
-                .andExpect(jsonPath("$.user.rating", is(4)))
                 .andReturn();
     }
 

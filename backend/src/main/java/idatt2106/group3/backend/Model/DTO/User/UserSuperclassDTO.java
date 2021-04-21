@@ -10,16 +10,12 @@ public class UserSuperclassDTO {
     private String surname;
     private String email;
     private LocalDate dateOfBirth;
-    private int score;
-    private int rating;
 
-    public UserSuperclassDTO(String forename, String surname, String email, LocalDate dateOfBirth, int score, int rating) {
+    public UserSuperclassDTO(String forename, String surname, String email, LocalDate dateOfBirth) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
-        this.score = score;
-        this.rating = rating;
     }
 
     public UserSuperclassDTO() {
@@ -57,22 +53,6 @@ public class UserSuperclassDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
     @Override
     public String toString()
     {
@@ -80,8 +60,6 @@ public class UserSuperclassDTO {
                 ", forename='" + forename + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
-                ", dateOfBirth='" + dateOfBirth + '\'' +
-                ", score=" + score + '\'' +
-                ", rating=" + rating;
+                ", dateOfBirth='" + dateOfBirth;
     }
 }

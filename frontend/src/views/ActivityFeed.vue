@@ -1,25 +1,37 @@
 <template>
-<div> 
-  <div>
+  <div id="activity-feed">
     <div>
       <div class="header" id="upper-header">
-        <h3>Finn aktiviteter</h3>
-        <h3 @click="mapViewClicked">Feed/Kart</h3>
+        <div id="header-title">
+          <h2>Finn aktiviteter</h2>
+        </div>
+        <img
+          id="map-view"
+          @click="mapViewClicked"
+          src="../../img/mapview.svg"
+          alt="Logo"
+          height="18"
+        />
         <!--Knapp som bytter mellom kart og feed -->
       </div>
-
       <div class="header" id="lower-header">
-        <h3 @click="sortClicked">Sortering</h3>
-        <h3 @click="filterClicked">Filter</h3>
+        <select class="dropdown" id="lower-header-sort">
+          <option selected hidden>Sortering</option>
+          <option @click="sortClicked" value="Nyeste">Nyeste</option>
+          <option @click="sortClicked" value="Avstand">Avstand</option>
+          <option @click="sortClicked" value="Antall deltakere">
+            Antall deltakere
+          </option>
+        </select>
+        <div id="lower-header-filter" @click="filterClicked">+ Filter</div>
       </div>
     </div>
     <div id="activities">
-      
-        <ActivityFeedItem v-for="activity in activities" :key="activity.activityId" :activityData="activity"/>
-      
+      <li v-for="activity in activitiesTest" :key="activity.id">
+        <ActivityPreviewFeed :activityData="activity" />
+      </li>
     </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -75,30 +87,91 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-div {
-  border: 1px black solid;
-  margin: 5px;
-  background-color: rgb(241, 188, 64);
+@import url("https://fonts.googleapis.com/css2?family=Mulish&display=swap");
+
+$primary-color: #282828;
+$secondary-color: #ea4b4b;
+$padding: 0.6rem 1rem 0.6rem 1rem;
+
+#activity-feed {
+  margin: 35px;
 }
 
-#activities {
-  background-color: rgb(83, 127, 197);
-}
-
-#activities > div div {
-  background-color: rgb(83, 127, 197);
-}
 .header {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  display: grid;
+  margin-bottom: 15px;
+  @media only screen and (min-width: 600px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
 }
 
-#lower-header {
-  justify-content: start;
+#header-title {
+  grid-column: 1/3;
+  @media only screen and (min-width: 600px) {
+    grid-column: 2/4;
+  }
 }
 
-#lower-header > h3 {
-  cursor: pointer;
+h2 {
+  font-weight: 600;
+  text-align: left;
+  margin: 0;
+  @media only screen and (min-width: 600px) {
+    text-align: center;
+  }
+}
+
+#map-view {
+  grid-column: 3/4;
+  align-self: center;
+  justify-self: end;
+  @media only screen and (min-width: 600px) {
+    grid-column: 3/4;
+  }
+}
+
+#lower-header-sort,
+#lower-header-filter {
+  border-radius: 20px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+  padding: 5px 10px 5px 10px;
+}
+
+#lower-header-sort {
+  box-shadow: 0px 0px 0px 1px #8b8b8b;
+  border-width: 0;
+  color: $primary-color;
+  width: 150px;
+  grid-column: 1/2;
+  @media only screen and (min-width: 600px) {
+    grid-column: 2/3;
+    justify-self: right;
+  }
+}
+
+#lower-header-filter {
+  background-color: $secondary-color;
+  color: #ffffff;
+  grid-column: 2/3;
+  width: 70px;
+  margin-left: 10px;
+  @media only screen and (min-width: 600px) {
+    grid-column: 3/4;
+    justify-self: left;
+    width: 100px;
+  }
+}
+
+option {
+  line-height: 1rem;
+}
+
+select {
+  font-family: "Mulish", sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 </style>

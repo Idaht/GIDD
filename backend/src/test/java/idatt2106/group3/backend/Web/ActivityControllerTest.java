@@ -1,29 +1,32 @@
 package idatt2106.group3.backend.Web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import idatt2106.group3.backend.Model.Activity;
 
+import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.UserSecurityDetails;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
+import idatt2106.group3.backend.Service.ActivityService;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
-
-import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,6 +34,7 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class ActivityControllerTest {
     @Autowired
@@ -38,15 +42,22 @@ public class ActivityControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
+    private ActivityService activityService;
+    @Autowired
     private ActivityRepository activityRepository;
     @Autowired
     private UserRepository userRepository;
 
     @BeforeEach
     public void setup(){
+        User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        user1 = userRepository.save(user1);
         Activity activity = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity1 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         Activity activity2 = new Activity("Playing", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
+        activity2.setOrganizer(user1);
+        activity1.setOrganizer(user1);
+        activity.setOrganizer(user1);
         activityRepository.save(activity2);
         activityRepository.save(activity1);
         activityRepository.save(activity);
@@ -55,8 +66,8 @@ public class ActivityControllerTest {
 
     @AfterEach
     public void teardown() {
-        userRepository.deleteAll();
         activityRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -89,6 +100,16 @@ public class ActivityControllerTest {
     @Test
     public void createActivity_PostActivity_StatusCreated() throws Exception
     {
+        User user1 = new User("Forename", "Surname", "test123@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        user1 = userRepository.save(user1);
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.lenient().when(authentication.getPrincipal())
+        .thenReturn(new UserSecurityDetails("test hash", "test123@test.com", user1.getUserId(), null));
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.lenient().when(securityContext.getAuthentication())
+        .thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
         Activity activity = new Activity("Playing","Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
         String activityJson = objectMapper.writeValueAsString(activity);
 
@@ -106,6 +127,8 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.latitude", is(50.50)))
                 .andExpect(jsonPath("$.durationMinutes", is(60)))
                 .andExpect(jsonPath("$.privateActivity", is(false)));
+
+        activityRepository.deleteAll();
     }
 
     @Test
@@ -157,8 +180,6 @@ public class ActivityControllerTest {
     @Test
     public void addUserToActivity_ExistingUserAdded_StatusCreated() throws Exception
     {
-        User user1 = new User("Forename", "Surname", "test@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
-        userRepository.save(user1);
         long userId = userRepository.findAll().get(0).getUserId();
         long activityId = activityRepository.findAll().get(0).getActivityId();
         this.mockMvc.perform(post("/api/v1/activities/" + activityId + "/users/" + userId))
@@ -169,5 +190,6 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")));
+        activityService.deleteActivity(activityId);
     }
 }

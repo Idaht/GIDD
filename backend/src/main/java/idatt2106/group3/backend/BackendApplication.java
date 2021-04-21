@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.UserWithPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import idatt2106.group3.backend.Service.UserService;

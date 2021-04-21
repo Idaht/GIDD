@@ -2,6 +2,8 @@ package idatt2106.group3.backend.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -36,6 +38,7 @@ public class Activity {
     @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
     private Set<User> users;
     
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User organizer;
@@ -74,6 +77,21 @@ public class Activity {
         this.startTime = startTime;
         this.durationMinutes = durationMinutes;
         this.isPrivateActivity = isPrivateActivity;
+    }
+
+    public Activity(ActivityRegistrationDTO activityRegistrationDTO, User organizeUser){
+        this.title = activityRegistrationDTO.getTitle();
+        this.description = activityRegistrationDTO.getDescription();
+        this.equipment = activityRegistrationDTO.getEquipment();
+        this.difficulty = activityRegistrationDTO.getDifficulty();
+        this.city = activityRegistrationDTO.getCity();
+        this.place = activityRegistrationDTO.getPlace();
+        this.longitude = activityRegistrationDTO.getLongitude();
+        this.latitude = activityRegistrationDTO.getLatitude();
+        this.startTime = activityRegistrationDTO.getStartTime();
+        this.durationMinutes = activityRegistrationDTO.getDurationMinutes();
+        this.isPrivateActivity = activityRegistrationDTO.isPrivateActivity();
+        this.organizer = organizeUser;
     }
 
     public Activity() {

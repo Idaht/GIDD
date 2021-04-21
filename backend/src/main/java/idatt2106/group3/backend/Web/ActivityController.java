@@ -1,14 +1,17 @@
 package idatt2106.group3.backend.Web;
 
-import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
-import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.UserDTO;
+import idatt2106.group3.backend.Model.UserSecurityDetails;
+import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
+import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Service.ActivityService;
 import idatt2106.group3.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +27,8 @@ public class ActivityController
     private UserService userService;
 
     @GetMapping("/{activity_id}")
-    public ResponseEntity<Activity> getActivity(@PathVariable("activity_id") long activityId) {
-        Activity returnActivity = activityService.getActivity(activityId);
+    public ResponseEntity<ActivityDTO> getActivity(@PathVariable("activity_id") long activityId) {
+        ActivityDTO returnActivity = activityService.getActivity(activityId);
         if (returnActivity == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -33,8 +36,8 @@ public class ActivityController
     }
 
     @GetMapping
-    public ResponseEntity<List<Activity>> getActivities() {
-        List<Activity> activities = activityService.getActivities();
+    public ResponseEntity<List<ActivityDTO>> getActivities() {
+        List<ActivityDTO> activities = activityService.getActivities();
         if (activities == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -42,16 +45,19 @@ public class ActivityController
     }
 
     @PostMapping
-    public ResponseEntity<Activity> createActivity(@RequestBody Activity activity) {
-        if (activityService.createActivity(activity)) {
-            return new ResponseEntity<>(activity, HttpStatus.CREATED);
+    public ResponseEntity<ActivityDTO> createActivity(@RequestBody ActivityRegistrationDTO activity) {
+        ActivityDTO returnActivity = activityService.createActivity(activity);
+        if (returnActivity != null) {
+            return new ResponseEntity<>(returnActivity, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PutMapping("/{activity_id}")
-    public ResponseEntity<Activity> editActivity(@PathVariable("activity_id") long activityId, @RequestBody Activity activity) {
-        Activity returnActivity = activityService.editActivity(activityId, activity);
+    @PreAuthorize("@activityService.checkIfOrganizerOfActivity(#activityId, principal.userId)")
+    public ResponseEntity<ActivityDTO> editActivity(@PathVariable("activity_id") long activityId, @RequestBody ActivityRegistrationDTO activityRegDTO) {
+        ActivityDTO returnActivity = activityService.editActivity(activityId, activityRegDTO);
+        
         if (returnActivity == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -59,6 +65,7 @@ public class ActivityController
     }
 
     @DeleteMapping("/{activity_id}")
+    @PreAuthorize("@activityService.checkIfOrganizerOfActivity(#activityId, principal.userId)")
     public ResponseEntity<String> deleteActivity(@PathVariable("activity_id") long activityId) {
         if (activityService.deleteActivity(activityId)) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -77,7 +84,7 @@ public class ActivityController
 
     @GetMapping("/{activity_id}/chat")
     public ResponseEntity<Chat> getActivityChat(@PathVariable("activity_id") long activityId) {
-        Chat returnChat = activityService.getActivity(activityId).getChat();
+        Chat returnChat = activityService.getChat(activityId);
         if (returnChat == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

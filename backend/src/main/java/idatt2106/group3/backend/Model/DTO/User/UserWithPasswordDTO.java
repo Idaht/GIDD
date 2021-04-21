@@ -1,55 +1,35 @@
-package idatt2106.group3.backend.Model.DTO;
+package idatt2106.group3.backend.Model.DTO.User;
 
 import java.sql.Blob;
 
-import idatt2106.group3.backend.Model.User;
-
 /**
- * DTO class for sending User information to frontend
+ * DTO class for User POST-requests: POST api/v1/users
  */
-public class UserDTO {
-    private long userId;
+public class UserWithPasswordDTO {
     private String forename;
     private String surname;
     private String email;
+    private String hash;
     private int score;
     private int rating;
     private String role;
     private Blob profilePicture;
 
 
-    public UserDTO(long userId, String forename, String surname, String email, int score, int rating, String role, Blob profilePicture) {
-        this.userId = userId;
+    public UserWithPasswordDTO(String forename, String surname, String email, String hash, int score, int rating, String role, Blob profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
+        this.hash = hash;
         this.score = score;
         this.rating = rating;
         this.role = role;
         this.profilePicture = profilePicture;
     }
 
-    public UserDTO() {
+    public UserWithPasswordDTO() {
     }
 
-    public UserDTO(User user){
-        this.userId = user.getUserId();
-        this.forename = user.getForename();
-        this.surname = user.getSurname();
-        this.email = user.getEmail();
-        this.score = user.getScore();
-        this.rating = user.getRating();
-        this.role = user.getRole();
-        this.profilePicture = user.getProfilePicture();
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
 
     public String getForename() {
         return forename;
@@ -74,6 +54,15 @@ public class UserDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
 
     public int getScore() {
         return score;
@@ -114,6 +103,7 @@ public class UserDTO {
                 ", forename='" + forename + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
+                ", hash='" + hash + '\'' +
                 ", score=" + score +
                 ", rating=" + rating +
                 ", role='" + role + '\'' +

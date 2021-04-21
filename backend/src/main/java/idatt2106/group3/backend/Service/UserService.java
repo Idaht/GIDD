@@ -72,12 +72,12 @@ public class UserService
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setForename(userDTO.getForename());
-            user.setSurname(userDTO.getSurname());
-            user.setEmail(userDTO.getEmail());
-            user.setProfilePicture(userDTO.getProfilePicture());
+            if(userDTO.getForename() != null) user.setForename(userDTO.getForename());
+            if(userDTO.getSurname() != null) user.setSurname(userDTO.getSurname());
+            if(userDTO.getEmail() != null)user.setEmail(userDTO.getEmail());
+            if(userDTO.getProfilePicture() != null)user.setProfilePicture(userDTO.getProfilePicture());
             // Already checked that oldPassword is correct
-            user.setHash(passwordEncoder.encode(userDTO.getNewPassword()));
+            if(userDTO.getNewPassword() != null && userDTO.getOldPassword() != null)user.setHash(passwordEncoder.encode(userDTO.getNewPassword()));
             
             return new UserDTO(userRepository.save(user));
             

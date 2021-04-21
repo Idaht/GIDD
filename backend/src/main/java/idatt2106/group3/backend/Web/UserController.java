@@ -50,7 +50,8 @@ public class UserController
     @PostMapping("/{user_id}")
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> editUser(@PathVariable("user_id") long userId, @RequestBody UserEditDTO userEditDTO) {
-        if(!userService.isOldPasswordCorrect(userEditDTO.getOldPassword(), userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(userEditDTO.getOldPassword() != null && userEditDTO.getNewPassword() != null
+        && !userService.isOldPasswordCorrect(userEditDTO.getOldPassword(), userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         UserDTO returnUser = userService.editUser(userId, userEditDTO);
         if (returnUser == null)
         {

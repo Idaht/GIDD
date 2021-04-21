@@ -85,7 +85,7 @@ export default defineComponent({
     });
     const loggedOutOptions: Ref<MenuOption[]> = ref([
       { title: "Logg inn", path: "/log-in" },
-      { title: "Opprett bruker", path: "/log-out" },
+      { title: "Opprett bruker", path: "/sign-up" },
     ]);
     //Have to use optional ?, to make the unit tests run.
     const loggedIn = computed(() => store?.getters?.isLoggedIn);

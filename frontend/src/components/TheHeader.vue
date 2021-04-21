@@ -80,7 +80,7 @@ export default defineComponent({
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
         { title: "Profilinnstillinger", path: "/edit-profile" },
-        { title: "Finn aktivitet", path: "/acitivity-feed" },
+        { title: "Finn aktivitet", path: "/activity-feed" },
       ];
     });
     const loggedOutOptions: Ref<MenuOption[]> = ref([

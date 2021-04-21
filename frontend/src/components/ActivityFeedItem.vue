@@ -35,7 +35,7 @@ export default defineComponent({
 
     const activityClicked = (): void => {
       //TODO: Route til siden som viser aktiviteten
-      console.log("Activity clicked: " + props.activityData.id);
+      console.log("Activity clicked: " + props.activityData.activityId);
     };
 
     return {

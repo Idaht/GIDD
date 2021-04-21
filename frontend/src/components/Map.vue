@@ -12,11 +12,10 @@
         }
     }
 
-    import { defineComponent, onMounted, ref } from "vue";
+    import { defineComponent, onMounted, PropType, ref } from "vue";
     import IActivity from "@/interfaces/IActivity.interface";
     import ICoordinates from "@/interfaces/ICoordinates.interface";
     import data from "@/../config.json";
-    
 
     export default defineComponent({
         name: "Map",
@@ -42,7 +41,13 @@
 
             onMounted(() => {
                 const keyAPI = data.googleAPIKey; //Gets the API key from config.json file
+                const sc = document.getElementById("123456");
+                if (sc instanceof HTMLElement)
+                {
+                    document.head.removeChild(sc);
+                }
                 const script = document.createElement("script");
+                script.id = "123456";
                 script.src = `https://maps.googleapis.com/maps/api/js?key=${keyAPI}&callback=initMap`;
                 script.async = true;
                 document.head.appendChild(script);
@@ -57,15 +62,19 @@
                 });
 
                 const infoWindow = new window.google.maps.InfoWindow();
+                console.log(props.activityData);
+                console.log(JSON.stringify(props.activityData));            
                 
                 props.activityData.forEach(element => {
                     const activity = element as IActivity;
+                    console.log("KAke: " + activity.city);
                     let marker = new window.google.maps.Marker({
                         position: { lat: activity.latitude, lng: activity.longitude },
                         title:"Hello World!"
                     });
+                    
                     marker.setMap(map.value);
-                    marker.setTitle(activity.description + " | " + activity.id);
+                    marker.setTitle(activity.description + " | " + activity.activityId);
                     const contentString = "<div id=\"activity\">" +
                         "<img title=\"Bilde av aktivitet\" src=\"\"/>" +
                         "<div><h3>" + activity.description + "</h3><h4>" + activity.startTime + " | " + activity.place + ", " + activity.city + "</h4></div></div>";

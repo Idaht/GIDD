@@ -54,7 +54,9 @@ public class UserService
         createdUser.setForename(user.getForename());
         createdUser.setSurname(user.getSurname());
         createdUser.setEmail(user.getEmail());
-        createdUser.setHash(passwordEncoder.encode(user.getHash())); //encodes password on registration
+        createdUser.setDateOfBirth(user.getDateOfBirth());
+        createdUser.setHash(passwordEncoder.encode(user.getPassword())); //encodes password on registration
+        createdUser.setProfilePicture(user.getProfilePicture());
         createdUser.setRole("ROLE_USER");
         createdUser = userRepository.save(createdUser);
         String token = createJWtToken(createdUser);

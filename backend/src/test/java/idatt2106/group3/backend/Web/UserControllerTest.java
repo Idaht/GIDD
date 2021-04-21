@@ -46,7 +46,7 @@ public class UserControllerTest
     @BeforeEach
     public void setup()
     {
-        Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10);
+        Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
         User user2 = new User("1Forename", "1Surname", "test2@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
         User user3 = new User("1Forename", "1Surname", "test3@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
         User user1 = new User("1Forename", "1Surname", "test1@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);

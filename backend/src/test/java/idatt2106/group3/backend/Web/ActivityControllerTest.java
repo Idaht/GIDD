@@ -53,9 +53,9 @@ public class ActivityControllerTest {
     public void setup(){
         User user1 = new User("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
         user1 = userRepository.save(user1);
-        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10);
-        Activity activity1 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10);
-        Activity activity2 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10);
+        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
+        Activity activity1 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
+        Activity activity2 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
         activity2.setOrganizer(user1);
         activity1.setOrganizer(user1);
         activity.setOrganizer(user1);
@@ -113,7 +113,7 @@ public class ActivityControllerTest {
         .thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10);
+        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
         String activityJson = objectMapper.writeValueAsString(activity);
 
         this.mockMvc.perform(post("/api/v1/activities")
@@ -139,7 +139,7 @@ public class ActivityControllerTest {
     @Test
     public void editActivity_UpdateActivity_StatusOk() throws Exception
     {
-        Activity activity = new Activity("Title", "Type", "Football and games1", "Two footballs", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, null, 60, false, 10);
+        Activity activity = new Activity("Title", "Type", "Football and games1", "Two footballs", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, null, 60, false, 10, null);
         String activityJson = objectMapper.writeValueAsString(activity);
 
         long id = activityRepository.findAll().get(2).getActivityId();

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -42,6 +44,8 @@ public class UserControllerTest
     private ActivityRepository activityRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setup()
@@ -51,6 +55,8 @@ public class UserControllerTest
         User user3 = new User("1Forename", "1Surname", "test3@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
         User user1 = new User("1Forename", "1Surname", "test1@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
         activityRepository.save(activity1);
+        // Needed for testing the editing user
+        user2.setHash(passwordEncoder.encode(("test hash")));
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
@@ -102,11 +108,11 @@ public class UserControllerTest
     @Test
     public void editUser_UpdateUserGetResponse_StatusOk() throws Exception
     {
-        User user = new User("Forename1", "Surname1", "test1@test1.com", LocalDate.of(2005, 1, 1), "test1 hash", "test1 salt", 100, 4, "Organizer1", 2, null);
-        String userJson = objectMapper.writeValueAsString(user);
+        UserEditDTO userEditDTO = new UserEditDTO("Forename1", "Surname1", "test1@test1.com", null, "test hash", "test hash", null);
+        String userJson = objectMapper.writeValueAsString(userEditDTO);
 
         long id = userRepository.findAll().get(1).getUserId();
-        this.mockMvc.perform(put("/api/v1/users/" + id)
+        this.mockMvc.perform(post("/api/v1/users/" + id)
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename1")))
@@ -115,7 +121,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
-                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer1")))
+                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
                 .andReturn();
 
         this.mockMvc.perform(get("/api/v1/users/" + id))
@@ -125,7 +131,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
-                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer1")))
+                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
                 .andReturn();
     }
 

@@ -5,6 +5,7 @@ import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserRegistrationCallbackDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
@@ -65,7 +66,7 @@ public class UserService
         return new UserRegistrationCallbackDTO(token, createdUser.getUserId(), user);
     }
 
-    public UserDTO editUser(long userId, UserDTO userDTO)
+    public UserDTO editUser(long userId, UserEditDTO userDTO)
     {
         LOGGER.info("editUser(long userId, UserDTO userDTO) called with userId: {}", userId);
         Optional<User> userOptional = userRepository.findById(userId);
@@ -74,12 +75,12 @@ public class UserService
             user.setForename(userDTO.getForename());
             user.setSurname(userDTO.getSurname());
             user.setEmail(userDTO.getEmail());
-            user.setScore(userDTO.getScore());
-            user.setRating(userDTO.getRating());
-            user.setRole(userDTO.getRole());
             user.setProfilePicture(userDTO.getProfilePicture());
-            userRepository.save(user);
-            return userDTO;
+            // Already checked that oldPassword is correct
+            user.setHash(passwordEncoder.encode(userDTO.getNewPassword()));
+            
+            return new UserDTO(userRepository.save(user));
+            
         }
         LOGGER.warn("Did not find user with userId: {}, while running editUser(long userId, UserDTO userDTO). Returning null", userId);
         return null;
@@ -161,6 +162,14 @@ public class UserService
                 .claim("userId", user.getUserId())
                 .setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 1800000))
                 .signWith(Keys.hmacShaKeyFor(JwtSigningKey.getInstance())).compact();
+    }
+
+    public boolean isOldPasswordCorrect(String oldPassword, long userId){
+        Optional<User> optionalUsers = userRepository.findById(userId);
+        if(optionalUsers.isPresent()){
+            return passwordEncoder.matches(oldPassword, optionalUsers.get().getHash());
+        }
+        return false;
     }
 
 

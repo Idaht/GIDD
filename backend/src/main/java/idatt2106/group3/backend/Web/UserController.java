@@ -3,6 +3,7 @@ package idatt2106.group3.backend.Web;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserRegistrationCallbackDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Service.UserService;
@@ -46,10 +47,11 @@ public class UserController
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PutMapping("/{user_id}")
+    @PostMapping("/{user_id}")
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UserDTO> editUser( @PathVariable("user_id") long userId, @RequestBody UserDTO userDTO) {
-        UserDTO returnUser = userService.editUser(userId, userDTO);
+    public ResponseEntity<UserDTO> editUser(@PathVariable("user_id") long userId, @RequestBody UserEditDTO userEditDTO) {
+        if(!userService.isOldPasswordCorrect(userEditDTO.getOldPassword(), userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        UserDTO returnUser = userService.editUser(userId, userEditDTO);
         if (returnUser == null)
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

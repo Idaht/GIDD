@@ -22,7 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.*;
@@ -83,7 +82,7 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", "test hash", 100, 4, "Organizer",null);
+        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", "test hash", 100, 4,null);
 
         String userJson = objectMapper.writeValueAsString(userPasswordDTO);
 
@@ -96,7 +95,6 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.user.email", containsStringIgnoringCase("test@test.com")))
                 .andExpect(jsonPath("$.user.score", is(100)))
                 .andExpect(jsonPath("$.user.rating", is(4)))
-                .andExpect(jsonPath("$.user.role", containsStringIgnoringCase("Organizer")))
                 .andReturn();
     }
 

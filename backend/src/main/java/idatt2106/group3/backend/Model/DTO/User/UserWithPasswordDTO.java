@@ -12,18 +12,16 @@ public class UserWithPasswordDTO {
     private String hash;
     private int score;
     private int rating;
-    private String role;
     private Blob profilePicture;
 
 
-    public UserWithPasswordDTO(String forename, String surname, String email, String hash, int score, int rating, String role, Blob profilePicture) {
+    public UserWithPasswordDTO(String forename, String surname, String email, String hash, int score, int rating, Blob profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
         this.hash = hash;
         this.score = score;
         this.rating = rating;
-        this.role = role;
         this.profilePicture = profilePicture;
     }
 
@@ -80,14 +78,6 @@ public class UserWithPasswordDTO {
         this.rating = rating;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public Blob getProfilePicture() {
         return profilePicture;
     }
@@ -106,7 +96,6 @@ public class UserWithPasswordDTO {
                 ", hash='" + hash + '\'' +
                 ", score=" + score +
                 ", rating=" + rating +
-                ", role='" + role + '\'' +
                 '}';
     }
 }

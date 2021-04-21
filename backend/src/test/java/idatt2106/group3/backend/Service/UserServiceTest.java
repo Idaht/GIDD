@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +53,7 @@ public class UserServiceTest
         user1.setForename("testForename");
         user1.setSurname("testSurname");
         user1.setEmail("testMail");
+        user1.setDateOfBirth(LocalDate.of(2005, 1, 1));
         user1.setHash("testHash");
         user1.setSalt("testSalt");
         user1.setScore(10);
@@ -96,6 +98,7 @@ public class UserServiceTest
         assertThat(user.getForename()).isEqualTo("testForename");
         assertThat(user.getSurname()).isEqualTo("testSurname");
         assertThat(user.getEmail()).isEqualTo("testMail");
+        assertThat(user.getDateOfBirth()).isEqualTo(LocalDate.of(2005, 1, 1));
         assertThat(user.getScore()).isEqualTo(10);
         assertThat(user.getRating()).isEqualTo(4);
     }
@@ -111,8 +114,8 @@ public class UserServiceTest
     @Test
     public void createUser_userGetsAdded_ReturnsTrue()
     {
-        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, null);
-        User returnUser = new User("test","test", "213", "hash","salt",1,1,",",1, null);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", LocalDate.of(2005, 1, 1), "hash", 0, 0, null);
+        User returnUser = new User("test","test", "213", LocalDate.of(2005, 1, 1), "hash","salt",1,1,",",1, null);
         returnUser.setUserId(1);
         Mockito.lenient()
                 .when(userRepository.save(any()))
@@ -125,16 +128,15 @@ public class UserServiceTest
     @Test
     public void editUser_updatesUser_ReturnsUpdatedUser() throws SerialException, SQLException
     {
-        Blob blob = new SerialBlob(new byte[256]);
-        UserDTO tempUserDTO = new UserDTO(1,"Test", "Name", "email@email.com", 10, 4, "Random Role", blob);
+        UserDTO tempUserDTO = new UserDTO(1,"Test", "Name", "email@email.com", LocalDate.of(2005, 1, 1), 10, 4, "Random Role", null);
         User tempUser = new User();
         tempUser.setForename(tempUserDTO.getForename());
         tempUser.setSurname(tempUserDTO.getSurname());
         tempUser.setEmail(tempUserDTO.getEmail());
+        tempUser.setDateOfBirth(tempUserDTO.getDateOfBirth());
         tempUser.setScore(tempUserDTO.getScore());
         tempUser.setRating(tempUserDTO.getRating());
         tempUser.setRole(tempUserDTO.getRole());
-        tempUser.setProfilePicture(tempUserDTO.getProfilePicture());
 
         Mockito.lenient()
                 .when(userRepository.save(any()))
@@ -146,6 +148,7 @@ public class UserServiceTest
         assertThat(user.getForename()).isEqualTo(tempUser.getForename());
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
+        assertThat(user.getDateOfBirth()).isEqualTo(tempUser.getDateOfBirth());
         assertThat(user.getScore()).isEqualTo(tempUser.getScore());
         assertThat(user.getRating()).isEqualTo(tempUser.getRating());
         assertThat(user.getProfilePicture()).isEqualTo(tempUser.getProfilePicture());

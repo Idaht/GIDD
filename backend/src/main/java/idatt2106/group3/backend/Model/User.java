@@ -1,6 +1,7 @@
 package idatt2106.group3.backend.Model;
 
 import java.sql.Blob;
+import java.time.LocalDate;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -24,6 +25,7 @@ public class User {
     private String surname;
     @Column(unique = true)
     private String email;
+    private LocalDate dateOfBirth;
     private String hash;
     private String salt;
     private int score;
@@ -54,10 +56,11 @@ public class User {
     @Lob
     private Blob profilePicture;
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, Blob profilePicture) {
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, Blob profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
+        this.dateOfBirth = dateOfBirth;
         this.hash = hash;
         this.salt = salt;
         this.score = score;
@@ -72,10 +75,11 @@ public class User {
         this.profilePicture = profilePicture;
     }
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Blob profilePicture) {
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, Blob profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
+        this.dateOfBirth = dateOfBirth;
         this.hash = hash;
         this.salt = salt;
         this.score = score;
@@ -160,6 +164,14 @@ public class User {
         this.email = email;
     }
 
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -224,17 +236,18 @@ public class User {
                 ", forename='" + forename + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", hash='" + hash + '\'' +
                 ", salt='" + salt + '\'' +
-                ", score=" + score +
-                ", rating=" + rating +
+                ", score=" + score + '\'' +
+                ", rating=" + rating + '\'' +
                 ", role='" + role + '\'' +
-                ", faults=" + faults +
-                ", activities=" + activities +
-                ", organizedActivities=" + organizedActivities +
-                ", reportsSent=" + reportsSent +
-                ", reportsReceived=" + reportsReceived +
-                ", messages=" + messages +
+                ", faults=" + faults + '\'' +
+                ", activities=" + activities + '\'' +
+                ", organizedActivities=" + organizedActivities + '\'' +
+                ", reportsSent=" + reportsSent + '\'' +
+                ", reportsReceived=" + reportsReceived + '\'' +
+                ", messages=" + messages + '\'' +
                 '}';
     }
 }

@@ -1,6 +1,7 @@
 package idatt2106.group3.backend.Model.DTO.User;
 
 import java.sql.Blob;
+import java.time.LocalDate;
 
 /**
  * DTO class for User POST-requests: POST api/v1/users
@@ -10,8 +11,8 @@ public class UserWithPasswordDTO extends UserSuperclassDTO{
     private Blob profilePicture;
 
 
-    public UserWithPasswordDTO(String forename, String surname, String email, String hash, int score, int rating, Blob profilePicture) {
-        super(forename, surname, email, score, rating);
+    public UserWithPasswordDTO(String forename, String surname, String email, LocalDate dateOfBirth, String hash, int score, int rating, Blob profilePicture) {
+        super(forename, surname, email, dateOfBirth, score, rating);
         this.hash = hash;
         this.profilePicture = profilePicture;
     }

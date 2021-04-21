@@ -39,7 +39,8 @@ public class UserRegistrationCallbackDTO {
     {
         return "RegistrationDTO{" +
                 ", token='" + token + '\'' +
-                ", user='" + user.toString() + '\'';
+                ", user='" + user.toString() + '\'' +
+                '}';
     }
 }
 

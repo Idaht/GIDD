@@ -23,6 +23,7 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long activityId;
     private String title;
+    private String type;
     private String description;
     private String equipment;
     private Difficulty difficulty;
@@ -33,6 +34,7 @@ public class Activity {
     private LocalDateTime startTime;
     private int durationMinutes;
     private boolean isPrivateActivity;
+    private int maxParticipants;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
@@ -48,9 +50,10 @@ public class Activity {
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
 
-    public Activity(String title, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat) {
-        this.description = description;
+    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat, int maxParticipants) {
         this.title = title;
+        this.type = type;
+        this.description = description;
         this.equipment = equipment;
         this.difficulty = difficulty;
         this.city = city;
@@ -63,11 +66,13 @@ public class Activity {
         this.users = users;
         this.organizer = organizer;
         this.chat = chat;
+        this.maxParticipants = maxParticipants;
     }
 
-    public Activity(String title, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity) {
-        this.description = description;
+    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants) {
         this.title = title;
+        this.type = type;
+        this.description = description;
         this.equipment = equipment;
         this.difficulty = difficulty;
         this.city = city;
@@ -77,10 +82,12 @@ public class Activity {
         this.startTime = startTime;
         this.durationMinutes = durationMinutes;
         this.isPrivateActivity = isPrivateActivity;
+        this.maxParticipants = maxParticipants;
     }
 
     public Activity(ActivityRegistrationDTO activityRegistrationDTO, User organizeUser){
         this.title = activityRegistrationDTO.getTitle();
+        this.type = activityRegistrationDTO.getType();
         this.description = activityRegistrationDTO.getDescription();
         this.equipment = activityRegistrationDTO.getEquipment();
         this.difficulty = activityRegistrationDTO.getDifficulty();
@@ -91,6 +98,7 @@ public class Activity {
         this.startTime = activityRegistrationDTO.getStartTime();
         this.durationMinutes = activityRegistrationDTO.getDurationMinutes();
         this.isPrivateActivity = activityRegistrationDTO.isPrivateActivity();
+        this.maxParticipants = activityRegistrationDTO.getMaxParticipants();
         this.organizer = organizeUser;
     }
 
@@ -127,6 +135,14 @@ public class Activity {
 
     public void setActivityId(long activityId) {
         this.activityId = activityId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDescription() {
@@ -217,25 +233,35 @@ public class Activity {
         isPrivateActivity = privateActivity;
     }
 
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
     @Override
     public String toString()
     {
         return "Activity{" +
                 "activityId=" + activityId +
-                ", description='" + description + '\'' +
                 ", title='" + title + '\'' +
+                ", type='" + type + '\'' +
+                ", description='" + description + '\'' +
                 ", equipment='" + equipment + '\'' +
                 ", difficulty=" + difficulty +
                 ", city='" + city + '\'' +
                 ", place='" + place + '\'' +
-                ", longitude=" + longitude +
-                ", latitude=" + latitude +
-                ", startTime=" + startTime +
-                ", durationMinutes=" + durationMinutes +
-                ", isPrivateActivity=" + isPrivateActivity +
-                ", users=" + users +
-                ", organizer=" + organizer +
-                ", chat=" + chat +
+                ", longitude=" + longitude + '\'' +
+                ", latitude=" + latitude + '\'' +
+                ", startTime=" + startTime + '\'' +
+                ", durationMinutes=" + durationMinutes + '\'' +
+                ", isPrivateActivity=" + isPrivateActivity + '\'' +
+                ", maxParticipants='" + maxParticipants + '\'' +
+                ", users=" + users + '\'' +
+                ", organizer=" + organizer + '\'' +
+                ", chat=" + chat + '\'' +
                 '}';
     }
 }

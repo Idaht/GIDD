@@ -3,8 +3,8 @@ package idatt2106.group3.backend.Service;
 import idatt2106.group3.backend.Configuration.Jwt.JwtSigningKey;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserRegistrationCallbackDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
@@ -160,4 +160,6 @@ public class UserService
                 .setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 1800000))
                 .signWith(Keys.hmacShaKeyFor(JwtSigningKey.getInstance())).compact();
     }
+
+
 }

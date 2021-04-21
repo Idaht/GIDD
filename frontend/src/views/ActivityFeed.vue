@@ -1,30 +1,33 @@
 <template>
 <div> 
   <div>
-    <div class="header" id="upper-header">
-      <h3>Finn aktiviteter</h3>
-      <h3 @click="mapViewClicked">Feed/Kart</h3>
-      <!--Knapp som bytter mellom kart og feed -->
-    </div>
+    <div>
+      <div class="header" id="upper-header">
+        <h3>Finn aktiviteter</h3>
+        <h3 @click="mapViewClicked">Feed/Kart</h3>
+        <!--Knapp som bytter mellom kart og feed -->
+      </div>
 
-    <div class="header" id="lower-header">
-      <h3 @click="sortClicked">Sortering</h3>
-      <h3 @click="filterClicked">Filter</h3>
+      <div class="header" id="lower-header">
+        <h3 @click="sortClicked">Sortering</h3>
+        <h3 @click="filterClicked">Filter</h3>
+      </div>
     </div>
-  </div>
-  <div id="activities">
-    <li v-for="activity in activitiesTest" :key="activity.id">
-            <ActivityFeedItem :activityData="activity"/>
-    </li>
+    <div id="activities">
+      
+        <ActivityFeedItem v-for="activity in activities" :key="activity.activityId" :activityData="activity"/>
+      
+    </div>
   </div>
 </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+
+import { defineComponent, onBeforeMount, ref, Ref } from "vue";
 import ActivityFeedItem from "../components/ActivityFeedItem.vue";
+import axios from "@/axiosConfig";
 import { useRouter } from "vue-router";
-//import axios from "axios";
 import IActivity from "@/interfaces/IActivity.interface";
 
 export default defineComponent({
@@ -32,11 +35,20 @@ export default defineComponent({
   components: {
     ActivityFeedItem,
   },
-  //TODO: Fiks problemet med at 'async' forårsaker at ingen ting blir load'et
-  /*async*/ setup() {
+
+  
+  setup() {
     const router = useRouter();
-        //const response = await axios.get("/activities");
-        //const activities = ref(response.data);
+    const activities : Ref<IActivity[]> = ref([]);
+
+    onBeforeMount(async () => {
+      try {
+        const response = await axios.get("/activities");
+        activities.value = response.data as IActivity[];
+      } catch (error) {
+        router.push("/error");
+      }
+    });
 
     const sortClicked = (): void => {
       //TODO: Open the sorting functionality, and remove console.log
@@ -56,65 +68,7 @@ export default defineComponent({
       sortClicked,
       filterClicked,
       mapViewClicked,
-      //activities,
-      activitiesTest: [
-        {
-          type: Object as () => IActivity,
-          id: 1,
-          description: "Test description",
-          equipment: "Utstyr",
-          difficulty: "Vanskelig",
-          city: "Trondheim",
-          place: "Kongensgate",
-          longitude: 1,
-          latitude: 1,
-          startTime: "19:00",
-          durationMinutes: 60,
-          isPrivateActivity: false,
-        },
-        {
-          type: Object as () => IActivity,
-          id: 2,
-          description: "Test description",
-          equipment: "Utstyr",
-          difficulty: "Vanskelig",
-          city: "Trondheim",
-          place: "Kongensgate",
-          longitude: 1,
-          latitude: 1,
-          startTime: "19:00",
-          durationMinutes: 60,
-          isPrivateActivity: false,
-        },
-        {
-          type: Object as () => IActivity,
-          id: 3,
-          description: "Test description",
-          equipment: "Utstyr",
-          difficulty: "Vanskelig",
-          city: "Trondheim",
-          place: "Kongensgate",
-          longitude: 1,
-          latitude: 1,
-          startTime: "19:00",
-          durationMinutes: 60,
-          isPrivateActivity: false,
-        },
-        {
-          type: Object as () => IActivity,
-          id: 4,
-          description: "Test description",
-          equipment: "Utstyr",
-          difficulty: "Vanskelig",
-          city: "Trondheim",
-          place: "Kongensgate",
-          longitude: 1,
-          latitude: 1,
-          startTime: "19:00",
-          durationMinutes: 60,
-          isPrivateActivity: false,
-        },
-      ],
+      activities,
     };
   },
 });

@@ -8,11 +8,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TheHeader from "@/components/TheHeader.vue";
+
 export default defineComponent({
   name: "App",
   components: {
     TheHeader,
-  },
+  }
 });
 </script>
 
@@ -23,6 +24,7 @@ $font-stack: "Mulish", sans-serif;
 $primary-color: #282828;
 $secondary-color: #ea4b4b;
 $padding: 0.6rem 1rem 0.6rem 1rem;
+
 
 body {
   margin: 0;

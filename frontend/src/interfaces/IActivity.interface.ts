@@ -1,17 +1,15 @@
 export default interface IActivity {
-  id: number;
-  title: string;
-  type: string;
-  organizer: string;
-  maxParticipants: number;
-  description: string;
-  equipment: string;
-  difficulty: string; //??
+  activityId: number;
   city: string;
-  place: string;
-  longitude: number;
-  latitude: number;
-  startTime: string; //Sjekk det er en LocalDateTime type
+  description: string;
+  difficulty: string;
   durationMinutes: number;
-  isPrivateActivity: boolean;
+  equipment: string;
+  latitude: number;
+  longitude: number;
+  organizerId: number;
+  place: string;
+  privateActivity: boolean;
+  startTime: string;
+  title: string;
 }

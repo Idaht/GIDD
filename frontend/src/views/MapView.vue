@@ -12,8 +12,9 @@
         </div>
         <div id="activities">
             <Map id="map"
-                :center="{ lat: 63.43049, lng: 10.39506}"
-                :activityData="activitiesTest">
+                :center="{ lat: 1.2, lng: 1.2 }"
+                :activityData="activities">
+                <!--:center="{ lat: 63.43049, lng: 10.39506}"-->
             </Map>
         </div>
     </div>
@@ -21,7 +22,7 @@
 
 <script lang="ts">
 
-import { defineComponent, onBeforeMount, ref } from "vue";
+import { defineComponent, onBeforeMount, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axiosConfig";
 import IActivity from "@/interfaces/IActivity.interface";
@@ -35,14 +36,16 @@ export default defineComponent({
 
 setup() {
     const router = useRouter();
-    let response;
-    let activities;
+    const activities : Ref<IActivity[]> = ref([]);
 
-    onBeforeMount(async () => {
-        //response = await axios.get("/activities");
-        //activities = ref(response.data);
-        //TODO: Get activities from backend server, and remove test data
-        console.log("Må ha noe her midelertidig");
+
+     onBeforeMount(async () => {
+      try {
+        const response = await axios.get("/activities");
+        activities.value = response.data as IActivity[];
+      } catch (error) {
+        router.push("/error");
+      }
     });
 
     const sortClicked = () : void => {
@@ -63,65 +66,7 @@ setup() {
         sortClicked,
         filterClicked,
         feedViewClicked,
-        //activities,
-        activitiesTest: [
-            {
-                type: Object as () => IActivity,
-                id: 1,
-                description: "Test description",
-                equipment: "Utstyr",
-                difficulty: "Vanskelig",
-                city: "Trondheim",
-                place: "Kongensgate",
-                longitude: 10.40645599,
-                latitude: 63.41914883,
-                startTime: "19:00",
-                durationMinutes: 60,
-                isPrivateActivity: false,
-            },
-            {
-                type: Object as () => IActivity,
-                id: 2,
-                description: "Test description",
-                equipment: "Utstyr",
-                difficulty: "Vanskelig",
-                city: "Trondheim",
-                place: "Kongensgate",
-                longitude: 10.40744305,
-                latitude: 63.41797743,
-                startTime: "19:00",
-                durationMinutes: 60,
-                isPrivateActivity: false,
-            },
-            {
-                type: Object as () => IActivity,
-                id: 3,
-                description: "Test description",
-                equipment: "Utstyr",
-                difficulty: "Vanskelig",
-                city: "Trondheim",
-                place: "Kongensgate",
-                longitude: 10.38032055,
-                latitude: 63.42640661,
-                startTime: "19:00",
-                durationMinutes: 60,
-                isPrivateActivity: false,
-            },
-            {
-                type: Object as () => IActivity,
-                id: 4,
-                description: "Test description",
-                equipment: "Utstyr",
-                difficulty: "Vanskelig",
-                city: "Trondheim",
-                place: "Kongensgate",
-                longitude: 10.40400982,
-                latitude: 63.41056384,
-                startTime: "19:00",
-                durationMinutes: 60,
-                isPrivateActivity: false,
-            }
-        ]
+        activities,
     };
   },
 });

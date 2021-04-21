@@ -37,7 +37,7 @@ export default defineComponent({
     //TODO Må ha en sjekk om at e-postadresse eksisterer
     const sendMailForgotPassword = (): void => {
       if (validEmail.value && emailIsNotEmpty.value) {
-        router.push("log-in");
+        router.push("/log-in");
       }
     };
 

@@ -45,7 +45,7 @@ public class UserControllerTest
     @BeforeEach
     public void setup()
     {
-        Activity activity1 = new Activity("Football", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false);
+        Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10);
         User user2 = new User("1Forename", "1Surname", "test2@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
         User user3 = new User("1Forename", "1Surname", "test3@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
         User user1 = new User("1Forename", "1Surname", "test1@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
@@ -143,6 +143,7 @@ public class UserControllerTest
         this.mockMvc.perform(get("/api/v1/users/" + userId + "/activities"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].title", containsStringIgnoringCase("Football")))
+                .andExpect(jsonPath("$.[0].type", containsStringIgnoringCase("Type")))
                 .andExpect(jsonPath("$.[0].description", containsStringIgnoringCase("Playing")))
                 .andExpect(jsonPath("$.[0].equipment", containsStringIgnoringCase("A football")))
                 .andExpect(jsonPath("$.[0].difficulty", is("EASY")))
@@ -152,6 +153,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.[0].latitude", is(50.50)))
                 .andExpect(jsonPath("$.[0].durationMinutes", is(60)))
                 .andExpect(jsonPath("$.[0].privateActivity", is(false)))
+                .andExpect(jsonPath("$.[0].maxParticipants", is(10)))
                 .andReturn();
     }
 

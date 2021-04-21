@@ -1,5 +1,9 @@
 export default interface IActivity {
   id: number;
+  title: string;
+  type: string;
+  organizer: string;
+  maxParticipants: number;
   description: string;
   equipment: string;
   difficulty: string; //??

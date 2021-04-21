@@ -6,19 +6,21 @@
     alt="Tilbakeknapp til hovedsiden"
   />
   <div>Her skal kart</div>
-  <h3 id="activityTitle">{{ activityTitle }}</h3>
+  <h3 id="activityTitle">{{ activity.title }}</h3>
   <label>Når</label>
-  <div>{{ activityDate }}</div>
+  <div>{{ activity.startTime }}</div>
+  <label>Varighet</label>
+  <div>{{ activity.durationMinutes }} minutter</div>
   <label>Hvor</label>
-  <div>{{ activityPlace }}</div>
+  <div>{{ activity.place }}, {{ activity.city }}</div>
   <label>Hva</label>
-  <div>{{ activityType }}</div>
+  <div>{{ activity.type }}</div>
   <label>Arrangør</label>
-  <div>{{ activityOrganizer }}</div>
+  <div>{{ activity.organizer }}</div>
   <label>Belastning</label>
-  <div>{{ activityLoad }}</div>
+  <div>{{ activity.difficulty }}</div>
   <label>Deltakere</label>
-  <div>{{ numberOfParticipants }} / {{ maxParticipants }}</div>
+  <div>{{ numberOfParticipants }} / {{ activity.maxParticipants }}</div>
 
   <span id="signing-up" v-if="signedUp">
     Du er påmeldt!
@@ -41,33 +43,29 @@
     </button>
   </span>
   <div>Beskrivelse</div>
-  <p>{{ activityDescription }}</p>
+  <p>{{ activity.description }}</p>
 
   <div>Utstyr</div>
-  <p>{{ activityEquipment }}</p>
+  <p>{{ activity.equipment }}</p>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "../axiosConfig";
 
 export default defineComponent({
   name: "ActivityInformation",
-  setup() {
-    const activityTitle = ref("Ballerinaopptreden");
-    const activityDate = ref("20/04/2021");
-    const activityPlace = ref("Dødens dal");
-    const activityOrganizer = ref("Ola Nordmann");
-    const activityLoad = ref("Supermann");
+  props: ["id"],
+  setup(props) {
+    //TODO finn arrangøren vha id
+    const activityOrganizer = ref("");
+    //TODO hent ut antall påmeldte
     const numberOfParticipants = ref(5);
-    const maxParticipants = ref(10);
+    //TODO hent ut fra backend
     const signedUp = ref(false);
-    const activityDescription = ref(
-      "Litt ballerina, litt fotball og en hel del golf"
-    );
-    const activityEquipment = ref("Golfball");
-    const activityType = ref("Fotball");
     const router = useRouter();
+    const activity = ref({});
 
     const isSignedUp = computed(() => {
       return signedUp.value;
@@ -77,15 +75,13 @@ export default defineComponent({
       //"Er du sikker?" vindu før påmelding?
       signedUp.value = true;
       numberOfParticipants.value += 1;
-      //TODO connect to backend
-      backendCall;
-      //TODO Få opp bekreftelse
+      //TODO connect to backend og få opp bekreftelse
     };
 
     const signOffActivity = (): void => {
       signedUp.value = false;
       numberOfParticipants.value -= 1;
-      //TODO connect to backend
+      //TODO connect to backend og få opp bekreftelse
     };
 
     const returnToActivityFeed = (): void => {
@@ -98,29 +94,33 @@ export default defineComponent({
     };
 
     /**
-     * Method to connect to backend
+     * Connects to backend using a get request to get the activity
      */
-    const backendCall = onMounted(() => {
-      //TODO Connect to backend
+    onBeforeMount(async () => {
+      try {
+        const response = await axios.get(`/activities/${props.id}`);
+        activity.value = response.data;
+      } catch {
+        router.push("/error");
+      }
     });
 
+    //TODO del opp startTime og display det fint
+    //const activityDate = ref(activity.startTime.toString());
+    //const activityTime = ref(activity.startTime)
+
     return {
-      activityTitle,
-      activityDate,
-      activityPlace,
+      //activityDate,
+      //activityTime
       activityOrganizer,
-      activityLoad,
-      activityType,
       numberOfParticipants,
-      maxParticipants,
       signedUp,
       isSignedUp,
       signUpActivity,
       signOffActivity,
-      activityDescription,
-      activityEquipment,
       returnToActivityFeed,
       openChat,
+      activity,
     };
   },
 });

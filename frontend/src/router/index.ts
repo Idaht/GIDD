@@ -54,6 +54,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/ForgottenPassword.vue"),
   },
   {
+    path: "/error",
+    name: "Error",
+    component: () => import("../views/ErrorPage.vue"),
+  },
+  {
     path: "/profile/:id",
     name: "Profile",
     meta: {

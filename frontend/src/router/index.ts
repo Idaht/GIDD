@@ -41,6 +41,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/ActivityFeed.vue"),
   },
   {
+    path: "/activity-map",
+    name: "MapView",
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import("../views/MapView.vue"),
+  },
+  {
     path: "/forgotten-password",
     name: "ForgottenPassword",
     component: () => import("../views/ForgottenPassword.vue"),

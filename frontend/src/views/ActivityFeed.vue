@@ -5,6 +5,7 @@
       <h3 @click="mapViewClicked">Feed/Kart</h3>
       <!--Knapp som bytter mellom kart og feed -->
     </div>
+
     <div class="header" id="lower-header">
       <h3 @click="sortClicked">Sortering</h3>
       <h3 @click="filterClicked">Filter</h3>
@@ -12,38 +13,41 @@
   </div>
   <div id="activities">
     <li v-for="activity in activitiesTest" :key="activity.id">
-      <ActivityPreviewFeed :activityData="activity" />
+            <ActivityFeedItem :activityData="activity"/>
     </li>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import ActivityPreviewFeed from "../components/ActivityFeedItem.vue";
+import ActivityFeedItem from "../components/ActivityFeedItem.vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+//import axios from "axios";
 import IActivity from "@/interfaces/IActivity.interface";
 
 export default defineComponent({
   name: "ActivityFeed",
   components: {
-    ActivityPreviewFeed,
+    ActivityFeedItem,
   },
   //TODO: Fiks problemet med at 'async' forårsaker at ingen ting blir load'et
   /*async*/ setup() {
-    //const response = await axios.get("/activities");
-    //const activities = ref(response.data);
+    const router = useRouter();
+        //const response = await axios.get("/activities");
+        //const activities = ref(response.data);
 
     const sortClicked = (): void => {
+      //TODO: Open the sorting functionality, and remove console.log
       console.log("Sort clicked");
     };
 
     const filterClicked = (): void => {
+      //TODO: Open the filtering functionality, and remove console.log
       console.log("Filter clicked");
     };
 
-    const mapViewClicked = (): void => {
-      console.log("MapView clicked");
+    const mapViewClicked = () : void => {
+        router.push("/activity-map");
     };
 
     return {

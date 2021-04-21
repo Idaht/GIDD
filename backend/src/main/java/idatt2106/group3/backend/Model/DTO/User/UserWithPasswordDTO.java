@@ -7,13 +7,13 @@ import java.time.LocalDate;
  * DTO class for User POST-requests: POST api/v1/users
  */
 public class UserWithPasswordDTO extends UserSuperclassDTO{
-    private String hash;
+    private String password;
     private Blob profilePicture;
 
 
-    public UserWithPasswordDTO(String forename, String surname, String email, LocalDate dateOfBirth, String hash, Blob profilePicture) {
+    public UserWithPasswordDTO(String forename, String surname, String email, LocalDate dateOfBirth, String password, Blob profilePicture) {
         super(forename, surname, email, dateOfBirth);
-        this.hash = hash;
+        this.password = password;
         this.profilePicture = profilePicture;
     }
 
@@ -21,12 +21,12 @@ public class UserWithPasswordDTO extends UserSuperclassDTO{
         super();
     }
 
-    public String getHash() {
-        return hash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Blob getProfilePicture() {
@@ -41,7 +41,7 @@ public class UserWithPasswordDTO extends UserSuperclassDTO{
     public String toString()
     {
         return super.toString() + '\'' +
-                ", hash='" + hash + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

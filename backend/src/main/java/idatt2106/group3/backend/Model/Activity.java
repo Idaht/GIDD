@@ -10,10 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -50,7 +52,10 @@ public class Activity {
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;
 
-    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat, int maxParticipants) {
+    @Lob
+    private Blob activityPicture;
+
+    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat, int maxParticipants, Blob activityPicture) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -67,9 +72,10 @@ public class Activity {
         this.organizer = organizer;
         this.chat = chat;
         this.maxParticipants = maxParticipants;
+        this.activityPicture = activityPicture;
     }
 
-    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants) {
+    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants, Blob activityPicture) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -83,6 +89,7 @@ public class Activity {
         this.durationMinutes = durationMinutes;
         this.isPrivateActivity = isPrivateActivity;
         this.maxParticipants = maxParticipants;
+        this.activityPicture = activityPicture;
     }
 
     public Activity(ActivityRegistrationDTO activityRegistrationDTO, User organizeUser){
@@ -98,6 +105,7 @@ public class Activity {
         this.startTime = activityRegistrationDTO.getStartTime();
         this.durationMinutes = activityRegistrationDTO.getDurationMinutes();
         this.isPrivateActivity = activityRegistrationDTO.isPrivateActivity();
+        this.activityPicture = activityRegistrationDTO.getActivityPicture();
         this.maxParticipants = activityRegistrationDTO.getMaxParticipants();
         this.organizer = organizeUser;
     }
@@ -231,6 +239,14 @@ public class Activity {
 
     public void setPrivateActivity(boolean privateActivity) {
         isPrivateActivity = privateActivity;
+    }
+
+    public Blob getActivityPicture() {
+        return activityPicture;
+    }
+
+    public void setActivityPicture(Blob activityPicture) {
+        this.activityPicture = activityPicture;
     }
 
     public int getMaxParticipants() {

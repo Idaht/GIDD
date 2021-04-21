@@ -5,52 +5,19 @@ import java.sql.Blob;
 /**
  * DTO class for User POST-requests: POST api/v1/users
  */
-public class UserWithPasswordDTO {
-    private String forename;
-    private String surname;
-    private String email;
+public class UserWithPasswordDTO extends UserSuperclassDTO{
     private String hash;
-    private int score;
-    private int rating;
     private Blob profilePicture;
 
 
     public UserWithPasswordDTO(String forename, String surname, String email, String hash, int score, int rating, Blob profilePicture) {
-        this.forename = forename;
-        this.surname = surname;
-        this.email = email;
+        super(forename, surname, email, score, rating);
         this.hash = hash;
-        this.score = score;
-        this.rating = rating;
         this.profilePicture = profilePicture;
     }
 
     public UserWithPasswordDTO() {
-    }
-
-
-    public String getForename() {
-        return forename;
-    }
-
-    public void setForename(String forename) {
-        this.forename = forename;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        super();
     }
 
     public String getHash() {
@@ -59,23 +26,6 @@ public class UserWithPasswordDTO {
 
     public void setHash(String hash) {
         this.hash = hash;
-    }
-
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     public Blob getProfilePicture() {
@@ -89,13 +39,8 @@ public class UserWithPasswordDTO {
     @Override
     public String toString()
     {
-        return "User{" +
-                ", forename='" + forename + '\'' +
-                ", surname='" + surname + '\'' +
-                ", email='" + email + '\'' +
+        return super.toString() + '\'' +
                 ", hash='" + hash + '\'' +
-                ", score=" + score +
-                ", rating=" + rating +
                 '}';
     }
 }

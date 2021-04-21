@@ -19,6 +19,9 @@ import idatt2106.group3.backend.Service.UserService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDate;
+
 import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
@@ -36,7 +39,7 @@ public class SecurityControllerTest {
 
     @BeforeEach
     public void setup(){
-        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email", "hash", 1, 1,null);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email", LocalDate.of(2005, 1, 1), "hash", 1, 1,null);
         userService.createUser(user);
     }
 
@@ -60,7 +63,7 @@ public class SecurityControllerTest {
     // Equal test in UserControllerTest
     @Test
     public void registration_CorrectFormat_StatusCreated() throws Exception {
-        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email1", "hash", 1, 1, null);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email1", LocalDate.of(2005, 1, 1), "hash", 1, 1, null);
         String objectJson = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/api/v1/users")
         .contentType(MediaType.APPLICATION_JSON)

@@ -1,6 +1,7 @@
 package idatt2106.group3.backend.Model.DTO.User;
 
 import java.sql.Blob;
+import java.time.LocalDate;
 
 import idatt2106.group3.backend.Model.User;
 
@@ -13,8 +14,8 @@ public class UserDTO extends UserSuperclassDTO {
     private Blob profilePicture;
 
 
-    public UserDTO(long userId, String forename, String surname, String email, int score, int rating, String role, Blob profilePicture) {
-        super(forename, surname, email, score, rating);
+    public UserDTO(long userId, String forename, String surname, String email, LocalDate dateOfBirth, int score, int rating, String role, Blob profilePicture) {
+        super(forename, surname, email, dateOfBirth, score, rating);
         this.userId = userId;
         this.role = role;
         this.profilePicture = profilePicture;
@@ -25,7 +26,7 @@ public class UserDTO extends UserSuperclassDTO {
     }
 
     public UserDTO(User user){
-        super(user.getForename(), user.getSurname(), user.getEmail(), user.getScore(), user.getRating());
+        super(user.getForename(), user.getSurname(), user.getEmail(), user.getDateOfBirth(), user.getScore(), user.getRating());
         this.userId = user.getUserId();
         this.role = user.getRole();
         this.profilePicture = user.getProfilePicture();

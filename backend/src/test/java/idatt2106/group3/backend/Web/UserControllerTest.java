@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.*;
@@ -46,9 +47,9 @@ public class UserControllerTest
     public void setup()
     {
         Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10);
-        User user2 = new User("1Forename", "1Surname", "test2@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
-        User user3 = new User("1Forename", "1Surname", "test3@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
-        User user1 = new User("1Forename", "1Surname", "test1@test.com", "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        User user2 = new User("1Forename", "1Surname", "test2@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        User user3 = new User("1Forename", "1Surname", "test3@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        User user1 = new User("1Forename", "1Surname", "test1@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
         activityRepository.save(activity1);
         userRepository.save(user1);
         userRepository.save(user2);
@@ -71,6 +72,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test.com")))
+                .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
@@ -82,7 +84,7 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", "test hash", 100, 4,null);
+        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash", 100, 4,null);
 
         String userJson = objectMapper.writeValueAsString(userPasswordDTO);
 
@@ -93,6 +95,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.user.forename", containsStringIgnoringCase("Forename")))
                 .andExpect(jsonPath("$.user.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.user.email", containsStringIgnoringCase("test@test.com")))
+                .andExpect(jsonPath("$.user.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
                 .andExpect(jsonPath("$.user.score", is(100)))
                 .andExpect(jsonPath("$.user.rating", is(4)))
                 .andReturn();
@@ -101,7 +104,7 @@ public class UserControllerTest
     @Test
     public void editUser_UpdateUserGetResponse_StatusOk() throws Exception
     {
-        User user = new User("Forename1", "Surname1", "test1@test1.com", "test1 hash", "test1 salt", 100, 4, "Organizer1", 2, null);
+        User user = new User("Forename1", "Surname1", "test1@test1.com", LocalDate.of(2005, 1, 1), "test1 hash", "test1 salt", 100, 4, "Organizer1", 2, null);
         String userJson = objectMapper.writeValueAsString(user);
 
         long id = userRepository.findAll().get(1).getUserId();
@@ -111,6 +114,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename1")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname1")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test1.com")))
+                .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer1")))
@@ -120,6 +124,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.forename", containsStringIgnoringCase("Forename1")))
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname1")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test1.com")))
+                .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
                 .andExpect(jsonPath("$.score", is(100)))
                 .andExpect(jsonPath("$.rating", is(4)))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer1")))

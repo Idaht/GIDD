@@ -2,9 +2,9 @@
   <div id="page">
     <div id="pageOne" v-if="stage === 1">
       <h1>Opprett bruker</h1>
-      <input type="epost" placeholder="e-post" v-model="email" />
-      <input type="fornavn" placeholder="Fornavn" v-model="firstName" />
-      <input type="etternavn" placeholder="Etternavn" v-model="lastName" />
+      <input type="epost" placeholder="e-post" v-model="user.email" />
+      <input type="fornavn" placeholder="Fornavn" v-model="user.forename" />
+      <input type="etternavn" placeholder="Etternavn" v-model="user.surname" />
 
       <h4>Fødselsdato</h4>
       <h5>Velg år</h5>
@@ -31,18 +31,18 @@
 
       <h3>Krav:</h3>
       <ul>
-     <!-- <ul><li v-if="!isEmailValid>-Epost må inneholde både @ og .</li></ul>-->
-      <li v-if="!isEmailValid">Epost må inneholde både @ og .</li>
-      <li v-if="!isNameValid">Navn må inneholde både fornavn og etternavn</li>
-      <li v-if="!isBirthDateValid">
-        Fødselsdato må inneholde år, måned og dato
-      </li>
+        <!-- <ul><li v-if="!isEmailValid>-Epost må inneholde både @ og .</li></ul>-->
+        <li v-if="!isEmailValid">Epost må inneholde både @ og .</li>
+        <li v-if="!isNameValid">Navn må inneholde både fornavn og etternavn</li>
+        <li v-if="!isBirthDateValid">
+          Fødselsdato må inneholde år, måned og dato
+        </li>
       </ul>
     </div>
 
     <div id="pageTwo" v-else-if="stage === 2">
       <h2>Skriv inn passord</h2>
-      <input type="password" v-model="passwordInput" placeholder="Passord" />
+      <input type="password" v-model="user.password" placeholder="Passord" />
       <input
         type="password"
         v-model="repeatPassword"
@@ -67,7 +67,7 @@
     <div id="pageFour" v-else-if="stage === 4">
       <h1>Godta betingelser</h1>
       <div class="terms-box">
-        {{ longString }}
+        {{ termsAndConditions }}
       </div>
     </div>
 
@@ -85,6 +85,7 @@
     >
       {{ nextButtonNames }}
     </button>
+
     <div>
       <!-- TODO: Disse skal styles slik at de er tre små runde prikker-->
       <button
@@ -120,10 +121,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, Ref, ref, watchEffect } from "vue";
+import {
+  defineComponent,
+  computed,
+  Ref,
+  ref,
+  watchEffect,
+  reactive,
+} from "vue";
 import Month from "../interfaces/Month.interface";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
+import SignUpUser from "../interfaces/User/SignUpUser.interface";
+import { useStore } from "../store";
 
 export default defineComponent({
   name: "SignUpScroll",
@@ -147,17 +157,24 @@ export default defineComponent({
     });
 
     const disableNextButton = computed(() => {
-      return ((disableNextButtonStageOne.value) || (disableNextButtonStageTwo.value))});
+      return disableNextButtonStageOne.value || disableNextButtonStageTwo.value;
+    });
 
     const nextPage = () => {
       if (stage.value < 4) {
-        stage.value += 1;
+        stage.value++;
+      }
+      else if(stage.value === 4){
+          saveUser(); 
       }
     };
 
     const prevPage = () => {
       if (stage.value > 1) {
-        stage.value -= 1;
+        stage.value--;
+      }
+      else if (stage.value === 1) {
+        router.push("/");
       }
     };
 
@@ -165,6 +182,7 @@ export default defineComponent({
       stage.value = dotValue;
     };
 
+    //TODO:fungerer ikke enda, noe for sprint 2?
     const disableDots = watchEffect((): void => {
       if (stage.value === 1) {
         disableDotTwo.value = true;
@@ -186,9 +204,6 @@ export default defineComponent({
     });
 
     //Methods for stage one
-    const email = ref("");
-    const lastName = ref("");
-    const firstName = ref("");
     const selectedYear = ref();
     const selectedMonth = ref("");
     const selectedDay = ref();
@@ -197,11 +212,7 @@ export default defineComponent({
 
     const availableYears = computed(() => {
       const years = [];
-      for (
-        let i = currentYear - limitForLowerYear;
-        i < currentYear;
-        i++
-      ) {
+      for (let i = currentYear - limitForLowerYear; i < currentYear; i++) {
         years.push(i);
       }
       return years.reverse();
@@ -226,32 +237,38 @@ export default defineComponent({
     });
 
     const isEmailValid = computed(() => {
-      return (email.value.includes("@") && email.value.includes("."))});
+      return user.email.includes("@") && user.email.includes(".");
+    });
 
     const isNameValid = computed(() => {
-      return firstName.value.trim() !== "" && lastName.value.trim() !== "";
+      return user.forename.trim() !== "" && user.surname.trim() !== "";
     });
 
     const isBirthDateValid = computed(() => {
-    return (
+      return (
         selectedYear.value > 0 &&
         selectedMonth.value > "" &&
         selectedDay.value > 0
-      )});
+      );
+    });
 
     const disableNextButtonStageOne = computed(() => {
-      return stage.value === 1 && (!isEmailValid.value || !isNameValid.value || !isBirthDateValid.value)
+      return (
+        stage.value === 1 &&
+        (!isEmailValid.value || !isNameValid.value || !isBirthDateValid.value)
+      );
     });
 
     //methods for stage two
-    const passwordInput = ref("");
     const repeatPassword = ref("");
 
     const isPasswordSecure = computed((): boolean => {
-      return (passwordInput.value.length >= 8)});
+      return user.password.length >= 8;
+    });
 
     const doesPasswordsMatch = computed((): boolean => {
-      return passwordInput.value === repeatPassword.value});
+      return user.password === repeatPassword.value;
+    });
 
     const passwordFeedback = computed(() => {
       if (!isPasswordSecure.value) {
@@ -263,7 +280,10 @@ export default defineComponent({
     });
 
     const disableNextButtonStageTwo = computed((): boolean => {
-      return stage.value === 2 && (!doesPasswordsMatch.value || !isPasswordSecure.value)
+      return (
+        stage.value === 2 &&
+        (!doesPasswordsMatch.value || !isPasswordSecure.value)
+      );
     });
 
     const months: Ref<Month[]> = ref([
@@ -300,6 +320,40 @@ export default defineComponent({
         });
     });
 
+    //methods for stage four
+    const termsAndConditions = ref(
+        "Dette er terms and conditions. " + 
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit," +
+        " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." +
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    );
+
+    //methods for connection to backend
+    const store = useStore();
+    const birthdate = computed(() => {
+      return (
+        selectedYear.value + "-" + selectedMonth.value + "-" + selectedDay.value
+      );
+    });
+
+    const user = reactive({
+      email: "",
+      password: "",
+      forename: "",
+      surname: "",
+      birthdate: birthdate.value,
+    } as SignUpUser);
+
+    const saveUser = async (): Promise<void> => {
+     if(await store.dispatch("register", user)){
+        router.replace("/activity-feed");
+      } else {
+          router.push("/error");
+      }
+    };
+
     return {
       //stage one
       months,
@@ -308,9 +362,6 @@ export default defineComponent({
       availableYears,
       selectedYear,
       selectedMonth,
-      email,
-      lastName,
-      firstName,
       selectedDay,
       isNameValid,
       isEmailValid,
@@ -319,12 +370,14 @@ export default defineComponent({
 
       //stage two
       passwordFeedback,
-      passwordInput,
       repeatPassword,
 
       //stage three
       uploadFile,
       handleSubmit,
+
+      //stage four
+      termsAndConditions,
 
       //overall
       buttonBackNames,
@@ -334,6 +387,8 @@ export default defineComponent({
       prevPage,
       onClickDot,
       stage,
+      user,
+      saveUser,
     };
   },
 });
@@ -344,8 +399,8 @@ export default defineComponent({
   overflow: scroll;
 }
 
-li{
-    list-style-type:none;
+li {
+  list-style-type: none;
 }
 
 .page {

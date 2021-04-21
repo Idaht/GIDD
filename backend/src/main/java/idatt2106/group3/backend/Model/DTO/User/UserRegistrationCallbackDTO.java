@@ -16,7 +16,6 @@ public class UserRegistrationCallbackDTO {
         this.user.setEmail(userPasswordDTO.getEmail());
         this.user.setScore(userPasswordDTO.getScore());
         this.user.setRating(userPasswordDTO.getRating());
-        this.user.setRole(userPasswordDTO.getRole());
     }
 
     public String getToken() {

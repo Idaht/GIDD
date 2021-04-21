@@ -111,7 +111,7 @@ public class UserServiceTest
     @Test
     public void createUser_userGetsAdded_ReturnsTrue()
     {
-        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, "role", null);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, null);
         User returnUser = new User("test","test", "213", "hash","salt",1,1,",",1, null);
         returnUser.setUserId(1);
         Mockito.lenient()

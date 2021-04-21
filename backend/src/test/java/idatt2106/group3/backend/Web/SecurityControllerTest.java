@@ -36,7 +36,7 @@ public class SecurityControllerTest {
 
     @BeforeEach
     public void setup(){
-        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email", "hash", 1, 1, "role",null);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email", "hash", 1, 1,null);
         userService.createUser(user);
     }
 
@@ -60,7 +60,7 @@ public class SecurityControllerTest {
     // Equal test in UserControllerTest
     @Test
     public void registration_CorrectFormat_StatusCreated() throws Exception {
-        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email1", "hash", 1, 1, "role",null);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("forename", "surname", "email1", "hash", 1, 1, null);
         String objectJson = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/api/v1/users")
         .contentType(MediaType.APPLICATION_JSON)

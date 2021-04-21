@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import IActivity from "@/interfaces/IActivity.interface";
+import IActivity from "../interfaces/IActivity.interface";
 
 export default defineComponent({
   name: "ActivityPreviewFeed",

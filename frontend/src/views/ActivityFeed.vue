@@ -1,4 +1,5 @@
 <template>
+<div> 
   <div>
     <div class="header" id="upper-header">
       <h3>Finn aktiviteter</h3>
@@ -16,6 +17,7 @@
             <ActivityFeedItem :activityData="activity"/>
     </li>
   </div>
+</div>
 </template>
 
 <script lang="ts">

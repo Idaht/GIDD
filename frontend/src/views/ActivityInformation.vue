@@ -1,5 +1,6 @@
 <template>
   <!-- Putt inn et bilde av en tilbakeknapp? -->
+  <div>
   <img
     @click="returnToActivityFeed"
     src="https://static.thenounproject.com/png/1195139-200.png"
@@ -47,6 +48,7 @@
 
   <div>Utstyr</div>
   <p>{{ activity.equipment }}</p>
+  </div>
 </template>
 
 <script lang="ts">

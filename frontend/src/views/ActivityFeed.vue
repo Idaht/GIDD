@@ -28,14 +28,13 @@
     </div>
     <div id="activities">
       <li v-for="activity in activitiesTest" :key="activity.id">
-        <ActivityPreviewFeed :activityData="activity" />
+        <ActivityFeedItem :activityData="activity" />
       </li>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-
 import { defineComponent, onBeforeMount, ref, Ref } from "vue";
 import ActivityFeedItem from "../components/ActivityFeedItem.vue";
 import axios from "@/axiosConfig";
@@ -48,10 +47,9 @@ export default defineComponent({
     ActivityFeedItem,
   },
 
-  
   setup() {
     const router = useRouter();
-    const activities : Ref<IActivity[]> = ref([]);
+    const activities: Ref<IActivity[]> = ref([]);
 
     onBeforeMount(async () => {
       try {
@@ -72,8 +70,8 @@ export default defineComponent({
       console.log("Filter clicked");
     };
 
-    const mapViewClicked = () : void => {
-        router.push("/activity-map");
+    const mapViewClicked = (): void => {
+      router.push("/activity-map");
     };
 
     return {

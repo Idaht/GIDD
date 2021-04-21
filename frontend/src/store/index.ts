@@ -40,6 +40,9 @@ export const store = createStore<State>({
       state.token = "";
       state.user = "";
     },
+    updateUser(state, user: User) {
+      state.user = JSON.stringify(user);
+    },
   },
   actions: {
     async login({ commit }, user: LogInUser): Promise<boolean> {
@@ -86,6 +89,10 @@ export const store = createStore<State>({
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       delete axios.defaults.headers["Authorization"];
+    },
+    async updateUser({ commit }, user: User) {
+      localStorage.setItem("user", JSON.stringify(user));
+      commit("updateUser", user);
     },
   },
   getters: {

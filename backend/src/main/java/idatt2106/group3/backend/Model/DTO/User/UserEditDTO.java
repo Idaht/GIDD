@@ -7,11 +7,11 @@ public class UserEditDTO extends UserSuperclassDTO {
     private String oldPassword;
     private String profilePicture;
     
-    public UserEditDTO(String forename, String surname, String email, LocalDate dateOfBirth, String newHash, String oldHash, String profilePicture) {
+    public UserEditDTO(String forename, String surname, String email, LocalDate dateOfBirth, String newPassword, String oldPassword, String profilePicture) {
         super(forename, surname, email, dateOfBirth);
         this.profilePicture = profilePicture;
-        this.newPassword = newHash;
-        this.oldPassword = oldHash;
+        this.newPassword = newPassword;
+        this.oldPassword = oldPassword  ;
     }
 
     public UserEditDTO(){

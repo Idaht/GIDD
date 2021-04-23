@@ -3,7 +3,7 @@
     <h1>Min profil</h1>
     <img
       id="profile-picture"
-      src="../../img/hamster-pfp.jpg"
+      :src="profilePicture"
       alt="profile-picture"
     />
     <div id="profile-wrapper">
@@ -50,19 +50,26 @@
 
 <script lang="ts">
 import router from "@/router";
-import { onBeforeMount, defineComponent, ref } from "vue";
+import { onBeforeMount, defineComponent, ref, Ref, computed } from "vue";
+import User from "../interfaces/User/User.interface"
 import axios from "../axiosConfig";
+import { useStore } from "../store";
 
 export default defineComponent({
   props: ["id"],
   setup(props) {
     //TODO hente ut/fikse resterende variabler
-    const user = ref({});
+    const user = ref({}) as Ref<User>;
+    const store = useStore();
     const age = ref(24); //Ha? Hente fødselsdato og regne ut alderen?
     const userBio = ref("Jeg liker ost og å dø på joggeturer");
     const trusted = ref(true); //Hente ut dett
     const trustedText = ref("Brukeren er trusted");
 
+    const profilePicture = computed(() => {
+      let val = (user.value.profilePicture !== null) ? user.value.profilePicture : require('../assets/hamster-pfp.jpg');  
+      return val;
+    });
     /**
      * Connects to backend using a get request to get the user
      */
@@ -78,6 +85,7 @@ export default defineComponent({
     return {
       age,
       userBio,
+      profilePicture,
       trusted,
       trustedText,
       user,

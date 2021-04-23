@@ -1,14 +1,13 @@
 package idatt2106.group3.backend.Model.DTO.User;
 
-import java.sql.Blob;
 import java.time.LocalDate;
 
 public class UserEditDTO extends UserSuperclassDTO {
     private String newPassword;
     private String oldPassword;
-    private Blob profilePicture;
+    private String profilePicture;
     
-    public UserEditDTO(String forename, String surname, String email, LocalDate dateOfBirth, String newHash, String oldHash, Blob profilePicture) {
+    public UserEditDTO(String forename, String surname, String email, LocalDate dateOfBirth, String newHash, String oldHash, String profilePicture) {
         super(forename, surname, email, dateOfBirth);
         this.profilePicture = profilePicture;
         this.newPassword = newHash;
@@ -19,11 +18,11 @@ public class UserEditDTO extends UserSuperclassDTO {
         super();
     }
 
-    public Blob getProfilePicture() {
+    public String getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(Blob profilePicture) {
+    public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
 

@@ -6,5 +6,5 @@ export default interface EditUser {
   email: string;
   newPassword?: string;
   oldPassword?: string;
-  profilePicture?: Blob;
+  profilePicture?: string;
 }

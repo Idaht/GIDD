@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 
 @SpringBootTest
@@ -129,14 +127,14 @@ public class UserServiceTest
     @Test
     public void editUser_updatesUser_ReturnsUpdatedUser() throws SerialException, SQLException
     {
-        UserEditDTO userEditDTO = new UserEditDTO("Forename", "surname", "email", LocalDate.now(), "newHash", "oldHash", null);
+        UserEditDTO userEditDTO = new UserEditDTO("Forename", "surname", "email", LocalDate.now(), "newHash", "oldHash", "null");
         User tempUser = new User();
         tempUser.setForename(userEditDTO.getForename());
         tempUser.setSurname(userEditDTO.getSurname());
         tempUser.setEmail(userEditDTO.getEmail());
         tempUser.setDateOfBirth(userEditDTO.getDateOfBirth());
         tempUser.setHash(userEditDTO.getOldPassword());
-        tempUser.setProfilePicture(userEditDTO.getProfilePicture());
+        tempUser.setProfilePicture(userEditDTO.getProfilePicture().getBytes());
 
         Mockito.lenient()
                 .when(userRepository.save(any()))
@@ -149,7 +147,7 @@ public class UserServiceTest
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
         assertThat(user.getDateOfBirth()).isEqualTo(tempUser.getDateOfBirth());
-        assertThat(user.getProfilePicture()).isEqualTo(tempUser.getProfilePicture());
+        assertThat(user.getProfilePicture().getBytes()).isEqualTo(tempUser.getProfilePicture());
     }
 
     @Test

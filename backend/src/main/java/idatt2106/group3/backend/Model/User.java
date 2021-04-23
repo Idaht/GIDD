@@ -1,6 +1,5 @@
 package idatt2106.group3.backend.Model;
 
-import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -54,9 +53,9 @@ public class User {
     Set<Message> messages;
 
     @Lob
-    private Blob profilePicture;
+    private byte[] profilePicture;
 
-    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, Blob profilePicture) {
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, byte[] profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -75,7 +74,7 @@ public class User {
         this.profilePicture = profilePicture;
     }
 
-    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, Blob profilePicture) {
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, byte[] profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
@@ -220,11 +219,11 @@ public class User {
         this.faults = faults;
     }
 
-    public Blob getProfilePicture() {
+    public byte[] getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(Blob profilePicture) {
+    public void setProfilePicture(byte[] profilePicture) {
         this.profilePicture = profilePicture;
     }
 

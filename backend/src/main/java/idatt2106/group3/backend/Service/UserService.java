@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+
 @Service
 public class UserService
 {
@@ -50,14 +51,13 @@ public class UserService
     {
         //TODO: sende en melding at email eksisterer til frontend
         LOGGER.info("createUser(UserPasswordDTO user) called with email: {}", user.getEmail());
-
         User createdUser = new User();
         createdUser.setForename(user.getForename());
         createdUser.setSurname(user.getSurname());
         createdUser.setEmail(user.getEmail());
         createdUser.setDateOfBirth(user.getDateOfBirth());
         createdUser.setHash(passwordEncoder.encode(user.getPassword())); //encodes password on registration
-        createdUser.setProfilePicture(user.getProfilePicture());
+        if(user.getProfilePicture() != null)createdUser.setProfilePicture(user.getProfilePicture().getBytes());    
         createdUser.setRole("ROLE_USER");
         createdUser = userRepository.save(createdUser);
         String token = createJWtToken(createdUser);
@@ -75,7 +75,8 @@ public class UserService
             if(userDTO.getForename() != null) user.setForename(userDTO.getForename());
             if(userDTO.getSurname() != null) user.setSurname(userDTO.getSurname());
             if(userDTO.getEmail() != null)user.setEmail(userDTO.getEmail());
-            if(userDTO.getProfilePicture() != null)user.setProfilePicture(userDTO.getProfilePicture());
+            if(userDTO.getProfilePicture() != null)user.setProfilePicture(userDTO.getProfilePicture().getBytes());
+            if(userDTO.getProfilePicture().equals("null")) user.setProfilePicture(null);
             // Already checked that oldPassword is correct
             if(userDTO.getNewPassword() != null && userDTO.getOldPassword() != null)user.setHash(passwordEncoder.encode(userDTO.getNewPassword()));
             

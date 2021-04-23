@@ -50,10 +50,10 @@ public class UserControllerTest
     @BeforeEach
     public void setup()
     {
-        Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
-        User user2 = new User("1Forename", "1Surname", "test2@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
-        User user3 = new User("1Forename", "1Surname", "test3@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
-        User user1 = new User("1Forename", "1Surname", "test1@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, true, null);
+        User user1 = new User("1Forename", "1Surname", "test1@test.com", LocalDate.of(2005, 1, 1), Difficulty.EASY, "test hash", "test salt", 4, "Organizer", 2, null);
+        User user2 = new User("1Forename", "1Surname", "test2@test.com", LocalDate.of(2005, 1, 1), Difficulty.MEDIUM, "test hash", "test salt", 4, "Organizer", 2, null);
+        User user3 = new User("1Forename", "1Surname", "test3@test.com", LocalDate.of(2005, 1, 1), Difficulty.HARD, "test hash", "test salt", 4, "Organizer", 2, null);
         activityRepository.save(activity1);
         // Needed for testing the editing user
         user2.setHash(passwordEncoder.encode(("test hash")));
@@ -79,8 +79,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test.com")))
                 .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
-                .andExpect(jsonPath("$.score", is(100)))
-                .andExpect(jsonPath("$.rating", is(4)))
+                .andExpect(jsonPath("$.trainingLevel", is("EASY")))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
                 //.andExpect(jsonPath("$.profilePic", instanceOf(Blob.class)))               
                 .andReturn();
@@ -90,7 +89,7 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash", "test");
+        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), Difficulty.MEDIUM, "test hash", "test");
 
         String userJson = objectMapper.writeValueAsString(userPasswordDTO);
 
@@ -102,16 +101,27 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.user.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.user.email", containsStringIgnoringCase("test@test.com")))
                 .andExpect(jsonPath("$.user.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
+                .andExpect(jsonPath("$.user.trainingLevel", is("MEDIUM")))
                 .andReturn();
     }
 
     @Test
     public void editUser_UpdateUserGetResponse_StatusOk() throws Exception
     {
-        UserEditDTO userEditDTO = new UserEditDTO("Forename1", "Surname1", "test1@test1.com", null, "test hash", "test hash", "null");
+        UserEditDTO userEditDTO = new UserEditDTO("Forename1", "Surname1", "test1@test1.com", null, Difficulty.HARD, "test hash", "test hash", "test");
         String userJson = objectMapper.writeValueAsString(userEditDTO);
 
         long id = userRepository.findAll().get(1).getUserId();
+
+        this.mockMvc.perform(get("/api/v1/users/" + id))
+                .andExpect(jsonPath("$.forename", containsStringIgnoringCase("1Forename")))
+                .andExpect(jsonPath("$.surname", containsStringIgnoringCase("1Surname")))
+                .andExpect(jsonPath("$.email", containsStringIgnoringCase("test2@test.com")))
+                .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
+                .andExpect(jsonPath("$.trainingLevel", is("MEDIUM")))
+                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
+                .andReturn();
+
         this.mockMvc.perform(post("/api/v1/users/" + id)
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isOk())
@@ -119,8 +129,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname1")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test1.com")))
                 .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
-                .andExpect(jsonPath("$.score", is(100)))
-                .andExpect(jsonPath("$.rating", is(4)))
+                .andExpect(jsonPath("$.trainingLevel", is("HARD")))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
                 .andReturn();
 
@@ -129,8 +138,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname1")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test1.com")))
                 .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
-                .andExpect(jsonPath("$.score", is(100)))
-                .andExpect(jsonPath("$.rating", is(4)))
+                .andExpect(jsonPath("$.trainingLevel", is("HARD")))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
                 .andReturn();
     }
@@ -155,7 +163,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.[0].type", containsStringIgnoringCase("Type")))
                 .andExpect(jsonPath("$.[0].description", containsStringIgnoringCase("Playing")))
                 .andExpect(jsonPath("$.[0].equipment", containsStringIgnoringCase("A football")))
-                .andExpect(jsonPath("$.[0].difficulty", is("EASY")))
+                .andExpect(jsonPath("$.[0].difficulty", is(Difficulty.EASY.value)))
                 .andExpect(jsonPath("$.[0].city", containsStringIgnoringCase("Trondheim")))
                 .andExpect(jsonPath("$.[0].place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.[0].longitude", is(50.30)))

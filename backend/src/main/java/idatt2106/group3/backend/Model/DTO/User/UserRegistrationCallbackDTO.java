@@ -15,6 +15,7 @@ public class UserRegistrationCallbackDTO {
         this.user.setSurname(userPasswordDTO.getSurname());
         this.user.setEmail(userPasswordDTO.getEmail());
         this.user.setDateOfBirth(userPasswordDTO.getDateOfBirth());
+        this.user.setTrainingLevel(userPasswordDTO.getTrainingLevel());
     }
 
     public String getToken() {

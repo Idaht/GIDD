@@ -2,6 +2,8 @@ package idatt2106.group3.backend.Model.DTO.User;
 
 import java.time.LocalDate;
 
+import idatt2106.group3.backend.Model.Difficulty;
+
 /**
  * This is the superclass for User DTO's.
  */
@@ -10,12 +12,14 @@ public class UserSuperclassDTO {
     private String surname;
     private String email;
     private LocalDate dateOfBirth;
+    private Difficulty trainingLevel;
 
-    public UserSuperclassDTO(String forename, String surname, String email, LocalDate dateOfBirth) {
+    public UserSuperclassDTO(String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+        this.trainingLevel = trainingLevel;
     }
 
     public UserSuperclassDTO() {
@@ -53,6 +57,14 @@ public class UserSuperclassDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public Difficulty getTrainingLevel() {
+        return trainingLevel;
+    }
+
+    public void setTrainingLevel(Difficulty trainingLevel) {
+        this.trainingLevel = trainingLevel;
+    }
+
     @Override
     public String toString()
     {
@@ -60,6 +72,7 @@ public class UserSuperclassDTO {
                 ", forename='" + forename + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
-                ", dateOfBirth='" + dateOfBirth;
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", trainingLevel='" + trainingLevel;
     }
 }

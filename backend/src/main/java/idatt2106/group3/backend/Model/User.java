@@ -27,10 +27,10 @@ public class User {
     private LocalDate dateOfBirth;
     private String hash;
     private String salt;
-    private int score;
     private int rating;
     private String role;
-    private int faults;
+    private int absence;
+    private Difficulty trainingLevel;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -55,17 +55,17 @@ public class User {
     @Lob
     private byte[] profilePicture;
 
-    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, byte[] profilePicture) {
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel, String hash, String salt, int rating, String role, int absence, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, byte[] profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+        this.trainingLevel = trainingLevel;
         this.hash = hash;
         this.salt = salt;
-        this.score = score;
         this.rating = rating;
         this.role = role;
-        this.faults = faults;
+        this.absence = absence;
         this.activities = activities;
         this.organizedActivities = organizedActivities;
         this.reportsSent = reportsSent;
@@ -74,17 +74,17 @@ public class User {
         this.profilePicture = profilePicture;
     }
 
-    public User(String forename, String surname, String email, LocalDate dateOfBirth, String hash, String salt, int score, int rating, String role, int faults, byte[] profilePicture) {
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel, String hash, String salt, int rating, String role, int absence, byte[] profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+        this.trainingLevel = trainingLevel;
         this.hash = hash;
         this.salt = salt;
-        this.score = score;
         this.rating = rating;
         this.role = role;
-        this.faults = faults;
+        this.absence = absence;
         this.profilePicture = profilePicture;
     }
 
@@ -187,14 +187,6 @@ public class User {
         this.salt = salt;
     }
 
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
     public int getRating() {
         return rating;
     }
@@ -211,12 +203,20 @@ public class User {
         this.role = role;
     }
 
-    public int getFaults() {
-        return faults;
+    public int getAbsence() {
+        return absence;
     }
 
-    public void setFaults(int faults) {
-        this.faults = faults;
+    public void setAbsence(int absence) {
+        this.absence = absence;
+    }
+
+    public Difficulty getTrainingLevel() {
+        return trainingLevel;
+    }
+
+    public void setTrainingLevel(Difficulty trainingLevel) {
+        this.trainingLevel = trainingLevel;
     }
 
     public byte[] getProfilePicture() {
@@ -238,10 +238,10 @@ public class User {
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", hash='" + hash + '\'' +
                 ", salt='" + salt + '\'' +
-                ", score=" + score + '\'' +
                 ", rating=" + rating + '\'' +
                 ", role='" + role + '\'' +
-                ", faults=" + faults + '\'' +
+                ", absence=" + absence + '\'' +
+                ", trainingLevel=" + trainingLevel + '\'' +
                 ", activities=" + activities + '\'' +
                 ", organizedActivities=" + organizedActivities + '\'' +
                 ", reportsSent=" + reportsSent + '\'' +

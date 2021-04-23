@@ -2,16 +2,18 @@ package idatt2106.group3.backend.Model.DTO.User;
 
 import java.time.LocalDate;
 
+import idatt2106.group3.backend.Model.Difficulty;
+
 public class UserEditDTO extends UserSuperclassDTO {
     private String newPassword;
     private String oldPassword;
     private String profilePicture;
     
-    public UserEditDTO(String forename, String surname, String email, LocalDate dateOfBirth, String newPassword, String oldPassword, String profilePicture) {
-        super(forename, surname, email, dateOfBirth);
+    public UserEditDTO(String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel, String newPassword, String oldPassword, String profilePicture) {
+        super(forename, surname, email, dateOfBirth, trainingLevel);
         this.profilePicture = profilePicture;
         this.newPassword = newPassword;
-        this.oldPassword = oldPassword  ;
+        this.oldPassword = oldPassword;
     }
 
     public UserEditDTO(){

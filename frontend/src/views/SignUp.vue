@@ -1,121 +1,173 @@
 <template>
-  <div id="page">
-    <div id="pageOne" v-if="stage === 1">
-      <h1>Opprett bruker</h1>
-      <input type="epost" placeholder="e-post" v-model="user.email" />
-      <input type="fornavn" placeholder="Fornavn" v-model="user.forename" />
-      <input type="etternavn" placeholder="Etternavn" v-model="user.surname" />
-
-      <h4>Fødselsdato</h4>
-      <h5>Velg år</h5>
-      <select v-model="selectedYear">
-        <option hidden disabled value>Velg år</option>
-        <option v-for="(year, index) in availableYears" :key="index">
-          {{ year }}
-        </option>
-      </select>
-      <h5>Velg måned</h5>
-      <select name="month" v-model="selectedMonth">
-        <option value="month" selected disabled hidden>Velg måned</option>
-        <option v-for="(month, index) in months" :key="month + index">
-          {{ month.name }}
-        </option>
-      </select>
-      <h5>Velg dag</h5>
-      <select name="day" v-model="selectedDay">
-        <option value="day" selected disabled hidden>Velg dato</option>
-        <option v-for="index in daysInCurrentMonth" :key="index">
-          {{ index }}
-        </option>
-      </select>
-
-      <h3>Krav:</h3>
-      <ul>
-        <!-- <ul><li v-if="!isEmailValid>-Epost må inneholde både @ og .</li></ul>-->
-        <li v-if="!isEmailValid">Epost må inneholde både @ og .</li>
-        <li v-if="!isNameValid">Navn må inneholde både fornavn og etternavn</li>
-        <li v-if="!isBirthDateValid">
-          Fødselsdato må inneholde år, måned og dato
-        </li>
-      </ul>
-    </div>
-
-    <div id="pageTwo" v-else-if="stage === 2">
-      <h2>Skriv inn passord</h2>
-      <input type="password" v-model="user.password" placeholder="Passord" />
-      <input
-        type="password"
-        v-model="repeatPassword"
-        placeholder="Gjenta passord"
-      />
-      <span> {{ passwordFeedback }} </span>
-    </div>
-
-    <div id="pageThree" v-else-if="stage === 3">
-      <div class="container">
-        <form @submit.prevent="handleSubmit">
-          <div class="form-group">
-            <input type="file" @change="uploadFile" multiple />
+  <div id="sign-up">
+    <span @click="prevPage" class="back-button">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      {{ buttonBackNames }}
+    </span>
+    <div id="page-one" v-if="stage === 1">
+      <h2>Opprett bruker</h2>
+      <div id="sign-up-form-container">
+        <input
+          class="sign-up-form-input"
+          type="epost"
+          placeholder="E-post"
+          v-model="user.email"
+        />
+        <input
+          class="sign-up-form-input"
+          type="fornavn"
+          placeholder="Fornavn"
+          v-model="user.forename"
+        />
+        <input
+          class="sign-up-form-input"
+          type="etternavn"
+          placeholder="Etternavn"
+          v-model="user.surname"
+        />
+        <!-- TODO: fiks sånn at option vises i dropdown. Er ikke mulig nå
+        pga select bruker v-model, så må trolig fikses i js -->
+        <div id="sign-up-form-birthday-container">
+          <h4>Fødselsdato</h4>
+          <div id="sign-up-form-birthday">
+            <div id="birthday-year" class="birthday-form">
+              <h5>År</h5>
+              <select class="dropdown" v-model="selectedYear">
+                <option hidden disabled value>Velg år</option>
+                <option v-for="(year, index) in availableYears" :key="index">
+                  {{ year }}
+                </option>
+              </select>
+            </div>
+            <div id="birthday-month" class="birthday-form">
+              <h5>Måned</h5>
+              <select name="month" v-model="selectedMonth">
+                <option value="month" selected disabled hidden>
+                  Velg måned
+                </option>
+                <option v-for="(month, index) in months" :key="month + index">
+                  {{ month.name }}
+                </option>
+              </select>
+            </div>
+            <div id="birthday-day" class="birthday-form">
+              <h5>Dag</h5>
+              <select name="day" v-model="selectedDay">
+                <option value="day" selected disabled hidden>Velg dato</option>
+                <option v-for="index in daysInCurrentMonth" :key="index">
+                  {{ index }}
+                </option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <button class="btn btn-success btn-block btn-lg">Last opp</button>
+        </div>
+      </div>
+      <div id="conditions-container">
+        <ul>
+          <li v-if="!isEmailValid">! Epost må inneholde både @ og .</li>
+          <li v-if="!isNameValid">
+            ! Navn må inneholde både fornavn og etternavn
+          </li>
+          <li v-if="!isBirthDateValid">
+            ! Fødselsdato må inneholde år, måned og dato
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="page-two" v-else-if="stage === 2">
+      <h2>Skriv inn passord</h2>
+      <div id="sign-up-form-container">
+        <input
+          class="sign-up-form-input"
+          type="password"
+          v-model="user.password"
+          placeholder="Passord"
+        />
+        <input
+          class="sign-up-form-input"
+          type="password"
+          v-model="repeatPassword"
+          placeholder="Gjenta passord"
+        />
+        <div id="conditions-container">
+          <span> {{ passwordFeedback }} </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TODO: Fiks opplastning til profilbilde -->
+    <div id="page-three" v-else-if="stage === 3">
+      <h2>Last opp profilbilde</h2>
+      <div class="sign-up-form-container-picture">
+        <img
+          id="profile-picture"
+          src="../../img/hamster-pfp.jpg"
+          alt="profile-picture"
+        />
+        <form @submit.prevent="handleSubmit">
+          <div class="picture-upload-submit">
+            <input
+              id="picture-input"
+              type="file"
+              @change="uploadFile"
+              multiple
+            />
+          </div>
+          <div class="picture-upload-submit">
+            <span>Last opp</span>
           </div>
         </form>
       </div>
     </div>
 
-    <div id="pageFour" v-else-if="stage === 4">
-      <h1>Godta betingelser</h1>
-      <div class="terms-box">
+    <div id="page-four" v-else-if="stage === 4">
+      <h2>Godta betingelser</h2>
+      <div class="terms-and-conditions-container">
+        {{ termsAndConditions }}
         {{ termsAndConditions }}
       </div>
+      <!-- TODO: Deaktiver "registrer"-knappen frem til boksen er krysset av -->
+      <input type="checkbox" name="checkbox" value="check" id="agree" /> Jeg
+      godtar brukervilkårene
     </div>
 
     <div id="wrong" v-else>
       <h1>Something went wrong</h1>
     </div>
 
-    <button @click="prevPage" class="router-link-button">
-      {{ buttonBackNames }}
-    </button>
-    <button
-      @click="nextPage"
-      class="router-link-button"
-      :disabled="disableNextButton"
-    >
-      {{ nextButtonNames }}
-    </button>
+    <div id="navigation">
+      <button
+        @click="nextPage"
+        class="router-link-button"
+        :disabled="disableNextButton"
+      >
+        {{ nextButtonNames }}
+      </button>
 
-    <div>
-      <!-- TODO: Disse skal styles slik at de er tre små runde prikker-->
-      <button
-        @onclick="onClickDot(1)"
-        class="GradeOfCompletion"
-        :disabled="true"
-      >
-        1
-      </button>
-      <button
-        @onclick="onClickDot(2)"
-        class="GradeOfCompletion"
-        :disabled="true"
-      >
-        2
-      </button>
-      <button
-        @onclick="onClickDot(3)"
-        class="GradeOfCompletion"
-        :disabled="true"
-      >
-        3
-      </button>
-      <button
-        @onclick="onClickDot(4)"
-        class="GradeOfCompletion"
-        :disabled="true"
-      >
-        4
-      </button>
+      <div id="dots-container">
+        <button
+          @onclick="onClickDot(1)"
+          class="completion-dot"
+          id="betch"
+          :disabled="false"
+        ></button>
+        <button
+          @onclick="onClickDot(2)"
+          class="completion-dot"
+          :disabled="true"
+        ></button>
+        <button
+          @onclick="onClickDot(3)"
+          class="completion-dot"
+          :disabled="true"
+        ></button>
+        <button
+          @onclick="onClickDot(4)"
+          class="completion-dot"
+          :disabled="true"
+        ></button>
+      </div>
     </div>
   </div>
 </template>
@@ -141,6 +193,7 @@ export default defineComponent({
     //overall
     const router = useRouter();
     const stage = ref(1);
+    const termsChecked = ref(true);
     const disableDotTwo = ref(true);
     const disableDotThree = ref(true);
     const disableDotFour = ref(true);
@@ -152,7 +205,7 @@ export default defineComponent({
 
     const nextButtonNames = computed(() => {
       if (stage.value === 4) {
-        return "Godta og registrer";
+        return "Registrer";
       } else return "Neste";
     });
 
@@ -163,17 +216,15 @@ export default defineComponent({
     const nextPage = () => {
       if (stage.value < 4) {
         stage.value++;
-      }
-      else if(stage.value === 4){
-          saveUser(); 
+      } else if (stage.value === 4) {
+        saveUser();
       }
     };
 
     const prevPage = () => {
       if (stage.value > 1) {
         stage.value--;
-      }
-      else if (stage.value === 1) {
+      } else if (stage.value === 1) {
         router.push("/");
       }
     };
@@ -322,7 +373,7 @@ export default defineComponent({
 
     //methods for stage four
     const termsAndConditions = ref(
-        "Dette er terms and conditions. " + 
+      "Dette er terms and conditions. " +
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit," +
         " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." +
         "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
@@ -347,10 +398,10 @@ export default defineComponent({
     } as SignUpUser);
 
     const saveUser = async (): Promise<void> => {
-     if(await store.dispatch("register", user)){
+      if (await store.dispatch("register", user)) {
         router.replace("/activity-feed");
       } else {
-          router.push("/error");
+        router.push("/error");
       }
     };
 
@@ -378,6 +429,7 @@ export default defineComponent({
 
       //stage four
       termsAndConditions,
+      termsChecked,
 
       //overall
       buttonBackNames,
@@ -394,16 +446,196 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.terms-box {
-  overflow: scroll;
+<style scoped lang="scss">
+$primary-color: #282828;
+$secondary-color: #ea4b4b;
+$disabled-color: #d7dce6;
+$padding: 0.6rem 1rem 0.6rem 1rem;
+
+h4 {
+  margin: 0;
 }
 
-li {
+h5 {
+  margin: 0;
+  padding-right: 13px;
+}
+
+#sign-up {
+  margin: 35px;
+  text-align: left;
+  color: $primary-color;
+  margin-bottom: 130px;
+  @media only screen and (min-width: 600px) {
+    width: 30%;
+    margin: auto;
+  }
+}
+
+#sign-up-form-container {
+  display: grid;
+  grid-auto-rows: 3rem 3rem 3rem 6rem;
+  margin-bottom: 20px;
+}
+
+.sign-up-form-container-picture {
+  text-align: center;
+}
+
+.sign-up-form-input {
+  width: 100%;
+  border-radius: 0;
+  border-width: 0;
+  border-bottom: 2px #d7dce6 solid;
+}
+
+.sign-up-form-input:active,
+.sign-up-form-input:focus {
+  border: none;
+  box-shadow: none;
+  border-bottom: 5px $secondary-color solid;
+}
+
+#sign-up-form-birthday-container {
+  display: grid;
+  grid-template-rows: auto;
+  margin: 20px 0px 20px 0px;
+}
+
+#sign-up-form-birthday {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-top: 10px;
+}
+
+.birthday-form {
+  width: 100%;
+  text-align: center;
+}
+
+select {
+  width: 90%;
+  height: 2rem;
+  border-radius: 0;
+  border-width: 0;
+  border-bottom: 2px $disabled-color solid;
+  font-family: "Mulish", sans-serif;
+  font-size: 1rem;
+  text-align-last: center;
+  color: #54545e;
+}
+
+option {
+  height: 30px;
+}
+
+select:focus {
+  box-shadow: none;
+}
+
+#conditions-container {
+  padding-top: 5px;
+  padding-bottom: 15px;
+  height: 60px;
+  font-weight: 600;
+  color: $secondary-color;
+  font-size: 10px;
+  line-height: 20px;
+}
+
+ul {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-.page {
-  overflow: scroll;
+#profile-picture {
+  width: 150px;
+  border-radius: 50%;
+  background-color: #999;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+}
+
+.picture-upload-submit {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+#picture-input {
+  width: 100%;
+}
+
+#navigation {
+  text-align: center;
+  position: fixed;
+  padding-top: 10px;
+  padding-bottom: 30px;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+}
+
+button:disabled {
+  background-color: $disabled-color;
+  color: #9499a5;
+}
+
+#dots-container {
+  display: grid;
+  padding-top: 10px;
+  margin: auto;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  width: 100px;
+  justify-content: center;
+}
+
+button.completion-dot {
+  height: 15px;
+  width: 15px;
+  border-radius: 20px;
+  margin: 5px;
+  display: block;
+  background: $secondary-color;
+  padding: 0px;
+}
+
+button.completion-dot:disabled {
+  border: 2px $secondary-color solid;
+  background-color: #ffffff;
+  opacity: 100%;
+}
+
+.back-button {
+  color: $primary-color;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 60px;
+  text-align: center;
+}
+
+.back-button:hover {
+  color: $secondary-color;
+}
+
+.terms-and-conditions-container {
+  overflow-y: scroll;
+  font-size: 0.8rem;
+  line-height: 1rem;
+  height: 16rem;
+  margin-bottom: 20px;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff0000;
 }
 </style>

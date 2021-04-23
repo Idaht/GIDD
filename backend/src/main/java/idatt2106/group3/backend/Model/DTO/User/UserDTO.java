@@ -3,6 +3,7 @@ package idatt2106.group3.backend.Model.DTO.User;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
+import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 
 /**
@@ -10,17 +11,13 @@ import idatt2106.group3.backend.Model.User;
  */
 public class UserDTO extends UserSuperclassDTO {
     private long userId;
-    private int score;
-    private int rating;
     private String role;
     private String profilePicture;
 
 
-    public UserDTO(long userId, String forename, String surname, String email, LocalDate dateOfBirth, int score, int rating, String role, String profilePicture) {
-        super(forename, surname, email, dateOfBirth);
+    public UserDTO(long userId, String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel, String role, String profilePicture) {
+        super(forename, surname, email, dateOfBirth, trainingLevel);
         this.userId = userId;
-        this.score = score;
-        this.rating = rating;
         this.role = role;
         this.profilePicture = profilePicture;
     }
@@ -30,10 +27,8 @@ public class UserDTO extends UserSuperclassDTO {
     }
 
     public UserDTO(User user){
-        super(user.getForename(), user.getSurname(), user.getEmail(), user.getDateOfBirth());
+        super(user.getForename(), user.getSurname(), user.getEmail(), user.getDateOfBirth(), user.getTrainingLevel());
         this.userId = user.getUserId();
-        this.score = user.getScore();
-        this.rating = user.getRating();
         this.role = user.getRole();
         if(user.getProfilePicture()!= null)this.profilePicture = new String(user.getProfilePicture(), StandardCharsets.UTF_8);
     }
@@ -44,22 +39,6 @@ public class UserDTO extends UserSuperclassDTO {
 
     public void setUserId(long userId) {
         this.userId = userId;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     public String getRole() {
@@ -83,8 +62,6 @@ public class UserDTO extends UserSuperclassDTO {
     {
         return super.toString() + '\'' +
                 ", userId='" + userId + '\'' +
-                ", score='" + score + '\'' +
-                ", rating='" + rating + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }

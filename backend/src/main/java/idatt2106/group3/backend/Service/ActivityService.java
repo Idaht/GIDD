@@ -4,6 +4,7 @@ import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserSecurityDetails;
+import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -104,8 +106,8 @@ public class ActivityService
     {
         LOGGER.info("addUserToActivity(long activityId) called with activityId: {}, and userId: {}", activityId, userId);
 
-        Optional<Activity> activity = activityRepository.findById(activityId);
-        if(!activity.isPresent()) {
+        Optional<Activity> activityOptional = activityRepository.findById(activityId);
+        if(!activityOptional.isPresent()) {
             LOGGER.warn("Did not find activity with activityId: {}. Returning false", activityId);
             return false;
         }
@@ -121,7 +123,8 @@ public class ActivityService
         if (activities == null) {
             return false;
         }
-        user.getActivities().add(activity.get());
+        Activity activity = activityOptional.get();
+        user.getActivities().add(activity);
 
         userRepository.save(user);
         return true;
@@ -141,5 +144,29 @@ public class ActivityService
             return optionalActivity.get().getOrganizer().getUserId() == userId;
         }
         return false;
+    }
+
+    /**
+     * Method that increases "absence" counter for users that were absent in an activity.
+     * Also sets activity's markedAbsence boolean to true, so that we know that that activity
+     * already has marked user absences.
+     * @param activityId
+     * @param absenceDTO
+     * @return a set of UserIds of users that were absent. If it fails, returns an empty HashSet.
+     */
+    public Set<Long> markAbsent(long activityId, AbsenceDTO absenceDTO) {
+        Optional<Activity> optionalActivity = activityRepository.findById(activityId);
+        if(optionalActivity.isPresent()){
+            Set<Long> absentUsersId = absenceDTO.getAbsentUsersId();
+            List<User> users = userRepository.findAllById(absentUsersId);
+            for(User user : users) {
+                user.setAbsence(user.getAbsence() + 1);
+            }
+            Activity activity = optionalActivity.get();
+            activity.setMarkedAbsence(true);
+
+            return absentUsersId;
+        }
+        return new HashSet<>();
     }
 }

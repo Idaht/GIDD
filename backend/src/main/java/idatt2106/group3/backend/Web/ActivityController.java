@@ -1,7 +1,7 @@
 package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Chat;
-import idatt2106.group3.backend.Model.UserSecurityDetails;
+import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/activities")
@@ -89,5 +89,15 @@ public class ActivityController
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(returnChat, HttpStatus.OK);
+    }
+
+    @PostMapping("/{activity_id}/absences")
+    @PreAuthorize("@activityService.checkIfOrganizerOfActivity(#activityId, principal.userId)")
+    public ResponseEntity<Set<Long>> editAbsence(@PathVariable("activity_id") long activityId, @RequestBody AbsenceDTO absenceDTO) {
+        Set<Long> absentUsersId = activityService.markAbsent(activityId, absenceDTO);
+        if(absentUsersId == null || absentUsersId.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(absentUsersId, HttpStatus.OK);
     }
 }

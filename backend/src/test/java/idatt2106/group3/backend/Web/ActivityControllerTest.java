@@ -6,6 +6,7 @@ import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserSecurityDetails;
+import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import idatt2106.group3.backend.Service.ActivityService;
@@ -28,6 +29,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,11 +54,11 @@ public class ActivityControllerTest {
 
     @BeforeEach
     public void setup(){
-        User user1 = new User("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        User user1 = new User("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), Difficulty.HARD, "test hash", "test salt", 100, "Organizer", 2, null);
         user1 = userRepository.save(user1);
-        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
-        Activity activity1 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
-        Activity activity2 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
+        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, true, null);
+        Activity activity1 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, true, null);
+        Activity activity2 = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, true, null);
         activity2.setOrganizer(user1);
         activity1.setOrganizer(user1);
         activity.setOrganizer(user1);
@@ -80,7 +83,7 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.type", containsStringIgnoringCase("Type")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("A football")))
-                .andExpect(jsonPath("$.difficulty", is("EASY")))
+                .andExpect(jsonPath("$.difficulty", is(Difficulty.EASY.value)))
                 .andExpect(jsonPath("$.city", containsStringIgnoringCase("Trondheim")))
                 .andExpect(jsonPath("$.place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.longitude", is(50.30)))
@@ -103,7 +106,7 @@ public class ActivityControllerTest {
     @Test
     public void createActivity_PostActivity_StatusCreated() throws Exception
     {
-        User user1 = new User("Forename", "Surname", "test123@test.com", LocalDate.of(2005, 1, 1), "test hash", "test salt", 100, 4, "Organizer", 2, null);
+        User user1 = new User("Forename", "Surname", "test123@test.com", LocalDate.of(2005, 1, 1), Difficulty.MEDIUM, "test hash", "test salt", 100, "Organizer", 2, null);
         user1 = userRepository.save(user1);
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.lenient().when(authentication.getPrincipal())
@@ -113,7 +116,7 @@ public class ActivityControllerTest {
         .thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, null);
+        Activity activity = new Activity("Playing", "Type", "Football", "A football", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, true, null);
         String activityJson = objectMapper.writeValueAsString(activity);
 
         this.mockMvc.perform(post("/api/v1/activities")
@@ -124,7 +127,7 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.type", containsStringIgnoringCase("Type")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("A football")))
-                .andExpect(jsonPath("$.difficulty", is("EASY")))
+                .andExpect(jsonPath("$.difficulty", is(Difficulty.EASY.value)))
                 .andExpect(jsonPath("$.city", containsStringIgnoringCase("Trondheim")))
                 .andExpect(jsonPath("$.place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.longitude", is(50.30)))
@@ -139,7 +142,7 @@ public class ActivityControllerTest {
     @Test
     public void editActivity_UpdateActivity_StatusOk() throws Exception
     {
-        Activity activity = new Activity("Title", "Type", "Football and games1", "Two footballs", Difficulty.EASY, "Trondheim", "Dal", 50.30, 50.50, null, 60, false, 10, null);
+        Activity activity = new Activity("Title", "Type", "Football and games1", "Two footballs", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, null, 60, false, 10, true, null);
         String activityJson = objectMapper.writeValueAsString(activity);
 
         long id = activityRepository.findAll().get(2).getActivityId();
@@ -151,7 +154,7 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.type", containsStringIgnoringCase("Type")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football and games1")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("Two footballs")))
-                .andExpect(jsonPath("$.difficulty", is("EASY")))
+                .andExpect(jsonPath("$.difficulty", is(Difficulty.EASY.value)))
                 .andExpect(jsonPath("$.city", containsStringIgnoringCase("Trondheim")))
                 .andExpect(jsonPath("$.place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.longitude", is(50.30)))
@@ -167,7 +170,7 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.type", containsStringIgnoringCase("Type")))
                 .andExpect(jsonPath("$.description", containsStringIgnoringCase("Football and games1")))
                 .andExpect(jsonPath("$.equipment", containsStringIgnoringCase("Two footballs")))
-                .andExpect(jsonPath("$.difficulty", is("EASY")))
+                .andExpect(jsonPath("$.difficulty", is(Difficulty.EASY.value)))
                 .andExpect(jsonPath("$.city", containsStringIgnoringCase("Trondheim")))
                 .andExpect(jsonPath("$.place", containsStringIgnoringCase("Dal")))
                 .andExpect(jsonPath("$.longitude", is(50.30)))
@@ -197,9 +200,23 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.surname", containsStringIgnoringCase("Surname")))
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test@test.com")))
                 .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
-                .andExpect(jsonPath("$.score", is(100)))
-                .andExpect(jsonPath("$.rating", is(4)))
+                .andExpect(jsonPath("$.trainingLevel", is("HARD")))
                 .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")));
         activityService.deleteActivity(activityId);
+    }
+
+    @Test
+    public void markAbsent_ShouldMarkAbsentUsers_StatusOk() throws Exception {
+        long id = activityRepository.findAll().get(0).getActivityId();
+
+        Set<Long> absentUsersId = new HashSet<>();
+        absentUsersId.add(id);
+        AbsenceDTO absenceDTO = new AbsenceDTO(absentUsersId);
+        String absenceJson = objectMapper.writeValueAsString(absenceDTO);
+        this.mockMvc.perform(post("/api/v1/activities/" + id + "/absences")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(absenceJson))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }

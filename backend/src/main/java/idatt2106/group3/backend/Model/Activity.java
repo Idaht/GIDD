@@ -28,7 +28,7 @@ public class Activity {
     private String type;
     private String description;
     private String equipment;
-    private Difficulty difficulty;
+    private int difficulty;
     private String city;
     private String place;
     private double longitude;
@@ -37,6 +37,7 @@ public class Activity {
     private int durationMinutes;
     private boolean isPrivateActivity;
     private int maxParticipants;
+    private boolean markedAbsence;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "activities", fetch = FetchType.EAGER)
@@ -55,7 +56,7 @@ public class Activity {
     @Lob
     private Blob activityPicture;
 
-    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat, int maxParticipants, Blob activityPicture) {
+    public Activity(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat, int maxParticipants, boolean markedAbsence, Blob activityPicture) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -72,10 +73,11 @@ public class Activity {
         this.organizer = organizer;
         this.chat = chat;
         this.maxParticipants = maxParticipants;
+        this.markedAbsence = markedAbsence;
         this.activityPicture = activityPicture;
     }
 
-    public Activity(String title, String type, String description, String equipment, Difficulty difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants, Blob activityPicture) {
+    public Activity(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants, boolean markedAbsence, Blob activityPicture) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -89,6 +91,7 @@ public class Activity {
         this.durationMinutes = durationMinutes;
         this.isPrivateActivity = isPrivateActivity;
         this.maxParticipants = maxParticipants;
+        this.markedAbsence = markedAbsence;
         this.activityPicture = activityPicture;
     }
 
@@ -107,6 +110,7 @@ public class Activity {
         this.isPrivateActivity = activityRegistrationDTO.isPrivateActivity();
         this.activityPicture = activityRegistrationDTO.getActivityPicture();
         this.maxParticipants = activityRegistrationDTO.getMaxParticipants();
+        this.markedAbsence = false;
         this.organizer = organizeUser;
     }
 
@@ -177,11 +181,11 @@ public class Activity {
         this.equipment = equipment;
     }
 
-    public Difficulty getDifficulty() {
+    public int getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(Difficulty difficulty) {
+    public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
     }
 
@@ -257,6 +261,14 @@ public class Activity {
         this.maxParticipants = maxParticipants;
     }
 
+    public boolean isMarkedAbsence() {
+        return markedAbsence;
+    }
+
+    public void setMarkedAbsence(boolean markedAbsence) {
+        this.markedAbsence = markedAbsence;
+    }
+
     @Override
     public String toString()
     {
@@ -275,6 +287,7 @@ public class Activity {
                 ", durationMinutes=" + durationMinutes + '\'' +
                 ", isPrivateActivity=" + isPrivateActivity + '\'' +
                 ", maxParticipants='" + maxParticipants + '\'' +
+                ", markedAbsence='" + markedAbsence + '\'' +
                 ", users=" + users + '\'' +
                 ", organizer=" + organizer + '\'' +
                 ", chat=" + chat + '\'' +

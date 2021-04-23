@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class UserSecurityDetails implements UserDetails {
 
     private String password;
-    private String username;
+    private String email;
     private long userId;
     private List<? extends GrantedAuthority> grantedAuthorities;
     private boolean isAccountNonExpired;
@@ -18,9 +18,9 @@ public class UserSecurityDetails implements UserDetails {
     private boolean isEnabled;
 
     
-    public UserSecurityDetails(String password, String username, long userId, List<? extends GrantedAuthority> grantedAuthorities) {
+    public UserSecurityDetails(String password, String email, long userId, List<? extends GrantedAuthority> grantedAuthorities) {
         this.password = password;
-        this.username = username;
+        this.email = email;
         this.userId = userId;
         this.grantedAuthorities = grantedAuthorities;
         this.isAccountNonExpired = true;
@@ -41,13 +41,13 @@ public class UserSecurityDetails implements UserDetails {
         return password;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String email) {
+        this.email = email;
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     public long getUserId() {

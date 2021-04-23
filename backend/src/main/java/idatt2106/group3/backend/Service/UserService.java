@@ -56,6 +56,7 @@ public class UserService
         createdUser.setSurname(user.getSurname());
         createdUser.setEmail(user.getEmail());
         createdUser.setDateOfBirth(user.getDateOfBirth());
+        createdUser.setTrainingLevel(user.getTrainingLevel());
         createdUser.setHash(passwordEncoder.encode(user.getPassword())); //encodes password on registration
         if(user.getProfilePicture() != null)createdUser.setProfilePicture(user.getProfilePicture().getBytes());    
         createdUser.setRole("ROLE_USER");
@@ -74,6 +75,7 @@ public class UserService
             User user = userOptional.get();
             if(userDTO.getForename() != null) user.setForename(userDTO.getForename());
             if(userDTO.getSurname() != null) user.setSurname(userDTO.getSurname());
+            if(userDTO.getTrainingLevel() != null) user.setTrainingLevel(userDTO.getTrainingLevel());
             if(userDTO.getEmail() != null)user.setEmail(userDTO.getEmail());
             if(userDTO.getProfilePicture() != null)user.setProfilePicture(userDTO.getProfilePicture().getBytes());
             if(userDTO.getProfilePicture().equals("null")) user.setProfilePicture(null);

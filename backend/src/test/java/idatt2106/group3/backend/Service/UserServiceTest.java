@@ -1,6 +1,7 @@
 package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
+import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
@@ -53,12 +54,12 @@ public class UserServiceTest
         user1.setSurname("testSurname");
         user1.setEmail("testMail");
         user1.setDateOfBirth(LocalDate.of(2005, 1, 1));
+        user1.setTrainingLevel(Difficulty.MEDIUM);
         user1.setHash("testHash");
         user1.setSalt("testSalt");
-        user1.setScore(10);
         user1.setRating(4);
         user1.setRole("testRole");
-        user1.setFaults(2);
+        user1.setAbsence(10);
         user1.setActivities(null);
 
         user2.setUserId(1l);
@@ -98,8 +99,6 @@ public class UserServiceTest
         assertThat(user.getSurname()).isEqualTo("testSurname");
         assertThat(user.getEmail()).isEqualTo("testMail");
         assertThat(user.getDateOfBirth()).isEqualTo(LocalDate.of(2005, 1, 1));
-        assertThat(user.getScore()).isEqualTo(10);
-        assertThat(user.getRating()).isEqualTo(4);
     }
 
     @Test
@@ -113,8 +112,8 @@ public class UserServiceTest
     @Test
     public void createUser_userGetsAdded_ReturnsTrue()
     {
-        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", LocalDate.of(2005, 1, 1), "hash", null);
-        User returnUser = new User("test","test", "213", LocalDate.of(2005, 1, 1), "hash","salt",1,1,",",1, null);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", LocalDate.of(2005, 1, 1), Difficulty.EASY, "hash", null);
+        User returnUser = new User("test","test", "213", LocalDate.of(2005, 1, 1), Difficulty.EASY, "hash","salt",1,",",1, null);
         returnUser.setUserId(1);
         Mockito.lenient()
                 .when(userRepository.save(any()))
@@ -127,12 +126,13 @@ public class UserServiceTest
     @Test
     public void editUser_updatesUser_ReturnsUpdatedUser() throws SerialException, SQLException
     {
-        UserEditDTO userEditDTO = new UserEditDTO("Forename", "surname", "email", LocalDate.now(), "newHash", "oldHash", "null");
+        UserEditDTO userEditDTO = new UserEditDTO("Forename", "surname", "email", LocalDate.now(), Difficulty.MEDIUM,"newHash", "oldHash", "null");
         User tempUser = new User();
         tempUser.setForename(userEditDTO.getForename());
         tempUser.setSurname(userEditDTO.getSurname());
         tempUser.setEmail(userEditDTO.getEmail());
         tempUser.setDateOfBirth(userEditDTO.getDateOfBirth());
+        tempUser.setTrainingLevel(userEditDTO.getTrainingLevel());
         tempUser.setHash(userEditDTO.getOldPassword());
         tempUser.setProfilePicture(userEditDTO.getProfilePicture().getBytes());
 
@@ -147,6 +147,7 @@ public class UserServiceTest
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
         assertThat(user.getDateOfBirth()).isEqualTo(tempUser.getDateOfBirth());
+        assertThat(user.getTrainingLevel()).isEqualTo(tempUser.getTrainingLevel());
         assertThat(user.getProfilePicture().getBytes()).isEqualTo(tempUser.getProfilePicture());
     }
 

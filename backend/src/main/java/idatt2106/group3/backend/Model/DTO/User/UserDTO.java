@@ -1,6 +1,6 @@
 package idatt2106.group3.backend.Model.DTO.User;
 
-import java.sql.Blob;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 import idatt2106.group3.backend.Model.User;
@@ -13,10 +13,10 @@ public class UserDTO extends UserSuperclassDTO {
     private int score;
     private int rating;
     private String role;
-    private Blob profilePicture;
+    private String profilePicture;
 
 
-    public UserDTO(long userId, String forename, String surname, String email, LocalDate dateOfBirth, int score, int rating, String role, Blob profilePicture) {
+    public UserDTO(long userId, String forename, String surname, String email, LocalDate dateOfBirth, int score, int rating, String role, String profilePicture) {
         super(forename, surname, email, dateOfBirth);
         this.userId = userId;
         this.score = score;
@@ -35,7 +35,7 @@ public class UserDTO extends UserSuperclassDTO {
         this.score = user.getScore();
         this.rating = user.getRating();
         this.role = user.getRole();
-        this.profilePicture = user.getProfilePicture();
+        if(user.getProfilePicture()!= null)this.profilePicture = new String(user.getProfilePicture(), StandardCharsets.UTF_8);
     }
 
     public long getUserId() {
@@ -70,11 +70,11 @@ public class UserDTO extends UserSuperclassDTO {
         this.role = role;
     }
 
-    public Blob getProfilePicture() {
+    public String getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(Blob profilePicture) {
+    public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
 

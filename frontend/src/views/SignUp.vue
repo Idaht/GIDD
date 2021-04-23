@@ -96,29 +96,11 @@
       </div>
     </div>
 
-    <!-- TODO: Fiks opplastning til profilbilde -->
-    <div id="page-three" v-else-if="stage === 3">
-      <h2>Last opp profilbilde</h2>
-      <div class="sign-up-form-container-picture">
-        <img
-          id="profile-picture"
-          src="../../img/hamster-pfp.jpg"
-          alt="profile-picture"
-        />
-        <form @submit.prevent="handleSubmit">
-          <div class="picture-upload-submit">
-            <input
-              id="picture-input"
-              type="file"
-              @change="uploadFile"
-              multiple
-            />
-          </div>
-          <div class="picture-upload-submit">
-            <span>Last opp</span>
-          </div>
-        </form>
-      </div>
+    <div id="pageThree" v-else-if="stage === 3">
+      <ImageSelector 
+      labelName="Select your profile picture" 
+      @imageSelected="onSelectedImage"
+      @removeImage="onRemoveImage"/>
     </div>
 
     <div id="page-four" v-else-if="stage === 4">
@@ -186,9 +168,11 @@ import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import SignUpUser from "../interfaces/User/SignUpUser.interface";
 import { useStore } from "../store";
+import ImageSelector from "@/components/ImageSelector.vue";
 
 export default defineComponent({
   name: "SignUpScroll",
+  components: {ImageSelector},
   setup() {
     //overall
     const router = useRouter();
@@ -353,23 +337,14 @@ export default defineComponent({
     ]);
 
     //methods for stage three
-    //TODO: upload fungerer ikke
-    let files = ref();
-    const uploadFile = ref((event: any) => {
-      files = event.target.files;
-    });
+    const onSelectedImage = (imageData: string) => {
+      user.profilePicture = imageData;
+    }
 
-    const handleSubmit = ref(() => {
-      const formData = new FormData();
-      for (const i of Object.keys(files.value)) {
-        formData.append("files", files.value[i]);
-      }
-      axios
-        .post("http://localhost:4000/api/file-upload", formData, {})
-        .then((res) => {
-          console.log(res);
-        });
-    });
+    const onRemoveImage = () => {
+      delete user.profilePicture;
+    }
+
 
     //methods for stage four
     const termsAndConditions = ref(
@@ -394,7 +369,8 @@ export default defineComponent({
       password: "",
       forename: "",
       surname: "",
-      birthdate: birthdate.value,
+      // Commented out because backend cant handle date
+      // dateOfBirth: birthdate.value, 
     } as SignUpUser);
 
     const saveUser = async (): Promise<void> => {
@@ -422,10 +398,10 @@ export default defineComponent({
       //stage two
       passwordFeedback,
       repeatPassword,
+      onRemoveImage,
 
       //stage three
-      uploadFile,
-      handleSubmit,
+      onSelectedImage,
 
       //stage four
       termsAndConditions,

@@ -90,7 +90,7 @@ public class UserControllerTest
     public void createUser_PostUserGetResponse_StatusCreated() throws Exception
     {
 
-        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash",null);
+        UserWithPasswordDTO userPasswordDTO = new UserWithPasswordDTO("Forename", "Surname", "test@test.com", LocalDate.of(2005, 1, 1), "test hash", "test");
 
         String userJson = objectMapper.writeValueAsString(userPasswordDTO);
 
@@ -108,7 +108,7 @@ public class UserControllerTest
     @Test
     public void editUser_UpdateUserGetResponse_StatusOk() throws Exception
     {
-        UserEditDTO userEditDTO = new UserEditDTO("Forename1", "Surname1", "test1@test1.com", null, "test hash", "test hash", null);
+        UserEditDTO userEditDTO = new UserEditDTO("Forename1", "Surname1", "test1@test1.com", null, "test hash", "test hash", "null");
         String userJson = objectMapper.writeValueAsString(userEditDTO);
 
         long id = userRepository.findAll().get(1).getUserId();

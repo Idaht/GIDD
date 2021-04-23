@@ -3,10 +3,12 @@
     <!--Add TheHeader component -->
     <h1>Instillinger</h1>
     <img src="" alt="Profilbilde" />
-    <!-- Profile pic here -->
-    <button @click="changeProfilePic" alt="Knapp for å endre profilbilde">
-      Endre profilbilde
-    </button>
+    <ImageSelector
+      labelName=""
+      @imageSelected="onSelectedImage"
+      @removeImage="onRemoveImage"
+    />
+
     <p>Endre fornavn</p>
     <input v-model="user.forename" type="name" placeholder="Nytt fornavn" />
     <p>Endre etternavn</p>
@@ -56,9 +58,11 @@ import axios from "@/axiosConfig";
 import { useStore } from "@/store";
 import User from "@/interfaces/User/User.interface";
 import EditUser from "@/interfaces/User/EditUser.interface";
+import ImageSelector from "@/components/ImageSelector.vue";
 
 export default defineComponent({
   name: "EditProfile",
+  components: { ImageSelector },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -70,6 +74,14 @@ export default defineComponent({
         user.value.forename.trim() !== "" && user.value.surname.trim() !== ""
       );
     });
+
+    const onSelectedImage = (image: string) => {
+      userDTO.profilePicture = image;
+    };
+
+    const onRemoveImage = () => {
+      delete userDTO.profilePicture;
+    };
 
     //Password
     const password = ref("");
@@ -132,22 +144,27 @@ export default defineComponent({
         isValidName.value
       );
     });
+
+    const userDTO: EditUser = {
+      userId: user.value.userId,
+      email: user.value.email,
+      forename: user.value.forename,
+      surname: user.value.surname,
+    };
+
     const saveProfileChanges = async (): Promise<void> => {
       oldPasswordWasCorrect.value = true;
       if (isValidForm.value) {
         try {
-          //TODO change to redirect to something went wrong site
-          //TODO handle bug where _ctx.user is undefined
-          const userDTO: EditUser = {
-            userId: user.value.userId,
-            email: user.value.email,
-            forename: user.value.forename,
-            surname: user.value.surname,
-          };
+          //TODO: change to redirect to something went wrong site
+          //TODO: handle bug where _ctx.user is undefined
+
           if (passwordIsNotEmpty.value) {
             userDTO.newPassword = password.value;
             userDTO.oldPassword = oldPassword.value;
           }
+          if (!userDTO.profilePicture) userDTO.profilePicture = "null";
+          
           const response = await axios.post(
             `/users/${userDTO.userId}`,
             userDTO
@@ -191,6 +208,8 @@ export default defineComponent({
       passwordIsValid,
       passwordFeedback,
       passwordIsNotEmpty,
+      onSelectedImage,
+      onRemoveImage,
       saveProfileChanges,
       makePasswordFeedback,
       emailIsNotEmpty,

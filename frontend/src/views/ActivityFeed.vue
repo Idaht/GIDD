@@ -27,7 +27,7 @@
       </div>
     </div>
     <div id="activities">
-      <li v-for="activity in activitiesTest" :key="activity.id">
+      <li v-for="activity in activities" :key="activity.activityId">
         <ActivityFeedItem :activityData="activity" />
       </li>
     </div>

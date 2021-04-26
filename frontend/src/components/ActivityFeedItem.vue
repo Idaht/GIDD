@@ -1,7 +1,7 @@
 <template>
   <div id="activity" @click="activityClicked">
     <div id="map">
-      <img id="map-img" src="../../img/map.png" alt="Map" />
+      <img id="map-img" :src="'https://maps.googleapis.com/maps/api/staticmap?center=' + activityData.latitude + ',' + activityData.longitude + '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' + activityData.latitude + ',' + activityData.longitude + '&key=AIzaSyAlIExoMNAdhquWRqMO4-yCuZZOn7OSJIc'" alt="Map" />
     </div>
     <div>
       <h3>{{ activityData.title }}</h3>

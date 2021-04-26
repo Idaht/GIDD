@@ -27,7 +27,7 @@ public class SourceData {
         
         try(BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/config.properties"))) {
             dataSourceBuilder.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            dataSourceBuilder.setUrl("jdbc:mysql://mysql.stud.iie.ntnu.no:3306/diderikk");
+            dataSourceBuilder.setUrl(reader.readLine());
             dataSourceBuilder.setUsername(reader.readLine());
             dataSourceBuilder.setPassword(reader.readLine());
 

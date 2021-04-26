@@ -8,6 +8,7 @@ import idatt2106.group3.backend.Model.UserSecurityDetails;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
@@ -172,6 +173,22 @@ public class ActivityService
             activity.setMarkedAbsence(true);
 
             return absentUsersId;
+        }
+        return new HashSet<>();
+    }
+
+    public Set<UserDTO> getUsers(long activityId)
+    {
+        LOGGER.info("getUsers(long activityId) called with activityId: {}", activityId); 
+        Optional<Activity> activityOptional = activityRepository.findById(activityId);
+        if(activityOptional.isPresent()) {
+            Activity activity = activityOptional.get();
+            Set<User> users = activity.getUsers();
+            Set<UserDTO> userDTOs = new HashSet<>();
+            for(User user : users) {
+                userDTOs.add(new UserDTO(user));
+            }
+            return userDTOs;
         }
         return new HashSet<>();
     }

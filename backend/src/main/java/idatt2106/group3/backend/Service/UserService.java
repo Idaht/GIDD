@@ -20,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -180,4 +181,12 @@ public class UserService
         return activityRepository.findFutureUserActivities(userId);
     }
 
+    public List<Activity> findOrganizedActivities(long userId){
+        LOGGER.info("findOrganizedActivities(long userId) called with userId: {}", userId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()) {
+            return new ArrayList<>(userOptional.get().getOrganizedActivities());
+        }
+        return new ArrayList<>();
+    }
 }

@@ -66,6 +66,7 @@
 import { computed, defineComponent, onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
+import { store } from "../store";
 
 export default defineComponent({
   name: "ActivityInformation",
@@ -84,12 +85,26 @@ export default defineComponent({
       return signedUp.value;
     });
 
-    const signUpActivity = (): void => {
-      //"Er du sikker?" vindu før påmelding?
+    const signUpActivity = async (): Promise<void> => {
       signedUp.value = true;
       numberOfParticipants.value += 1;
-      //TODO connect to backend og få opp bekreftelse
+      try{ 
+        //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
+      await axios.post(`/activities/${props.id}/users/${store.getters.user.userId}`);
+
+      } catch(error) {
+       router.push("/error");
+       }
     };
+
+    /*TODO: fiks denne
+    const getOrganizerName = async():Promise<void> => {
+      try{
+          return axios.get('activities/organizerId'); 
+          } catch(error) {
+            router.push("/error")
+          }
+     }*/
 
     const signOffActivity = (): void => {
       signedUp.value = false;

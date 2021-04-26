@@ -13,6 +13,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
+import { useRouter } from "vue-router";
 import IActivity from "../interfaces/IActivity.interface";
 
 export default defineComponent({
@@ -26,6 +27,7 @@ export default defineComponent({
   },
 
   setup(props) {
+    const router = useRouter();
     const location = computed((): string => {
       return (
         props.activityData.place +
@@ -36,6 +38,7 @@ export default defineComponent({
 
     const activityClicked = (): void => {
       //TODO: Route til siden som viser aktiviteten
+      router.push("/activity/" + props.activityData.activityId);
       console.log("Activity clicked: " + props.activityData.activityId);
     };
 

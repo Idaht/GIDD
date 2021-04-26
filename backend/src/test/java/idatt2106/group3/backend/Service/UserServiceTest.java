@@ -6,6 +6,7 @@ import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
+import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,10 +21,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +47,9 @@ public class UserServiceTest
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private ActivityRepository activityRepository;
 
     @BeforeEach
     public void setup()
@@ -174,5 +180,16 @@ public class UserServiceTest
     {
         Set<Activity> activities = userService.getUserActivities(0l);
         assertThat(activities).isEmpty();
+    }
+
+    @Test
+    public void getFutureActivities_UserHasNoActivities_ContainsActivity() {
+        Mockito.lenient()
+        .when(activityRepository.findFutureUserActivities(anyLong()))
+        .thenReturn(List.of(new Activity("title", "type", "description", "equipment", Difficulty.EASY.value, "city", "place", 1.2, 1.2, LocalDateTime.now(), 60, false, 20, false, null)));
+
+        List<Activity> activities = userService.findFutureActivities(1L);
+        assertThat(activities).hasSize(1);
+        assertThat(activities.get(0)).isInstanceOf(Activity.class);
     }
 }

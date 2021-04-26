@@ -175,5 +175,9 @@ public class UserService
         return false;
     }
 
+    public List<Activity> findFutureActivities(long userId){
+        LOGGER.info("findFutureActivities(long userId) called with userId: {}", userId);
+        return activityRepository.findFutureUserActivities(userId);
+    }
 
 }

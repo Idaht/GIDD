@@ -15,7 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -54,9 +53,9 @@ public class Activity {
     private Chat chat;
 
     @Lob
-    private Blob activityPicture;
+    private byte[] activityPicture;
 
-    public Activity(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat, int maxParticipants, boolean markedAbsence, Blob activityPicture) {
+    public Activity(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, Set<User> users, User organizer, Chat chat, int maxParticipants, boolean markedAbsence, byte[] activityPicture) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -77,7 +76,7 @@ public class Activity {
         this.activityPicture = activityPicture;
     }
 
-    public Activity(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants, boolean markedAbsence, Blob activityPicture) {
+    public Activity(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants, boolean markedAbsence, byte[] activityPicture) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -108,7 +107,7 @@ public class Activity {
         this.startTime = activityRegistrationDTO.getStartTime();
         this.durationMinutes = activityRegistrationDTO.getDurationMinutes();
         this.isPrivateActivity = activityRegistrationDTO.isPrivateActivity();
-        this.activityPicture = activityRegistrationDTO.getActivityPicture();
+        if(activityRegistrationDTO.getActivityPicture() != null)this.activityPicture = activityRegistrationDTO.getActivityPicture().getBytes();
         this.maxParticipants = activityRegistrationDTO.getMaxParticipants();
         this.markedAbsence = false;
         this.organizer = organizeUser;
@@ -245,11 +244,11 @@ public class Activity {
         isPrivateActivity = privateActivity;
     }
 
-    public Blob getActivityPicture() {
+    public byte[] getActivityPicture() {
         return activityPicture;
     }
 
-    public void setActivityPicture(Blob activityPicture) {
+    public void setActivityPicture(byte[] activityPicture) {
         this.activityPicture = activityPicture;
     }
 

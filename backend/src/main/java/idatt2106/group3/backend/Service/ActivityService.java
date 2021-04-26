@@ -52,8 +52,11 @@ public class ActivityService
     public ActivityDTO createActivity(ActivityRegistrationDTO activity)
     {
         LOGGER.info("createActivity(Activity activity) called. Activity Title: {}", activity.getTitle());
+        // To get currently logged in user
         UserSecurityDetails creatorUser = (UserSecurityDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // Finds this user
         Optional<User> optionalUser = userRepository.findById(creatorUser.getUserId());
+        // Saves User with organizer, and returns a ActivityDTO object
         if(optionalUser.isPresent()) return new ActivityDTO(activityRepository.save(new Activity(activity, optionalUser.get())));
 
         return null;

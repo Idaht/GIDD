@@ -14,6 +14,11 @@ instance.defaults.validateStatus = (status: number) => {
 
 //Telling this axios instance to log us out if we cannot connect, get 401 Unauthorized or 403 Forbidden error for every response it receives
 instance.interceptors.response.use(undefined, (error) => {
+  //Need this to have local errorhandling for codes that are not 401, 403 or somthing the system cannot handle
+  const errorToOutside: { shouldBeThrown: boolean; value: any } = {
+    shouldBeThrown: false,
+    value: "",
+  };
   //Need try-catch in case the client cannot connect to the server, since then error.response will be undefined and throw an error
   try {
     if (error) {
@@ -23,14 +28,19 @@ instance.interceptors.response.use(undefined, (error) => {
         !request._retry
       ) {
         request._retry = true;
-        store.dispatch("logout", BackendStatus.ERROR);
+        store.dispatch("logout");
         return router.replace("/log-in");
       }
+      errorToOutside.shouldBeThrown = true;
+      errorToOutside.value = error;
     }
   } catch (err) {
     //Logging user out
     store.dispatch("logout");
     return router.replace("/log-in");
+  }
+  if (errorToOutside.shouldBeThrown) {
+    throw errorToOutside.value;
   }
 });
 

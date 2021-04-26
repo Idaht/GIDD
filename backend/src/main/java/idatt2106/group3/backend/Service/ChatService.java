@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.processing.Messager;
+import java.lang.StackWalker.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,8 +48,14 @@ public class ChatService
 
     public Chat updateChat(long chatId, Chat chat) {
         LOGGER.info("updateChat(long chatId, Chat chat) called with chatId: {}", chatId); 
-        chat.setChatId(chatId);
-        return chatRepository.save(chat);
+        Optional<Chat> optionalChat = chatRepository.findById(chatId);
+        if(optionalChat.isPresent()){
+            Chat tempChat = optionalChat.get();
+            if(chat.getActivity() != null) tempChat.setActivity(chat.getActivity());
+            if(chat.getMessages() != null) tempChat.setMessages(chat.getMessages());
+            return chatRepository.save(tempChat);
+        }
+        return null;
     }
 
     public Set<Message> getMessages(long chatId) {

@@ -1,21 +1,21 @@
 <template>
-    <div id="map" ref="mapDivRef">
+    <div id="map">
     </div>
 </template>
 
 <script lang="ts">
-    
+    /*global google*/ //This line of code MUST be here, otherwise Eslint will have a stroke
     //This global interface is needed to make the initialization of the map possible
     declare global {
         interface Window {
             initMap: any;
         }
     }
-
-    import { defineComponent, onMounted, PropType, ref } from "vue";
+    import { defineComponent, watch } from "vue";
     import IActivity from "@/interfaces/IActivity.interface";
     import ICoordinates from "@/interfaces/ICoordinates.interface";
     import data from "@/../config.json";
+    import { Loader } from "@googlemaps/js-api-loader"
 
     export default defineComponent({
         name: "Map",
@@ -35,59 +35,56 @@
         },
 
         setup(props) {
+            let map : google.maps.Map;
 
-            const map = ref();
-            const mapDivRef = ref();
-
-            onMounted(() => {
-                const keyAPI = data.googleAPIKey; //Gets the API key from config.json file
-                const sc = document.getElementById("123456");
-                if (sc instanceof HTMLElement)
-                {
-                    document.head.removeChild(sc);
-                }
-                const script = document.createElement("script");
-                script.id = "123456";
-                script.src = `https://maps.googleapis.com/maps/api/js?key=${keyAPI}&callback=initMap`;
-                script.async = true;
-                document.head.appendChild(script);
-            });
-
-            window.initMap = () : void => {
-                map.value = new window.google.maps.Map(mapDivRef.value as HTMLElement, {
+            function initMap() : google.maps.Map {
+                map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
                     center: { lat: props.center.lat, lng: props.center.lng },
                     zoom: props.zoom || 14,
                     mapTypeId: props.mapTypeId || "roadmap",
                     disableDefaultUI: props.disableDefaultUI || true,
                 });
-
-                const infoWindow = new window.google.maps.InfoWindow();
-                console.log(props.activityData);
-                console.log(JSON.stringify(props.activityData));            
-                
-                props.activityData.forEach(element => {
-                    const activity = element as IActivity;
-                    console.log("KAke: " + activity.city);
-                    let marker = new window.google.maps.Marker({
-                        position: { lat: activity.latitude, lng: activity.longitude },
-                        title:"Hello World!"
-                    });
-                    
-                    marker.setMap(map.value);
-                    marker.setTitle(activity.description + " | " + activity.activityId);
-                    const contentString = "<div id=\"activity\">" +
-                        "<img title=\"Bilde av aktivitet\" src=\"\"/>" +
-                        "<div><h3>" + activity.description + "</h3><h4>" + activity.startTime + " | " + activity.place + ", " + activity.city + "</h4></div></div>";
-                    marker.addListener("click", () => {
-                        infoWindow.close();
-                        infoWindow.setContent(contentString);
-                        infoWindow.open(marker.getMap(), marker);
-                    });
-                });
+                return map;
             };
 
+            watch(() => props.activityData, (newValue, oldValue) => {
+                if (newValue != oldValue)
+                {
+                    const infoWindow = new window.google.maps.InfoWindow();
+
+                    props.activityData.forEach(element => {
+                        const activity = element as IActivity;
+                        let marker = new window.google.maps.Marker({
+                            position: { lat: activity.latitude, lng: activity.longitude },
+                            title:"Hello World!"
+                        });
+                        
+                        marker.setMap(map);
+                        marker.setTitle(activity.description + " | " + activity.activityId);
+                        const contentString = "<div id=\"activity\">" +
+                            "<div><h3>" + activity.description + "</h3><h4>" + activity.startTime + " | " + activity.place + ", " + activity.city + "</h4></div></div>";
+                        marker.addListener("click", () => {
+                            infoWindow.close();
+                            infoWindow.setContent(contentString);
+                            infoWindow.open(marker.getMap(), marker);
+                        });
+                    });
+                }
+            });
+
+            const loader = new Loader({
+                apiKey: data.googleAPIKey,
+                version: "weekly",            
+            });
+
+            loader.load().then(() => {
+                if (map == null)
+                {
+                    map = initMap();
+                }
+            });
+
             return {
-                mapDivRef,
             }
         },
     });

@@ -33,8 +33,12 @@
             <div id="birthday-year" class="birthday-form">
               <h5>År</h5>
               <select class="dropdown" v-model="selectedYear">
-                <option hidden disabled value>Velg år</option>
-                <option v-for="(year, index) in availableYears" :key="index">
+                <option value="0" hidden disabled>Velg år</option>
+                <option
+                  v-for="(year, index) in availableYears"
+                  :value="year"
+                  :key="index"
+                >
                   {{ year }}
                 </option>
               </select>
@@ -42,10 +46,12 @@
             <div id="birthday-month" class="birthday-form">
               <h5>Måned</h5>
               <select name="month" v-model="selectedMonth">
-                <option value="month" selected disabled hidden>
-                  Velg måned
-                </option>
-                <option v-for="(month, index) in months" :key="month + index">
+                <option value="0" selected disabled hidden>Velg måned</option>
+                <option
+                  v-for="(month, index) in availableMonths"
+                  :value="index + 1"
+                  :key="index"
+                >
                   {{ month.name }}
                 </option>
               </select>
@@ -53,13 +59,29 @@
             <div id="birthday-day" class="birthday-form">
               <h5>Dag</h5>
               <select name="day" v-model="selectedDay">
-                <option value="day" selected disabled hidden>Velg dato</option>
-                <option v-for="index in daysInCurrentMonth" :key="index">
+                <option value="0" selected disabled hidden>Velg dato</option>
+                <option
+                  v-for="index in availableDays"
+                  :key="index"
+                  :value="index"
+                >
                   {{ index }}
                 </option>
               </select>
             </div>
           </div>
+        </div>
+        <!-- Maybe change name to since its not a birthday form -->
+        <div class="birthday-form">
+          <h5>Treningsnivå</h5>
+          <label v-for="(trainingLevel, index) in trainingLevels" :key="index">
+            <input
+              type="radio"
+              :value="trainingLevel.value"
+              :checked="trainingLevel.value === selectedTrainingLevel"
+              @change="changeTrainingLevel(trainingLevel.value)"
+            />{{ trainingLevel.title }}
+          </label>
         </div>
       </div>
       <div id="conditions-container">
@@ -71,6 +93,7 @@
           <li v-if="!isBirthDateValid">
             ! Fødselsdato må inneholde år, måned og dato
           </li>
+          <li v-if="!isTrainigLevelValid">! Treningsnivå må være valgt</li>
         </ul>
       </div>
     </div>
@@ -97,27 +120,37 @@
     </div>
 
     <div id="pageThree" v-else-if="stage === 3">
-      <ImageSelector 
-      labelName="Select your profile picture" 
-      @imageSelected="onSelectedImage"
-      @removeImage="onRemoveImage"/>
+      <ImageSelector
+        labelName="Select your profile picture"
+        @imageSelected="onSelectedImage"
+        @removeImage="onRemoveImage"
+      />
     </div>
 
     <div id="page-four" v-else-if="stage === 4">
       <h2>Godta betingelser</h2>
       <div class="terms-and-conditions-container">
-        {{ termsAndConditions }}
-        {{ termsAndConditions }}
+        Dette er terms and conditions. Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+        in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+        qui officia deserunt mollit anim id est laborum.
       </div>
-      <!-- TODO: Deaktiver "registrer"-knappen frem til boksen er krysset av -->
-      <input type="checkbox" name="checkbox" value="check" id="agree" /> Jeg
-      godtar brukervilkårene
+      <input
+        type="checkbox"
+        name="checkbox"
+        value="check"
+        id="agree"
+        v-model="termsAndConditions"
+      />
+      Jeg godtar brukervilkårene
     </div>
 
     <div id="wrong" v-else>
       <h1>Something went wrong</h1>
     </div>
-
     <div id="navigation">
       <button
         @click="nextPage"
@@ -127,76 +160,69 @@
         {{ nextButtonNames }}
       </button>
 
-      <div id="dots-container">
-        <button
-          @onclick="onClickDot(1)"
-          class="completion-dot"
-          id="betch"
-          :disabled="false"
-        ></button>
-        <button
-          @onclick="onClickDot(2)"
-          class="completion-dot"
-          :disabled="true"
-        ></button>
-        <button
-          @onclick="onClickDot(3)"
-          class="completion-dot"
-          :disabled="true"
-        ></button>
-        <button
-          @onclick="onClickDot(4)"
-          class="completion-dot"
-          :disabled="true"
-        ></button>
-      </div>
+      <Page-Dots
+        :maxStageAllowed="maxStageAllowed"
+        :numberOfButtons="4"
+        :currentStage="stage"
+        @changeStage="changeStage($event)"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  computed,
-  Ref,
-  ref,
-  watchEffect,
-  reactive,
-} from "vue";
+import { defineComponent, computed, Ref, ref, reactive } from "vue";
 import Month from "../interfaces/Month.interface";
 import { useRouter } from "vue-router";
-import axios from "../axiosConfig";
+import { useStore } from "@/store";
 import SignUpUser from "../interfaces/User/SignUpUser.interface";
-import { useStore } from "../store";
 import ImageSelector from "@/components/ImageSelector.vue";
+import PageDots from "../components/PageDots.vue";
+import { TrainingLevel } from "@/enums/TrainingLevel.enum";
 
 export default defineComponent({
-  name: "SignUpScroll",
-  components: {ImageSelector},
+  name: "SignUp",
+  components: {
+    PageDots,
+    ImageSelector,
+  },
   setup() {
     //overall
     const router = useRouter();
+    const store = useStore();
     const stage = ref(1);
-    const termsChecked = ref(true);
-    const disableDotTwo = ref(true);
-    const disableDotThree = ref(true);
-    const disableDotFour = ref(true);
 
+    /**
+     * Gets name of back button based on the stage we're
+     */
     const buttonBackNames = computed(() => {
       if (stage.value === 1) return "Avbryt";
       return "Tilbake";
     });
 
+    /**
+     * Gets name of next button based on the stage we're
+     */
     const nextButtonNames = computed(() => {
       if (stage.value === 4) {
         return "Registrer";
       } else return "Neste";
     });
 
+    /**
+     * Finds out if we're going to the disable the next-button
+     */
     const disableNextButton = computed(() => {
-      return disableNextButtonStageOne.value || disableNextButtonStageTwo.value;
+      return (
+        disableNextButtonStageOne.value ||
+        disableNextButtonStageTwo.value ||
+        disableNextButtonStageFour.value
+      );
     });
 
+    /**
+     * Decides what action happens when pressing the next button, based on the current stage
+     */
     const nextPage = () => {
       if (stage.value < 4) {
         stage.value++;
@@ -205,6 +231,9 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Decides what action happens when pressing the back-button, based on the current stage
+     */
     const prevPage = () => {
       if (stage.value > 1) {
         stage.value--;
@@ -213,41 +242,25 @@ export default defineComponent({
       }
     };
 
-    const onClickDot = (dotValue: number) => {
-      stage.value = dotValue;
-    };
-
-    //TODO:fungerer ikke enda, noe for sprint 2?
-    const disableDots = watchEffect((): void => {
-      if (stage.value === 1) {
-        disableDotTwo.value = true;
-        disableDotThree.value = true;
-        disableDotFour.value = true;
-      } else if (stage.value === 2) {
-        disableDotTwo.value = false;
-        disableDotThree.value = true;
-        disableDotFour.value = true;
-      } else if (stage.value === 3) {
-        disableDotTwo.value = false;
-        disableDotThree.value = false;
-        disableDotFour.value = true;
-      } else if (stage.value === 4) {
-        disableDotTwo.value = false;
-        disableDotThree.value = false;
-        disableDotFour.value = false;
-      }
-    });
-
     //Methods for stage one
-    const selectedYear = ref();
-    const selectedMonth = ref("");
-    const selectedDay = ref();
-    const currentYear = new Date().getFullYear();
+    const selectedYear = ref(0);
+    const selectedMonth = ref(0);
+    const selectedDay = ref(0);
+    const currentDate = new Date();
+    const yearOfLowestAge = computed(() => currentDate.getFullYear() - 16);
     const limitForLowerYear = 120;
 
+    /**
+     * Returns an array of the years to be displayed, sorted from nearest to furthest away
+     */
     const availableYears = computed(() => {
       const years = [];
-      for (let i = currentYear - limitForLowerYear; i < currentYear; i++) {
+      for (
+        let i = yearOfLowestAge.value - limitForLowerYear;
+        //Has to be <= to allow the yearOfLowestAge to be able to equal selectedYear, so that we can correctly calculate the correct age limit
+        i <= yearOfLowestAge.value;
+        i++
+      ) {
         years.push(i);
       }
       return years.reverse();
@@ -261,69 +274,13 @@ export default defineComponent({
       );
     });
 
-    const daysInCurrentMonth = computed(() => {
-      if (selectedMonth.value === "") {
-        return 0;
-      }
-      //else if(selectedMonth.value === "Februar" && isLeapYear) return 29;
-      else
-        return months.value.find((month) => month.name === selectedMonth.value)
-          ?.numberOfDays;
-    });
-
-    const isEmailValid = computed(() => {
-      return user.email.includes("@") && user.email.includes(".");
-    });
-
-    const isNameValid = computed(() => {
-      return user.forename.trim() !== "" && user.surname.trim() !== "";
-    });
-
-    const isBirthDateValid = computed(() => {
-      return (
-        selectedYear.value > 0 &&
-        selectedMonth.value > "" &&
-        selectedDay.value > 0
-      );
-    });
-
-    const disableNextButtonStageOne = computed(() => {
-      return (
-        stage.value === 1 &&
-        (!isEmailValid.value || !isNameValid.value || !isBirthDateValid.value)
-      );
-    });
-
-    //methods for stage two
-    const repeatPassword = ref("");
-
-    const isPasswordSecure = computed((): boolean => {
-      return user.password.length >= 8;
-    });
-
-    const doesPasswordsMatch = computed((): boolean => {
-      return user.password === repeatPassword.value;
-    });
-
-    const passwordFeedback = computed(() => {
-      if (!isPasswordSecure.value) {
-        return "Passordet må være minst 8 tegn";
-      } else if (!doesPasswordsMatch.value) {
-        return "Passordene er ikke like";
-      }
-      return "";
-    });
-
-    const disableNextButtonStageTwo = computed((): boolean => {
-      return (
-        stage.value === 2 &&
-        (!doesPasswordsMatch.value || !isPasswordSecure.value)
-      );
+    const daysInFebruary = computed(() => {
+      return isLeapYear.value ? 29 : 28;
     });
 
     const months: Ref<Month[]> = ref([
       { name: "Januar", numberOfDays: 31 },
-      { name: "Februar", numberOfDays: 29 },
+      { name: "Februar", numberOfDays: daysInFebruary },
       { name: "Mars", numberOfDays: 31 },
       { name: "April", numberOfDays: 30 },
       { name: "Mai", numberOfDays: 31 },
@@ -336,31 +293,199 @@ export default defineComponent({
       { name: "Desember", numberOfDays: 31 },
     ]);
 
+    const numberOfAvailableMonths = computed(() => {
+      return selectedYear.value === yearOfLowestAge.value
+        ? currentDate.getMonth() + 1
+        : 12;
+    });
+
+    /**
+     * Returns an array of the months available to be displayed, based on the numberOfAvailableMonths variable
+     */
+    const availableMonths = computed(() => {
+      return numberOfAvailableMonths.value === 12
+        ? months.value
+        : months.value.slice(0, numberOfAvailableMonths.value);
+    });
+
+    /**
+     * Returns the number of available days in the current year and month, with the nearest day possible being 16 years ago
+     */
+    const availableDays = computed(() => {
+      //If the defaultvalue is selected we exit immediatly
+      if (selectedMonth.value === 0) return;
+      //Have to add - 1 since our dropdownlist uses 1-12 for months and 0 for default, but JS date uses 0-11
+      return selectedMonth.value - 1 === currentDate.getMonth() &&
+        months.value[selectedMonth.value - 1].numberOfDays >
+          currentDate.getDate() &&
+        selectedYear.value === yearOfLowestAge.value
+        ? currentDate.getDate()
+        : months.value[selectedMonth.value - 1].numberOfDays;
+    });
+
+    /**
+     * Email is valid if it includes "@" and "."
+     */
+    const isEmailValid = computed(() => {
+      return user.email.includes("@") && user.email.includes(".");
+    });
+
+    /**
+     * Name is valid if forename and surname contains anything else than spaces
+     */
+    const isNameValid = computed(() => {
+      return user.forename.trim() !== "" && user.surname.trim() !== "";
+    });
+
+    /**
+     * Birth date is valid if selected years value is not 0 (default value), selected months value is not 0 (default value) and selected days value is not 0 (default value)
+     */
+    const isBirthDateValid = computed(() => {
+      return (
+        selectedYear.value > 0 &&
+        selectedMonth.value > 0 &&
+        selectedDay.value > 0
+      );
+    });
+
+    //Training level
+    const trainingLevels = ref([
+      { title: "Lav", value: TrainingLevel.LOW },
+      { title: "Medium", value: TrainingLevel.MEDIUM },
+      { title: "Høy", value: TrainingLevel.HIGH },
+    ]);
+
+    const selectedTrainingLevel = ref(0);
+
+    /**
+     * Sets thes users form attribute
+     */
+    const changeTrainingLevel = (value: number) => {
+      selectedTrainingLevel.value = value;
+    };
+
+    /**
+     * Training level is valid if users form attribute
+     */
+    const isTrainigLevelValid = computed(() => {
+      return selectedTrainingLevel.value != 0;
+    });
+
+    /**
+     * Gets the training value as a string
+     * Has to do this because of the REST api taking a string as training level
+     */
+    const trainingLevelAsString = computed(() => {
+      switch (selectedTrainingLevel.value) {
+        case 1:
+          return "EASY";
+        case 2:
+          return "MEDIUM";
+        case 4:
+          return "HARD";
+        default:
+          return "";
+      }
+    });
+
+    /**
+     * Stage one is complete if email is valid, name is valid, birth date is valid and the training level is valid
+     */
+    const isStageOneCompleted = computed(() => {
+      return (
+        isEmailValid.value &&
+        isNameValid.value &&
+        isBirthDateValid.value &&
+        isTrainigLevelValid.value
+      );
+    });
+
+    /**
+     * Disables the next button if the stage is 1, and stage 1 is not completed
+     */
+    const disableNextButtonStageOne = computed(() => {
+      return stage.value === 1 && !isStageOneCompleted.value;
+    });
+
+    //methods for stage two
+    const repeatPassword = ref("");
+
+    /**
+     * Checks if password is equal to or above 8 characters
+     */
+    const isPasswordSecure = computed((): boolean => {
+      return user.password.length >= 8;
+    });
+
+    const doesPasswordsMatch = computed((): boolean => {
+      return user.password === repeatPassword.value;
+    });
+
+    /**
+     * Creates password feedback based on lack of equality with the repeated password or 8 character minimum limit is reached
+     */
+    const passwordFeedback = computed(() => {
+      if (!isPasswordSecure.value) {
+        return "Passordet må være minst 8 tegn";
+      } else if (!doesPasswordsMatch.value) {
+        return "Passordene er ikke like";
+      }
+      return "";
+    });
+
+    /**
+     * Stage two is completed when stage one is completed, and the created password rechead minimum limit of 8 characters, and is equal to the repeated password
+     */
+    const isStageTwoCompleted = computed(() => {
+      return (
+        isStageOneCompleted.value &&
+        isPasswordSecure.value &&
+        doesPasswordsMatch.value
+      );
+    });
+
+    /**
+     * Disables next button if stage is equal to 2, and stage 2 is not completed
+     */
+    const disableNextButtonStageTwo = computed((): boolean => {
+      return stage.value === 2 && !isStageTwoCompleted.value;
+    });
+
     //methods for stage three
     const onSelectedImage = (imageData: string) => {
       user.profilePicture = imageData;
-    }
+    };
 
     const onRemoveImage = () => {
       delete user.profilePicture;
-    }
-
+    };
 
     //methods for stage four
-    const termsAndConditions = ref(
-      "Dette er terms and conditions. " +
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit," +
-        " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." +
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
-        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    );
+    const termsAndConditions = ref(false);
+    /**
+     * Stage four is completed if stage two is completed and the terms and conditions are checked
+     */
+    const isStageFourCompleted = computed(() => {
+      return isStageTwoCompleted.value && termsAndConditions.value === true;
+    });
+
+    /**
+     * Disables next button if stage is equal to 4, and stage 4 is not completed
+     */
+    const disableNextButtonStageFour = computed((): boolean => {
+      return stage.value === 4 && !isStageFourCompleted.value;
+    });
 
     //methods for connection to backend
-    const store = useStore();
     const birthdate = computed(() => {
       return (
-        selectedYear.value + "-" + selectedMonth.value + "-" + selectedDay.value
+        selectedYear.value +
+        "-" +
+        (selectedMonth.value < 10 ? "0" : "") +
+        selectedMonth.value +
+        "-" +
+        (selectedDay.value < 10 ? "0" : "") +
+        selectedDay.value
       );
     });
 
@@ -369,11 +494,17 @@ export default defineComponent({
       password: "",
       forename: "",
       surname: "",
-      // Commented out because backend cant handle date
-      // dateOfBirth: birthdate.value, 
+      trainingLevel: "",
     } as SignUpUser);
 
+    /**
+     * Saves the user by dispatching the register action in our store instance
+     * Transers user to the activity feed if the register action is successful
+     * Pushes the user to /error if something goes wrong
+     */
     const saveUser = async (): Promise<void> => {
+      user.dateOfBirth = birthdate.value;
+      user.trainingLevel = trainingLevelAsString.value;
       if (await store.dispatch("register", user)) {
         router.replace("/activity-feed");
       } else {
@@ -381,12 +512,27 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Calculates the max stage the user is allowed to be in based on the completion of other stages
+     */
+    const maxStageAllowed = computed(() => {
+      if (isStageTwoCompleted.value) return 4;
+      if (isStageOneCompleted.value) return 2;
+      return 1;
+    });
+
+    /**
+     * Changes stage to the number give
+     */
+    const changeStage = (index: number) => {
+      stage.value = index;
+    };
+
     return {
       //stage one
-      months,
-      daysInCurrentMonth,
-      //isLeapYear, til eventuell bruk senere
       availableYears,
+      availableMonths,
+      availableDays,
       selectedYear,
       selectedMonth,
       selectedDay,
@@ -394,6 +540,10 @@ export default defineComponent({
       isEmailValid,
       isBirthDateValid,
       disableNextButton,
+      trainingLevels,
+      isTrainigLevelValid,
+      changeTrainingLevel,
+      selectedTrainingLevel,
 
       //stage two
       passwordFeedback,
@@ -404,19 +554,19 @@ export default defineComponent({
       onSelectedImage,
 
       //stage four
+      isStageFourCompleted,
       termsAndConditions,
-      termsChecked,
 
       //overall
       buttonBackNames,
-      disableDots,
       nextButtonNames,
       nextPage,
       prevPage,
-      onClickDot,
       stage,
       user,
       saveUser,
+      maxStageAllowed,
+      changeStage,
     };
   },
 });
@@ -557,31 +707,6 @@ ul {
 button:disabled {
   background-color: $disabled-color;
   color: #9499a5;
-}
-
-#dots-container {
-  display: grid;
-  padding-top: 10px;
-  margin: auto;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  width: 100px;
-  justify-content: center;
-}
-
-button.completion-dot {
-  height: 15px;
-  width: 15px;
-  border-radius: 20px;
-  margin: 5px;
-  display: block;
-  background: $secondary-color;
-  padding: 0px;
-}
-
-button.completion-dot:disabled {
-  border: 2px $secondary-color solid;
-  background-color: #ffffff;
-  opacity: 100%;
 }
 
 .back-button {

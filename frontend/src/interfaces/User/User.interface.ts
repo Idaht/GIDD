@@ -7,5 +7,5 @@ export default interface User {
   rating: number;
   role: string;
   dateOfBirth?: string;
-  profilePicture?: Blob;
+  profilePicture?: string;
 }

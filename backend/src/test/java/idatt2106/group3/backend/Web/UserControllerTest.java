@@ -50,7 +50,7 @@ public class UserControllerTest
     @BeforeEach
     public void setup()
     {
-        Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now(), 60, false, 10, true, null);
+        Activity activity1 = new Activity("Football", "Type", "Playing", "A football", Difficulty.EASY.value, "Trondheim", "Dal", 50.30, 50.50, LocalDateTime.now().plusMinutes(20), 60, false, 10, true, null);
         User user1 = new User("1Forename", "1Surname", "test1@test.com", LocalDate.of(2005, 1, 1), Difficulty.EASY, "test hash", "test salt", 4, "Organizer", 2, null);
         User user2 = new User("1Forename", "1Surname", "test2@test.com", LocalDate.of(2005, 1, 1), Difficulty.MEDIUM, "test hash", "test salt", 4, "Organizer", 2, null);
         User user3 = new User("1Forename", "1Surname", "test3@test.com", LocalDate.of(2005, 1, 1), Difficulty.HARD, "test hash", "test salt", 4, "Organizer", 2, null);
@@ -182,5 +182,16 @@ public class UserControllerTest
         userService.addUserToActivity(userId, activityId);
         this.mockMvc.perform(delete("/api/v1/users/" + userId + "/activities/" + activityId))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getFutureActivities_ShouldReturnFutureActivities_StatusOk() throws Exception
+    {
+        long userId = userRepository.findAll().get(0).getUserId();
+        long activityId = activityRepository.findAll().get(0).getActivityId();
+        userService.addUserToActivity(userId, activityId);
+        this.mockMvc.perform(get("/api/v1/users/" + userId + "/my-activities"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.[0].title", containsStringIgnoringCase("Football")));
     }
 }

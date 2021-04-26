@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.List;
 import java.util.Set;
 
 
@@ -89,5 +89,11 @@ public class UserController
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/{user_id}/my-activities")
+    @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Activity>> getFutureActivities(@PathVariable("user_id") Long userId){
+        return new ResponseEntity<> (userService.findFutureActivities(userId), HttpStatus.OK);
     }
 }

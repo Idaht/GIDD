@@ -1,7 +1,6 @@
 package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Activity;
-import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserRegistrationCallbackDTO;

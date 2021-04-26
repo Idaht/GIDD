@@ -8,6 +8,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TheHeader from "@/components/TheHeader.vue";
+
 export default defineComponent({
   name: "App",
   components: {
@@ -54,6 +55,11 @@ button {
   font-weight: 500;
   color: white;
   font-size: 0.833rem;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 3px 0 black;
 }
 
 input {

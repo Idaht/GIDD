@@ -3,21 +3,21 @@
     <!--Add TheHeader component -->
     <h1>Instillinger</h1>
     <img src="" alt="Profilbilde" />
-    <!-- Profile pic here -->
-    <button @click="changeProfilePic" alt="Knapp for å endre profilbilde">
-      Endre profilbilde
-    </button>
+    <ImageSelector
+      labelName=""
+      @imageSelected="onSelectedImage"
+      @removeImage="onRemoveImage"
+    />
+
     <p>Endre fornavn</p>
-    <input v-model="firstName" type="name" placeholder="Nytt fornavn" />
+    <input v-model="user.forename" type="name" placeholder="Nytt fornavn" />
     <p>Endre etternavn</p>
-    <input v-model="lastName" type="name" placeholder="Nytt etternavn" />
+    <input v-model="user.surname" type="name" placeholder="Nytt etternavn" />
     <p>Endre email</p>
-    <input v-model="email" type="email" placeholder="Ny email" />
-    <span v-if="emailIsNotEmpty">
-      <p>
-        {{ makeEmailFeedback }}
-      </p>
-    </span>
+    <input v-model="user.email" type="email" placeholder="Ny email" />
+    <p v-if="emailIsNotEmpty && !isValidEmail">
+      E-postadressen må inneholde @ og .
+    </p>
     <p>Endre passord</p>
     <input v-model="password" type="password" placeholder="Nytt passord" />
     <input
@@ -25,11 +25,24 @@
       type="password"
       placeholder="Gjenta passord"
     />
-    <span v-if="passwordIsNotEmpty">
-      <p>{{ makePasswordFeedback }}</p>
-    </span>
-    <p>{{ matchingPasswords }}</p>
-    <button @click="saveProfileChanges" alt="Knapp som lagrer profilendringer">
+    <p v-if="!matchingPasswords && passwordIsNotEmpty">
+      Passordene må være like
+    </p>
+    <p v-if="!passwordIsValid && passwordIsNotEmpty">
+      Nytt passord må inneholde minst 8 tegn
+    </p>
+    <p>Gammelt passord</p>
+    <input v-model="oldPassword" type="password" />
+    <p v-if="!oldPasswordWasCorrect">
+      Gammelt passord var ikke riktig. Besøk:
+      <router-link to="/forgotten-password">Glemt passord</router-link> om du
+      har glemt ditt gamle passord
+    </p>
+    <button
+      :disabled="!isValidForm"
+      @click="saveProfileChanges"
+      alt="Knapp som lagrer profilendringer"
+    >
       Lagre endringer
     </button>
     <button @click="deleteUser" alt="Knapp for å slette brukeren">
@@ -39,87 +52,175 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "@/axiosConfig";
+import { useStore } from "@/store";
+import User from "@/interfaces/User/User.interface";
+import EditUser from "@/interfaces/User/EditUser.interface";
+import ImageSelector from "@/components/ImageSelector.vue";
 
 export default defineComponent({
   name: "EditProfile",
+  components: { ImageSelector },
   setup() {
+    const store = useStore();
     const router = useRouter();
-    const firstName = ref("");
-    const lastName = ref("");
-    const email = ref("");
+    //Using ref since we are setting values
+    const user: Ref<User> = ref(store.getters.user);
+
+    const isValidName = computed(() => {
+      return (
+        user.value.forename.trim() !== "" && user.value.surname.trim() !== ""
+      );
+    });
+
+    const onSelectedImage = (image: string) => {
+      userDTO.profilePicture = image;
+    };
+
+    const onRemoveImage = () => {
+      delete userDTO.profilePicture;
+    };
+
+    //Password
     const password = ref("");
-    const validPassword = ref(false);
     const passwordFeedback = ref("");
-    const emailFeedback = ref("");
     const repeatPassword = ref("");
-    const matchingPasswords = ref("");
-    const numberOfCharacterPass = ref(8);
+    const matchingPasswords = computed(() => {
+      return password.value == repeatPassword.value;
+    });
+    const numberOfCharacterPass = 8;
+    const passwordIsValid = computed(() => {
+      return password.value.length >= 8;
+    });
 
     const passwordIsNotEmpty = computed(() => {
       return password.value.trim() !== "";
     });
 
-    const emailIsNotEmpty = computed(() => {
-      return email.value.trim() !== "";
+    const isValidPassword = computed(() => {
+      return matchingPasswords.value && passwordIsNotEmpty.value;
     });
 
-    const saveProfileChanges = (): void => {
-      matchingPasswords.value = "";
-      //TODO communicate with backend
-      if (password.value != repeatPassword.value) {
-        matchingPasswords.value = "Passordene må være like";
-        password.value = "";
-        repeatPassword.value = "";
-      }
-    };
-
     const makePasswordFeedback = computed(() => {
-      if (password.value.length < numberOfCharacterPass.value) {
+      if (password.value.length < numberOfCharacterPass) {
         return (
           passwordFeedback.value +
           "Passordet må være minst " +
-          numberOfCharacterPass.value +
+          numberOfCharacterPass +
           " tegn"
         );
       }
       return passwordFeedback.value + "Passordet er gyldig";
     });
 
-    const makeEmailFeedback = computed(() => {
-      if (!(email.value.includes("@") && email.value.includes("."))) {
-        return emailFeedback.value + "Emailen må være gyldig";
-      }
-      return emailFeedback.value + "";
+    //Gammelt passord
+    const oldPassword = ref("");
+
+    const oldPasswordIsNotEmpty = computed(() => {
+      return oldPassword.value.trim() !== "";
     });
+
+    const oldPasswordWasCorrect = ref(true);
+
+    //Email
+    const emailIsNotEmpty = computed(() => {
+      return user.value.email.trim() !== "";
+    });
+
+    const isValidEmail = computed(() => {
+      return user.value.email.includes("@") && user.value.email.includes(".");
+    });
+
+    const isValidForm = computed(() => {
+      return (
+        (!passwordIsNotEmpty.value ||
+          (isValidPassword.value &&
+            oldPasswordIsNotEmpty.value &&
+            passwordIsValid.value &&
+            matchingPasswords.value)) &&
+        isValidEmail.value &&
+        isValidName.value
+      );
+    });
+
+    const userDTO: EditUser = {
+      userId: user.value.userId,
+      email: user.value.email,
+      forename: user.value.forename,
+      surname: user.value.surname,
+    };
+
+    const saveProfileChanges = async (): Promise<void> => {
+      oldPasswordWasCorrect.value = true;
+      if (isValidForm.value) {
+        try {
+          //TODO: change to redirect to something went wrong site
+          //TODO: handle bug where _ctx.user is undefined
+
+          if (passwordIsNotEmpty.value) {
+            userDTO.newPassword = password.value;
+            userDTO.oldPassword = oldPassword.value;
+          }
+          if (!userDTO.profilePicture) userDTO.profilePicture = "null";
+          
+          const response = await axios.post(
+            `/users/${userDTO.userId}`,
+            userDTO
+          );
+          await store.dispatch("updateUser", response.data);
+          user.value = store.getters.value;
+        } catch (error) {
+          //TODO fix bug with error.response is undefined
+          if (error.response.status === 400) {
+            oldPasswordWasCorrect.value = false;
+          } else {
+            router.push("/error");
+          }
+        }
+      }
+    };
 
     const changeProfilePic = (): void => {
       //TODO fix upload
     };
 
-    const deleteUser = (): void => {
-      //Få opp en liten "Er du sikker?"
-      //Så slett bruker
+    const deleteUser = async (): Promise<void> => {
+      if (window.confirm("Er du sikker på at du vil slette brukeren din")) {
+        try {
+          const response = await axios.delete(
+            `/users/${store.getters.user.userId}`
+          );
+          if (response.status === 200) {
+            store.dispatch("logout");
+            router.replace("/log-in");
+          }
+        } catch (error) {
+          //TODO add errorhandling
+        }
+      }
     };
 
     return {
-      router,
-      firstName,
-      lastName,
-      email,
+      user,
       password,
-      validPassword,
+      passwordIsValid,
       passwordFeedback,
       passwordIsNotEmpty,
+      onSelectedImage,
+      onRemoveImage,
       saveProfileChanges,
       makePasswordFeedback,
       emailIsNotEmpty,
-      makeEmailFeedback,
       changeProfilePic,
       repeatPassword,
       matchingPasswords,
       deleteUser,
+      isValidEmail,
+      isValidForm,
+      oldPassword,
+      oldPasswordWasCorrect,
     };
   },
 });

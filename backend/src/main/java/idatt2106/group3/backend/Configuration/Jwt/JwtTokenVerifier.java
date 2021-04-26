@@ -12,6 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,12 +29,20 @@ import io.jsonwebtoken.Jwts;
 
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenVerifier.class);
+
     /**
      * Verifies the JWT token from request, and returns a 403 if it has expired
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+
+        if(request.getRequestURI().equals("/api/v1/users") && request.getMethod().equals("POST")){ 
+            filterChain.doFilter(request, response); 
+            return;
+        }
         String token = request.getHeader("Authorization");
         try{
                 Jws<Claims> claimsJWs = Jwts.parserBuilder()
@@ -55,13 +65,9 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                UserSecurityDetails user = (UserSecurityDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                System.out.println(user.getUserId());
-
 
             }catch(JwtException e){
-                //TODO: Logger
-                e.printStackTrace();
+                LOGGER.warn("Something went wrong trying to verify JWT token: {}\nException message: {}", token, e.getMessage());
             }
             // Sends the request to the next filter, which will be the controller
             filterChain.doFilter(request, response);

@@ -6,4 +6,6 @@ export default interface User {
   score: number;
   rating: number;
   role: string;
+  dateOfBirth?: string;
+  profilePicture?: string;
 }

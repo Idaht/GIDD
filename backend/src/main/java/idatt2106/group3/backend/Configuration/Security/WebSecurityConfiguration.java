@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -36,11 +38,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .requiresSecure();
         http.csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+        .addFilter(getJWTAuthenticationFilter(authenticationManager()))
         .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
+        .addFilterAfter(new ExceptionHandlerFilter(), JwtTokenVerifier.class)
         .authorizeRequests()
         .antMatchers("/error").permitAll().antMatchers("/api/v1/activities/**").hasAnyRole("USER", "ADMIN")
-        .anyRequest().authenticated();
+        .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
+        .anyRequest().authenticated()
+        .and()
+        .cors();
     }
 
     @Override
@@ -54,5 +60,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(userSecurityDetailsService);
         return provider;
+    }
+
+     public JwtUsernameAndPasswordAuthenticationFilter getJWTAuthenticationFilter(AuthenticationManager authenticationManager){
+        final JwtUsernameAndPasswordAuthenticationFilter filter = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager);
+        filter.setFilterProcessesUrl("/api/v1/login");
+        return filter;
     }
 }

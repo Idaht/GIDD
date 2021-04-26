@@ -1,36 +1,38 @@
 package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Activity;
+import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
-import idatt2106.group3.backend.Model.DTO.UserDTO;
-import idatt2106.group3.backend.Model.DTO.UserPasswordDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
+import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@SpringBootTest
+import javax.sql.rowset.serial.SerialException;
+
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class UserServiceTest
@@ -44,6 +46,9 @@ public class UserServiceTest
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private ActivityRepository activityRepository;
+
     @BeforeEach
     public void setup()
     {
@@ -52,12 +57,13 @@ public class UserServiceTest
         user1.setForename("testForename");
         user1.setSurname("testSurname");
         user1.setEmail("testMail");
+        user1.setDateOfBirth(LocalDate.of(2005, 1, 1));
+        user1.setTrainingLevel(Difficulty.MEDIUM);
         user1.setHash("testHash");
         user1.setSalt("testSalt");
-        user1.setScore(10);
         user1.setRating(4);
         user1.setRole("testRole");
-        user1.setFaults(2);
+        user1.setAbsence(10);
         user1.setActivities(null);
 
         user2.setUserId(1l);
@@ -92,64 +98,61 @@ public class UserServiceTest
     public void getUser_IdExists_UserIsCorrect()
     {
         long userId = 0l;
-        User user = userService.getUser(userId);
-        assertThat(user.getUserId()).isEqualTo(0l);
+        UserDTO user = userService.getUser(userId);
         assertThat(user.getForename()).isEqualTo("testForename");
         assertThat(user.getSurname()).isEqualTo("testSurname");
         assertThat(user.getEmail()).isEqualTo("testMail");
-        assertThat(user.getHash()).isEqualTo("testHash");
-        assertThat(user.getSalt()).isEqualTo("testSalt");
-        assertThat(user.getScore()).isEqualTo(10);
-        assertThat(user.getRating()).isEqualTo(4);
+        assertThat(user.getDateOfBirth()).isEqualTo(LocalDate.of(2005, 1, 1));
     }
 
     @Test
     public void getUser_IdDoesNotExists_ReturnsNull()
     {
         long userId = -1l;
-        User user = userService.getUser(userId);
+        UserDTO user = userService.getUser(userId);
         assertThat(user).isNull();
     }
 
     @Test
     public void createUser_userGetsAdded_ReturnsTrue()
     {
-        UserPasswordDTO user = new UserPasswordDTO("testForename", "testSurname", "testMail", "hash", 0, 0, "role", 0);
-        User user1 = userService.getUser(0l);
+        UserWithPasswordDTO user = new UserWithPasswordDTO("testForename", "testSurname", "testMail", LocalDate.of(2005, 1, 1), Difficulty.EASY, "hash", null);
+        User returnUser = new User("test","test", "213", LocalDate.of(2005, 1, 1), Difficulty.EASY, "hash","salt",1,",",1, null);
+        returnUser.setUserId(1);
         Mockito.lenient()
                 .when(userRepository.save(any()))
-                .thenReturn(user1);
+                .thenReturn(returnUser);
 
 
         assertThat(userService.createUser(user)).isNotNull();
     }
 
     @Test
-    public void editUser_updatesUser_ReturnsUpdatedUser()
+    public void editUser_updatesUser_ReturnsUpdatedUser() throws SerialException, SQLException
     {
-        UserDTO tempUserDTO = new UserDTO("Test", "Name", "email@email.com", 10, 4, "Random Role");
+        UserEditDTO userEditDTO = new UserEditDTO("Forename", "surname", "email", LocalDate.now(), Difficulty.MEDIUM,"newHash", "oldHash", "null");
         User tempUser = new User();
-        tempUser.setForename(tempUserDTO.getForename());
-        tempUser.setSurname(tempUserDTO.getSurname());
-        tempUser.setEmail(tempUserDTO.getEmail());
-        tempUser.setScore(tempUserDTO.getScore());
-        tempUser.setRating(tempUserDTO.getRating());
-        tempUser.setRole(tempUserDTO.getRole());
+        tempUser.setForename(userEditDTO.getForename());
+        tempUser.setSurname(userEditDTO.getSurname());
+        tempUser.setEmail(userEditDTO.getEmail());
+        tempUser.setDateOfBirth(userEditDTO.getDateOfBirth());
+        tempUser.setTrainingLevel(userEditDTO.getTrainingLevel());
+        tempUser.setHash(userEditDTO.getOldPassword());
+        tempUser.setProfilePicture(userEditDTO.getProfilePicture().getBytes());
 
         Mockito.lenient()
                 .when(userRepository.save(any()))
                 .thenReturn(tempUser);
 
-        User user = userService.editUser(0l, tempUserDTO);
+        UserDTO user = userService.editUser(0l, userEditDTO);
 
         assertThat(user).isNotNull();
         assertThat(user.getForename()).isEqualTo(tempUser.getForename());
         assertThat(user.getSurname()).isEqualTo(tempUser.getSurname());
         assertThat(user.getEmail()).isEqualTo(tempUser.getEmail());
-        assertThat(user.getHash()).isEqualTo(tempUser.getHash());
-        assertThat(user.getSalt()).isEqualTo(tempUser.getSalt());
-        assertThat(user.getScore()).isEqualTo(tempUser.getScore());
-        assertThat(user.getRating()).isEqualTo(tempUser.getRating());
+        assertThat(user.getDateOfBirth()).isEqualTo(tempUser.getDateOfBirth());
+        assertThat(user.getTrainingLevel()).isEqualTo(tempUser.getTrainingLevel());
+        assertThat(user.getProfilePicture().getBytes()).isEqualTo(tempUser.getProfilePicture());
     }
 
     @Test
@@ -175,5 +178,16 @@ public class UserServiceTest
     {
         Set<Activity> activities = userService.getUserActivities(0l);
         assertThat(activities).isEmpty();
+    }
+
+    @Test
+    public void getFutureActivities_UserHasNoActivities_ContainsActivity() {
+        Mockito.lenient()
+        .when(activityRepository.findFutureUserActivities(anyLong()))
+        .thenReturn(List.of(new Activity("title", "type", "description", "equipment", Difficulty.EASY.value, "city", "place", 1.2, 1.2, LocalDateTime.now(), 60, false, 20, false, null)));
+
+        List<Activity> activities = userService.findFutureActivities(1L);
+        assertThat(activities).hasSize(1);
+        assertThat(activities.get(0)).isInstanceOf(Activity.class);
     }
 }

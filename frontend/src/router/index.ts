@@ -10,14 +10,14 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
-    path: "/about",
-    name: "About",
-    component: () => import("../views/About.vue"),
-  },
-  {
     path: "/log-in",
     name: "LogIn",
     component: () => import("../views/LogIn.vue"),
+  },
+  {
+    path: "/sign-up",
+    name: "SignUp",
+    component: () => import("../views/SignUp.vue"),
   },
   {
     path: "/activity/:id",
@@ -30,7 +30,9 @@ const routes: Array<RouteRecordRaw> = [
     path: "/edit-profile",
     name: "EditProfile",
     component: () => import("../views/EditProfile.vue"),
-    //TODO make it so that you cannot edit anyone elses profile
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/activity-feed",
@@ -39,6 +41,42 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
     },
     component: () => import("../views/ActivityFeed.vue"),
+  },
+  {
+    path: "/activity-map",
+    name: "MapView",
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import("../views/MapView.vue"),
+  },
+  {
+    path: "/forgotten-password",
+    name: "ForgottenPassword",
+    component: () => import("../views/ForgottenPassword.vue"),
+  },
+  {
+    path: "/error",
+    name: "Error",
+    component: () => import("../views/ErrorPage.vue"),
+  },
+  {
+    path: "/profile/:id",
+    name: "Profile",
+    meta: {
+      requiresAuth: true,
+    },
+    props: true,
+    component: () => import("../views/Profile.vue"),
+  },
+  {
+    path: "/calendar",
+    name: "Calendar",
+    meta: {
+      requiresAuth: true,
+    },
+    props: true,
+    component: () => import("../views/Calendar.vue"),
   },
   {
     //Catch all makes router redirect all unknown URLs to the PageNotFound view

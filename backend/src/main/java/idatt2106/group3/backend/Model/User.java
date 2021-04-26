@@ -1,7 +1,9 @@
 package idatt2106.group3.backend.Model;
 
+import java.time.LocalDate;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,11 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class User {
@@ -22,18 +22,15 @@ public class User {
     private long userId;
     private String forename;
     private String surname;
+    @Column(unique = true)
     private String email;
-    @JsonIgnore
+    private LocalDate dateOfBirth;
     private String hash;
-    @JsonIgnore
     private String salt;
-    private int score;
     private int rating;
     private String role;
-    private int faults;
-
-    @OneToOne(mappedBy = "user")
-    private Session session;
+    private int absence;
+    private Difficulty trainingLevel;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -55,34 +52,40 @@ public class User {
     @OneToMany(mappedBy = "user", targetEntity = Message.class)
     Set<Message> messages;
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults, Session session, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages) {
+    @Lob
+    private byte[] profilePicture;
+
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel, String hash, String salt, int rating, String role, int absence, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, byte[] profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
+        this.dateOfBirth = dateOfBirth;
+        this.trainingLevel = trainingLevel;
         this.hash = hash;
         this.salt = salt;
-        this.score = score;
         this.rating = rating;
         this.role = role;
-        this.faults = faults;
-        this.session = session;
+        this.absence = absence;
         this.activities = activities;
         this.organizedActivities = organizedActivities;
         this.reportsSent = reportsSent;
         this.reportsReceived = reportsReceived;
         this.messages = messages;
+        this.profilePicture = profilePicture;
     }
 
-    public User(String forename, String surname, String email, String hash, String salt, int score, int rating, String role, int faults) {
+    public User(String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel, String hash, String salt, int rating, String role, int absence, byte[] profilePicture) {
         this.forename = forename;
         this.surname = surname;
         this.email = email;
+        this.dateOfBirth = dateOfBirth;
+        this.trainingLevel = trainingLevel;
         this.hash = hash;
         this.salt = salt;
-        this.score = score;
         this.rating = rating;
         this.role = role;
-        this.faults = faults;
+        this.absence = absence;
+        this.profilePicture = profilePicture;
     }
 
     public User() {
@@ -110,14 +113,6 @@ public class User {
 
     public void setMessages(Set<Message> messages) {
         this.messages = messages;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
     }
 
     public Set<Activity> getActivities() {
@@ -168,6 +163,14 @@ public class User {
         this.email = email;
     }
 
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -182,14 +185,6 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
     }
 
     public int getRating() {
@@ -208,12 +203,28 @@ public class User {
         this.role = role;
     }
 
-    public int getFaults() {
-        return faults;
+    public int getAbsence() {
+        return absence;
     }
 
-    public void setFaults(int faults) {
-        this.faults = faults;
+    public void setAbsence(int absence) {
+        this.absence = absence;
+    }
+
+    public Difficulty getTrainingLevel() {
+        return trainingLevel;
+    }
+
+    public void setTrainingLevel(Difficulty trainingLevel) {
+        this.trainingLevel = trainingLevel;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     @Override
@@ -224,18 +235,18 @@ public class User {
                 ", forename='" + forename + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", hash='" + hash + '\'' +
                 ", salt='" + salt + '\'' +
-                ", score=" + score +
-                ", rating=" + rating +
+                ", rating=" + rating + '\'' +
                 ", role='" + role + '\'' +
-                ", faults=" + faults +
-                ", session=" + session +
-                ", activities=" + activities +
-                ", organizedActivities=" + organizedActivities +
-                ", reportsSent=" + reportsSent +
-                ", reportsReceived=" + reportsReceived +
-                ", messages=" + messages +
+                ", absence=" + absence + '\'' +
+                ", trainingLevel=" + trainingLevel + '\'' +
+                ", activities=" + activities + '\'' +
+                ", organizedActivities=" + organizedActivities + '\'' +
+                ", reportsSent=" + reportsSent + '\'' +
+                ", reportsReceived=" + reportsReceived + '\'' +
+                ", messages=" + messages + '\'' +
                 '}';
     }
 }

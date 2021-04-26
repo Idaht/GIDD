@@ -1,95 +1,133 @@
 <template>
-  <!-- Putt inn et bilde av en tilbakeknapp? -->
-  <img
-    @click="returnToActivityFeed"
-    src="https://static.thenounproject.com/png/1195139-200.png"
-    alt="Tilbakeknapp til hovedsiden"
-  />
-  <div>Her skal kart</div>
-  <h3 id="activityTitle">{{ activityTitle }}</h3>
-  <label>Når</label>
-  <div>{{ activityDate }}</div>
-  <label>Hvor</label>
-  <div>{{ activityPlace }}</div>
-  <label>Hva</label>
-  <div>{{ activityType }}</div>
-  <label>Arrangør</label>
-  <div>{{ activityOrganizer }}</div>
-  <label>Belastning</label>
-  <div>{{ activityLoad }}</div>
-  <label>Deltakere</label>
-  <div>{{ numberOfParticipants }} / {{ maxParticipants }}</div>
-
-  <span id="signing-up" v-if="signedUp">
-    Du er påmeldt!
-    <button
-      @click="signOffActivity"
-      alt="Knapp for å melde seg av en aktivitet"
-    >
-      Meld deg av
-    </button>
-    <button
-      @click="openChat"
-      alt="Knapp for å chatte med andre på samme aktivitet"
-    >
-      Chat
-    </button>
-  </span>
-  <span v-else>
-    <button @click="signUpActivity" alt="Knapp for å melde seg på en aktivitet">
-      Meld deg på
-    </button>
-  </span>
-  <div>Beskrivelse</div>
-  <p>{{ activityDescription }}</p>
-
-  <div>Utstyr</div>
-  <p>{{ activityEquipment }}</p>
+  <div id="activity-information">
+    <div @click="back" id="nav-back">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      Tilbake 
+    </div>
+    <!-- TODO: implementer kart -->
+    <div id="map">
+      <img id="map-img" src="../../img/map.png" alt="Map" />
+    </div>
+    <h2 id="activity-title">{{ activity.title }}</h2>
+    <div id="host">Arrangeres av {{ activity.organizer }}</div>
+    <div id="information-wrapper">
+      <label class="event-variable">Når</label>
+      <div class="variable-value">{{ activity.startTime }}</div>
+      <label class="event-variable">Varighet</label>
+      <div class="variable-value">{{ activity.durationMinutes }} minutter</div>
+      <label class="event-variable">Hvor</label>
+      <div class="variable-value">
+        {{ activity.place }}, {{ activity.city }}
+      </div>
+      <label class="event-variable">Hva</label>
+      <div class="variable-value">{{ activity.type }}</div>
+      <label class="event-variable">Belastning</label>
+      <div class="variable-value">{{ activity.difficulty }}</div>
+      <label class="event-variable">Deltakere</label>
+      <div class="variable-value">
+        {{ numberOfParticipants }} / {{ activity.maxParticipants }}
+      </div>
+    </div>
+    <div id="signing-up-wrapper">
+      <div id="signing-up" v-if="signedUp">
+        <div id="signing-up-conformation">Du er påmeldt!</div>
+        <button
+          @click="signOffActivity"
+          alt="Knapp for å melde seg av en aktivitet"
+        >
+          Meld deg av
+        </button>
+        <button
+          @click="openChat"
+          alt="Knapp for å chatte med andre på samme aktivitet"
+        >
+          Chat
+        </button>
+      </div>
+      <div v-else>
+        <button
+          @click="signUpActivity"
+          alt="Knapp for å melde seg på en aktivitet"
+        >
+          Meld deg på
+        </button>
+      </div>
+    </div>
+    <div class="details-wrapper">
+      <h3>Beskrivelse</h3>
+      <p>{{ activity.description }}</p>
+    </div>
+    <div class="details-wrapper">
+      <h3>Utstyr</h3>
+      <p>{{ activity.equipment }}</p>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "../axiosConfig";
+import { store } from "../store";
 
 export default defineComponent({
   name: "ActivityInformation",
-  setup() {
-    const activityTitle = ref("Ballerinaopptreden");
-    const activityDate = ref("20/04/2021");
-    const activityPlace = ref("Dødens dal");
-    const activityOrganizer = ref("Ola Nordmann");
-    const activityLoad = ref("Supermann");
+  props: ["id"],
+  setup(props) {
+    //TODO finn arrangøren vha id
+    const activityOrganizer = ref("");
+    //TODO hent ut antall påmeldte fra backend
     const numberOfParticipants = ref(5);
-    const maxParticipants = ref(10);
+    //TODO hent ut fra backend
     const signedUp = ref(false);
-    const activityDescription = ref(
-      "Litt ballerina, litt fotball og en hel del golf"
-    );
-    const activityEquipment = ref("Golfball");
-    const activityType = ref("Fotball");
     const router = useRouter();
+    const activity = ref({});
 
     const isSignedUp = computed(() => {
       return signedUp.value;
     });
 
-    const signUpActivity = (): void => {
-      //"Er du sikker?" vindu før påmelding?
+
+/** 
+ * Method for signing up to an activity
+ */
+    const signUpActivity = async (): Promise<void> => {
       signedUp.value = true;
-      numberOfParticipants.value += 1;
-      //TODO connect to backend
-      backendCall;
-      //TODO Få opp bekreftelse
+      try{ 
+        //TODO: må sørge for at visinigen endres når du er påmeldt et arrangement
+      await axios.post(`/activities/${props.id}/users/${store.getters.user.userId}`);
+
+      } catch(error) {
+       router.push("/error");
+       }
     };
 
-    const signOffActivity = (): void => {
+    /*TODO: fiks denne
+    const getOrganizerName = async():Promise<void> => {
+      try{
+          return axios.get('activities/organizerId'); 
+          } catch(error) {
+            router.push("/error")
+          }
+     }*/
+
+/**
+ * Method for signing off an activity
+ */
+    const signOffActivity = async (): Promise<void> => {
       signedUp.value = false;
-      numberOfParticipants.value -= 1;
-      //TODO connect to backend
+      //numberOfParticipants.value -= 1;
+      try{ 
+        //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
+      await axios.delete(`users/${store.getters.user.userId}/activities/${props.id}`);
+      } catch(error) {
+       router.push("/error");
+       }
+      
     };
 
-    const returnToActivityFeed = (): void => {
-      router.push("/activity-feed");
+    const back = (): void => {
+      router.back(); 
     };
 
     const openChat = (): void => {
@@ -98,30 +136,117 @@ export default defineComponent({
     };
 
     /**
-     * Method to connect to backend
+     * Connects to backend using a get request to get the activity
      */
-    const backendCall = onMounted(() => {
-      //TODO Connect to backend
+    onBeforeMount(async () => {
+      try {
+        const response = await axios.get(`/activities/${props.id}`);
+        activity.value = response.data;
+      } catch {
+        router.push("/error");
+      }
     });
 
+    //TODO del opp startTime og display det fint
+    //const activityDate = ref(activity.startTime.toString());
+    //const activityTime = ref(activity.startTime)
+
     return {
-      activityTitle,
-      activityDate,
-      activityPlace,
+      //activityDate,
+      //activityTime
       activityOrganizer,
-      activityLoad,
-      activityType,
       numberOfParticipants,
-      maxParticipants,
       signedUp,
       isSignedUp,
       signUpActivity,
       signOffActivity,
-      activityDescription,
-      activityEquipment,
-      returnToActivityFeed,
+      back,
       openChat,
+      activity,
     };
   },
 });
 </script>
+
+<style scoped lang="scss">
+$primary-color: #282828;
+$secondary-color: #ea4b4b;
+
+#activity-information {
+  margin: 10px 35px 10px 35px;
+  text-align: left;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
+  }
+}
+
+#nav-back {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+#nav-back:hover,
+#nav-back:active {
+  color: $secondary-color;
+}
+
+#map-img {
+  border-radius: 20px;
+  width: 100%;
+  @media only screen and (min-width: 600px) {
+    width: 100%;
+    height: auto;
+  }
+}
+
+#activity-title {
+  margin: 20px 0px 20px 0px;
+  text-align: center;
+}
+
+#host {
+  font-weight: 600;
+  margin: 10px 0px 20px 0px;
+}
+
+#information-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-auto-rows: 2rem;
+  width: 100%;
+  text-align: left;
+  align-items: center;
+}
+
+.event-variable {
+  grid-column: 1/2;
+  font-weight: 700;
+}
+
+.variable-value {
+  grid-column: 2/3;
+}
+
+#signing-up-wrapper {
+  margin: 20px 0px 20px 0px;
+  justify-content: center;
+  text-align: center;
+}
+
+#signing-up-conformation {
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+button {
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 600;
+  margin: 0px 5px 0px 5px;
+}
+
+.details-wrapper {
+  margin: 20px 0px 20px 0px;
+}
+</style>

@@ -54,7 +54,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 #login {
   width: 340px;
   margin: 0 auto;

@@ -35,9 +35,9 @@ public class BackendApplication {
 	// @Bean
 	// public CommandLineRunner run(){
 	// 	return args -> {
-	// 		UserWithPasswordDTO user = new UserWithPasswordDTO("test","test","test@test.com","hash",123,123,"role",null);
+	// 		UserWithPasswordDTO user = new UserWithPasswordDTO("test","test","test@test.com", LocalDate.of(2000, 1, 1), Difficulty.EASY, "hash",null);
 	// 		userService.createUser(user);
-	// 		Activity acitivty = new Activity("title","desc","equip", Difficulty.EASY,"bergen","place",1.2,1.2,LocalDateTime.now(),123,false);
+	// 		Activity acitivty = new Activity("title", "type", "desc","equip", Difficulty.EASY.value,"bergen","place",1.2,1.2,LocalDateTime.now(),123,false, 10, false, null);
 	// 		acitivityRepo.save(acitivty);
 	// 		Activity activity = acitivityRepo.findById(1L).get();
 	// 		User user1 = userRepo.findById(1L).get();

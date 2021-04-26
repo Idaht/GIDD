@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +96,12 @@ public class ActivityService
         Optional<Activity> optionalActivity = activityRepository.findById(activityId);
         if(optionalActivity.isPresent()){
             Activity activity = optionalActivity.get();
+
+            // Should not be able to delete activity after it is finished
+            if(activity.getStartTime().plusMinutes(activity.getDurationMinutes()).isBefore(LocalDateTime.now())) {
+                return false;
+            }
+
             List<User> activityUsers = new ArrayList<>();
             for(User user : activity.getUsers()){
                 user.getActivities().remove(activity);

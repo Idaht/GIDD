@@ -1,6 +1,5 @@
 package idatt2106.group3.backend.Web;
 
-import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
@@ -73,7 +72,6 @@ public class ActivityController
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
     }
 
     @PostMapping("/{activity_id}/users/{user_id}")

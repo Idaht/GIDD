@@ -75,6 +75,7 @@ public class ActivityController
     }
 
     @PostMapping("/{activity_id}/users/{user_id}")
+    @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> addUserToActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId) {
         if (activityService.addUserToActivity(activityId, userId)) {
             return new ResponseEntity<>(userService.getUser(userId),HttpStatus.CREATED);

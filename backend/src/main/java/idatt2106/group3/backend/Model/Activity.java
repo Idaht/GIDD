@@ -1,5 +1,6 @@
 package idatt2106.group3.backend.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
@@ -32,6 +33,7 @@ public class Activity {
     private String place;
     private double longitude;
     private double latitude;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime startTime;
     private int durationMinutes;
     private boolean isPrivateActivity;

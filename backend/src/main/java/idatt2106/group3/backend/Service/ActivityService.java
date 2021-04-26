@@ -1,5 +1,6 @@
 package idatt2106.group3.backend.Service;
 
+import idatt2106.group3.backend.Component.EmailComponent;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.User;
@@ -33,6 +34,8 @@ public class ActivityService
     private ActivityRepository activityRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired(required = false)
+    private EmailComponent emailSender;
 
     public ActivityDTO getActivity(long activityId)
     {
@@ -95,6 +98,7 @@ public class ActivityService
             for(User user : activity.getUsers()){
                 user.getActivities().remove(activity);
                 activityUsers.add(user);
+                emailSender.sendCancelationMail(user, activity);
             }
             userRepository.saveAll(activityUsers);
             activityRepository.save(activity);

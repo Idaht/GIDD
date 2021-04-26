@@ -32,6 +32,15 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/edit-activity",
+    name: "EditActivity",
+    component: () => import("../views/EditActivity.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+    //TODO make it so that you cannot edit anyone elses profile
+  },
+  {
     path: "/edit-profile",
     name: "EditProfile",
     component: () => import("../views/EditProfile.vue"),

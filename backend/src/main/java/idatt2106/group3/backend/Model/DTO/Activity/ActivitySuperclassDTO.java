@@ -1,6 +1,5 @@
 package idatt2106.group3.backend.Model.DTO.Activity;
 
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 public class ActivitySuperclassDTO {
@@ -17,9 +16,9 @@ public class ActivitySuperclassDTO {
     private int durationMinutes;
     private boolean isPrivateActivity;
     private int maxParticipants;
-    private Blob activityPicture;
+    private String activityPicture;
 
-    public ActivitySuperclassDTO(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants, Blob activityPicture) {
+    public ActivitySuperclassDTO(String title, String type, String description, String equipment, int difficulty, String city, String place, double longitude, double latitude, LocalDateTime startTime, int durationMinutes, boolean isPrivateActivity, int maxParticipants, String activityPicture) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -143,11 +142,11 @@ public class ActivitySuperclassDTO {
         this.maxParticipants = maxParticipants;
     }
 
-    public Blob getActivityPicture() {
+    public String getActivityPicture() {
         return activityPicture;
     }
 
-    public void setActivityPicture(Blob activityPicture) {
+    public void setActivityPicture(String activityPicture) {
         this.activityPicture = activityPicture;
     }
 

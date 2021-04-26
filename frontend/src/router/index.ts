@@ -70,6 +70,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/Profile.vue"),
   },
   {
+    path: "/calendar",
+    name: "Calendar",
+    meta: {
+      requiresAuth: true,
+    },
+    props: true,
+    component: () => import("../views/Calendar.vue"),
+  },
+  {
     //Catch all makes router redirect all unknown URLs to the PageNotFound view
     path: "/:catchAll(.*)",
     name: "PageNotFound",

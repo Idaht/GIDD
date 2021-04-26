@@ -1,5 +1,6 @@
 stages:
   - triggers
+  - deploy
 
 # Only runs pipelines if merge request has been created or is open for that branch
 workflow:
@@ -27,3 +28,16 @@ trigger_backend:
   rules:
     - changes:
       - backend/**/*
+
+pages:
+  stage: deploy
+  image: node:latest
+  rules:
+    - changes:
+      - API.yml
+  script:
+  - npm install -g redoc-cli
+  - redoc-cli bundle -o public/index.html API.yml
+  artifacts:
+    paths:
+    - public

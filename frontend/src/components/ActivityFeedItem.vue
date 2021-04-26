@@ -1,7 +1,7 @@
 <template>
   <div id="activity" @click="activityClicked">
     <div id="map">
-      <img id="map-img" :src="'https://maps.googleapis.com/maps/api/staticmap?center=' + activityData.latitude + ',' + activityData.longitude + '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' + activityData.latitude + ',' + activityData.longitude + '&key=AIzaSyAlIExoMNAdhquWRqMO4-yCuZZOn7OSJIc'" alt="Map" />
+      <img id="map-img" :src="'https://maps.googleapis.com/maps/api/staticmap?center=' + activityData.latitude + ',' + activityData.longitude + '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' + activityData.latitude + ',' + activityData.longitude + '&key=' + apiKey" alt="Map" />
     </div>
     <div>
       <h3>{{ activityData.title }}</h3>
@@ -15,6 +15,7 @@
 import { computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import IActivity from "../interfaces/IActivity.interface";
+import data from "@/../config.json";
 
 export default defineComponent({
   name: "ActivityPreviewFeed",
@@ -36,6 +37,8 @@ export default defineComponent({
       );
     });
 
+    const apiKey = data.googleAPIKey;
+
     const activityClicked = (): void => {
       //TODO: Route til siden som viser aktiviteten
       router.push("/activity/" + props.activityData.activityId);
@@ -45,6 +48,7 @@ export default defineComponent({
     return {
       location,
       activityClicked,
+      apiKey,
     };
   },
 });

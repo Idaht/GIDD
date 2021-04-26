@@ -23,9 +23,7 @@
       </div>
     </div>
     <div id="activities">
-      <li v-for="activity in activities" :key="activity.activityId">
-        <ActivityFeedItem :activityData="activity" />
-      </li>
+        <ActivityFeedItem v-for="activity in activities" :key="activity.activityId" :activityData="activity"/>
     </div>
   </div>
 </template>

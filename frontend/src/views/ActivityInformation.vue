@@ -76,7 +76,7 @@ export default defineComponent({
   setup(props) {
     //TODO finn arrangøren vha id
     const activityOrganizer = ref("");
-    //TODO hent ut antall påmeldte
+    //TODO hent ut antall påmeldte fra backend
     const numberOfParticipants = ref(5);
     //TODO hent ut fra backend
     const signedUp = ref(false);
@@ -87,9 +87,12 @@ export default defineComponent({
       return signedUp.value;
     });
 
+
+/** 
+ * Method for signing up to an activity
+ */
     const signUpActivity = async (): Promise<void> => {
       signedUp.value = true;
-      numberOfParticipants.value += 1;
       try{ 
         //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
       await axios.post(`/activities/${props.id}/users/${store.getters.user.userId}`);
@@ -108,10 +111,19 @@ export default defineComponent({
           }
      }*/
 
-    const signOffActivity = (): void => {
+/**
+ * Method for signing off an activity
+ */
+    const signOffActivity = async (): Promise<void> => {
       signedUp.value = false;
-      numberOfParticipants.value -= 1;
-      //TODO connect to backend og få opp bekreftelse
+      //numberOfParticipants.value -= 1;
+      try{ 
+        //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
+      await axios.delete(`users/${store.getters.user.userId}/activities/${props.id}`);
+      } catch(error) {
+       router.push("/error");
+       }
+      
     };
 
     const returnToActivityFeed = (): void => {

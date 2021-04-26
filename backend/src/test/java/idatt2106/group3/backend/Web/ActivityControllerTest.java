@@ -219,4 +219,25 @@ public class ActivityControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
     }
+
+    @Test
+    public void isOrganizerOfActivity_ShouldCheckIfOrganizerOfActivity_StatusOk() throws Exception {
+        Activity activity = activityRepository.findAll().get(0);
+
+        long activityId = activity.getActivityId();
+        long organizerId = activity.getOrganizer().getUserId();
+
+        this.mockMvc.perform(get("/api/v1/activities/" + activityId + "/users/" + organizerId))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void getUsers_ShouldReturnAllUsersRegisteredInActivity_StatusOk() throws Exception {
+        long activityId = activityRepository.findAll().get(0).getActivityId();
+        this.mockMvc.perform(get("/api/v1/activities/" + activityId + "/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))))
+                .andReturn();
+    }
 }

@@ -96,4 +96,10 @@ public class UserController
     public ResponseEntity<List<Activity>> getFutureActivities(@PathVariable("user_id") Long userId){
         return new ResponseEntity<> (userService.findFutureActivities(userId), HttpStatus.OK);
     }
+
+    @GetMapping("/{user_id}/organized-activities")
+    @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Activity>> getOrganizedActivities(@PathVariable("user_id") Long userId){
+        return new ResponseEntity<> (userService.findOrganizedActivities(userId), HttpStatus.OK);
+    }
 }

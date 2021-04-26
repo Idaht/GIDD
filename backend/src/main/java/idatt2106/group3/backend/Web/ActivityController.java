@@ -1,5 +1,6 @@
 package idatt2106.group3.backend.Web;
 
+import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -81,6 +83,30 @@ public class ActivityController
             return new ResponseEntity<>(userService.getUser(userId),HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/{activity_id}/users/{user_id}")
+    public ResponseEntity<Boolean> isOrganizerOfActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId) {
+        ActivityDTO activityDTO = activityService.getActivity(activityId);
+        UserDTO userDTO = userService.getUser(userId);
+
+        if(activityDTO == null || userDTO == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (activityDTO.getOrganizerId() == userDTO.getUserId()) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false, HttpStatus.OK);
+    }
+
+    @GetMapping("/{activity_id}/users")
+    public ResponseEntity<List<UserDTO>> getUsersOfActivity(@PathVariable("activity_id") long activityId) {
+        Set<UserDTO> userDTOs = activityService.getUsers(activityId);
+        if (userDTOs != null) {
+            return new ResponseEntity<>(new ArrayList<>(userDTOs), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/{activity_id}/chat")

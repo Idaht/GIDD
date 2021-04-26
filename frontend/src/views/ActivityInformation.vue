@@ -16,19 +16,21 @@
       <label class="event-variable">Varighet</label>
       <div class="variable-value">{{ activity.durationMinutes }} minutter</div>
       <label class="event-variable">Hvor</label>
-      <div class="variable-value">{{ activity.place }}, {{ activity.city }}</div>
+      <div class="variable-value">
+        {{ activity.place }}, {{ activity.city }}
+      </div>
       <label class="event-variable">Hva</label>
       <div class="variable-value">{{ activity.type }}</div>
       <label class="event-variable">Belastning</label>
       <div class="variable-value">{{ activity.difficulty }}</div>
       <label class="event-variable">Deltakere</label>
-      <div class="variable-value">{{ numberOfParticipants }} / {{ activity.maxParticipants }}</div>
+      <div class="variable-value">
+        {{ numberOfParticipants }} / {{ activity.maxParticipants }}
+      </div>
     </div>
     <div id="signing-up-wrapper">
       <div id="signing-up" v-if="signedUp">
-        <div id="signing-up-conformation">
-        Du er påmeldt!
-        </div>
+        <div id="signing-up-conformation">Du er påmeldt!</div>
         <button
           @click="signOffActivity"
           alt="Knapp for å melde seg av en aktivitet"
@@ -63,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, onMounted, ref } from "vue";
+import { computed, defineComponent, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import { store } from "../store";

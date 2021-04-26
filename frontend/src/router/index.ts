@@ -38,7 +38,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true,
     },
-    //TODO make it so that you cannot edit anyone elses profile
   },
   {
     path: "/activity-feed",

@@ -4,7 +4,12 @@
       <div class="form-group" id="file-button-group">
         <div id="label-input">
           <label for="fileInput">{{ labelName }}</label>
-          <input ref="fileInput" id="fileInput" type="file" @change="uploadFile" />
+          <input
+            ref="fileInput"
+            id="fileInput"
+            type="file"
+            @change="uploadFile"
+          />
         </div>
         <button @click="removeImage">Fjern bildet</button>
       </div>
@@ -21,10 +26,9 @@ export default defineComponent({
   props: {
     labelName: String,
   },
-  setup(props, {emit}) {
-    const imageData = ref("") as Ref<string|ArrayBuffer|null|undefined>;
+  setup(props, { emit }) {
+    const imageData = ref("") as Ref<string | ArrayBuffer | null | undefined>;
     const fileInput = ref(null) as Ref<any>;
-
 
     const uploadFile = (event: any) => {
       let input = event.target.files[0];
@@ -39,10 +43,10 @@ export default defineComponent({
     };
 
     const removeImage = () => {
-        imageData.value = "";
-        fileInput.value.value = "";
-        emit("removeImage")
-    }
+      imageData.value = "";
+      fileInput.value.value = "";
+      emit("removeImage");
+    };
     return {
       uploadFile,
       imageData,
@@ -62,7 +66,7 @@ img {
   height: 150px;
   border-radius: 50%;
 }
-#label-input{
-    display: inline-block;
+#label-input {
+  display: inline-block;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div id="activity-information">
-    <div @click="returnToActivityFeed" id="nav-back">
+    <div @click="back" id="nav-back">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      Tilbake til feed
+      Tilbake 
     </div>
     <!-- TODO: implementer kart -->
     <div id="map">
@@ -94,7 +94,7 @@ export default defineComponent({
     const signUpActivity = async (): Promise<void> => {
       signedUp.value = true;
       try{ 
-        //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
+        //TODO: må sørge for at visinigen endres når du er påmeldt et arrangement
       await axios.post(`/activities/${props.id}/users/${store.getters.user.userId}`);
 
       } catch(error) {
@@ -126,8 +126,8 @@ export default defineComponent({
       
     };
 
-    const returnToActivityFeed = (): void => {
-      router.push("/activity-feed");
+    const back = (): void => {
+      router.back(); 
     };
 
     const openChat = (): void => {
@@ -160,7 +160,7 @@ export default defineComponent({
       isSignedUp,
       signUpActivity,
       signOffActivity,
-      returnToActivityFeed,
+      back,
       openChat,
       activity,
     };

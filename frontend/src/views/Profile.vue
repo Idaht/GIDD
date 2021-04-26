@@ -1,11 +1,7 @@
 <template>
   <div id="profile">
     <h1>Min profil</h1>
-    <img
-      id="profile-picture"
-      :src="profilePicture"
-      alt="profile-picture"
-    />
+    <img id="profile-picture" :src="profilePicture" alt="profile-picture" />
     <div id="profile-wrapper">
       <div id="profile-name-wrapper">
         <div id="profile-name">
@@ -19,30 +15,10 @@
         </div>
       </div>
       <div id="profile-information">
-        <div id="profile-information-age">
-          <label>Alder</label>
-          <div>{{ age }}</div>
-        </div>
         <div id="profile-information-poins">
           <label>Poeng</label>
           <div>{{ user.score }}</div>
         </div>
-        <div id="profile-information-rating">
-          <label>Rating</label>
-          <div>
-            <i class="fa fa-star-o"></i>
-            <i class="fa fa-star-o"></i>
-            <i class="fa fa-star-o"></i>
-            <i class="fa fa-star-o"></i>
-            <i class="fa fa-star-o"></i>
-            <!-- TODO: fiks user rating -->
-            <!-- <div>{{ user.rating }}</div> -->
-          </div>
-        </div>
-      </div>
-      <div id="profile-bio">
-        <h3>Bio</h3>
-        <div>{{ userBio }}</div>
       </div>
     </div>
   </div>
@@ -51,25 +27,23 @@
 <script lang="ts">
 import router from "@/router";
 import { onBeforeMount, defineComponent, ref, Ref, computed } from "vue";
-import User from "../interfaces/User/User.interface"
+import User from "../interfaces/User/User.interface";
 import axios from "../axiosConfig";
-import { useStore } from "../store";
 
 export default defineComponent({
   props: ["id"],
   setup(props) {
-    //TODO hente ut/fikse resterende variabler
     const user = ref({}) as Ref<User>;
-    const store = useStore();
-    const age = ref(24); //Ha? Hente fødselsdato og regne ut alderen?
-    const userBio = ref("Jeg liker ost og å dø på joggeturer");
-    const trusted = ref(true); //Hente ut dett
-    const trustedText = ref("Brukeren er trusted");
+    const trusted = ref(true); //TODO Hente ut dette fra backend
 
     const profilePicture = computed(() => {
-      let val = (user.value.profilePicture !== null) ? user.value.profilePicture : require('../assets/hamster-pfp.jpg');  
+      let val =
+        user.value.profilePicture !== null
+          ? user.value.profilePicture
+          : require("../assets/hamster-pfp.jpg");
       return val;
     });
+
     /**
      * Connects to backend using a get request to get the user
      */
@@ -83,11 +57,8 @@ export default defineComponent({
     });
 
     return {
-      age,
-      userBio,
       profilePicture,
       trusted,
-      trustedText,
       user,
     };
   },
@@ -123,9 +94,9 @@ label {
 }
 
 #profile-wrapper {
-      @media only screen and (min-width: 600px) {
-      width: 45%;
-      margin: auto;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
   }
 }
 

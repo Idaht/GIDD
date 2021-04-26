@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,6 +17,9 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  */
 @Configuration
 public class SourceData {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceData.class);
+
     /**
      * Creates a MySQL datasource
      * Reads password and username from config.properties file
@@ -32,7 +37,7 @@ public class SourceData {
             dataSourceBuilder.setPassword(reader.readLine());
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage(), ex.fillInStackTrace());
         }
         return dataSourceBuilder;
     }

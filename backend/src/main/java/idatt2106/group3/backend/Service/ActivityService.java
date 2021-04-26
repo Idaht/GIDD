@@ -46,7 +46,6 @@ public class ActivityService
     {
         LOGGER.info("getActivities() called");
         return activityRepository.findAll().stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
-        
     }
 
     public ActivityDTO createActivity(ActivityRegistrationDTO activity)

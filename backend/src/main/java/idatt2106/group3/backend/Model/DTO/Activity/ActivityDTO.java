@@ -11,7 +11,7 @@ public class ActivityDTO extends ActivitySuperclassDTO {
     public ActivityDTO(Activity activity){
         super(activity.getTitle(), activity.getType(), activity.getDescription(), activity.getEquipment(), activity.getDifficulty(), activity.getCity(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getStartTime(), activity.getDurationMinutes(), activity.isPrivateActivity(), activity.getMaxParticipants(), convertActivityPicture(activity.getActivityPicture()));
         this.activityId = activity.getActivityId();
-        this.organizerId = activity.getOrganizer().getUserId();
+        if(activity.getOrganizer() != null) this.organizerId = activity.getOrganizer().getUserId();
     }
 
     public ActivityDTO(){}

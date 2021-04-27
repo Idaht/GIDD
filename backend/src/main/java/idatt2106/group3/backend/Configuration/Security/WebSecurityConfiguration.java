@@ -1,5 +1,7 @@
 package idatt2106.group3.backend.Configuration.Security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import idatt2106.group3.backend.Component.MyCorsConfig;
 import idatt2106.group3.backend.Configuration.Jwt.JwtTokenVerifier;
 import idatt2106.group3.backend.Configuration.Jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import idatt2106.group3.backend.Service.UserSecurityDetailsService;
@@ -42,20 +48,21 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
+        .cors()
+        .and()
         .requiresChannel().anyRequest().requiresSecure()
         .and()
         .csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .addFilter(getJWTAuthenticationFilter(authenticationManager()))
+        .addFilterBefore(new MyCorsConfig(), JwtUsernameAndPasswordAuthenticationFilter.class)
+        .addFilterAfter(getJWTAuthenticationFilter(authenticationManager()), MyCorsConfig.class)
         .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
         .addFilterAfter(new ExceptionHandlerFilter(), JwtTokenVerifier.class)
         .authorizeRequests()
         .antMatchers("/error").permitAll()
         .antMatchers("/api/v1/activities/**").hasAnyRole("USER", "ADMIN")
         .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .cors();
+        .anyRequest().authenticated();
     }
 
     /**
@@ -88,5 +95,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         final JwtUsernameAndPasswordAuthenticationFilter filter = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager);
         filter.setFilterProcessesUrl("/api/v1/login");
         return filter;
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource()
+    {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        //or any domain that you want to restrict to 
+        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        //Add the method support as you like
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

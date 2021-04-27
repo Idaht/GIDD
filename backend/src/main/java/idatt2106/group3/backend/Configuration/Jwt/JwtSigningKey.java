@@ -3,7 +3,7 @@ package idatt2106.group3.backend.Configuration.Jwt;
 import java.security.SecureRandom;
 
 /**
- * Class for creating a new JWT Signing Key on server startup. 
+ * Class for creating a new and unique JWT Signing Key on server startup. 
  * Singleton Class
  */
 public class JwtSigningKey {

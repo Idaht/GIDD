@@ -2,7 +2,7 @@ package idatt2106.group3.backend.Configuration.Jwt;
 
 
 /**
- * Mapper file
+ * Mapper file for input when trying to log in
  */
 public class UsernameAndPasswordAuthenticationRequest {
     private String email;

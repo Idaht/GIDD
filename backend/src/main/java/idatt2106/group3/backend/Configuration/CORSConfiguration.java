@@ -5,11 +5,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configures CORS to correct localhost port
+ */
 @Configuration
 public class CORSConfiguration {
     
     /**
-	 * Allows CORS to frontend
+	 * Allows CORS to frontend application
 	 */
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {

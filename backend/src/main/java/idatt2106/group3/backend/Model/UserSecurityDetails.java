@@ -6,6 +6,10 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * Entity class for storing information about authenticated user
+ * UserDetails including userId
+ */
 public class UserSecurityDetails implements UserDetails {
 
     private String password;

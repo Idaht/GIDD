@@ -1,10 +1,12 @@
 package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Component.EmailComponent;
+import idatt2106.group3.backend.Enum.SortingType;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserSecurityDetails;
+import idatt2106.group3.backend.Model.DTO.SortFilterQueryDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
@@ -39,6 +41,11 @@ public class ActivityService
     @Autowired(required = false)
     private EmailComponent emailSender;
 
+    /**
+     * Returns activity from activityId stored in the database
+     * @param activityId
+     * @return ActivityDTO object
+     */
     public ActivityDTO getActivity(long activityId)
     {
         LOGGER.info("getActivity(long activityId) called with activityId: {}", activityId); 
@@ -47,12 +54,35 @@ public class ActivityService
         return null;
     }
 
+    /**
+     * Returns all activities stored in the database
+     * @return List of activities
+     */
     public List<ActivityDTO> getActivities()
     {
         LOGGER.info("getActivities() called");
         return activityRepository.findAll().stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
     }
 
+    /**
+     * Returns a sorted or filtered list from what the user wants
+     * @param filter
+     * @return List of ActivityDTO objects
+     */
+    public List<ActivityDTO> getActivitiesWithFilterAndSorting(SortFilterQueryDTO filter){
+        LOGGER.info("getActivitiesWithFilterAndSorting(SortFilterQueryDTO) called with amount: {} sortQuery: {}",filter.getAmount(), filter.getSearchQuery());
+        String searchQuery = "%" + filter.getSearchQuery() + "%";
+        List<Activity> list;
+        list = sortAndFilter(filter, searchQuery);
+        return list.stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
+    }
+
+    /**
+     * Finds the user who created the activity, and sets it as the organizer
+     * Saves the Activity object in the database
+     * @param activity
+     * @return ActivityDTO object
+     */
     public ActivityDTO createActivity(ActivityRegistrationDTO activity)
     {
         LOGGER.info("createActivity(Activity activity) called. Activity Title: {}", activity.getTitle());
@@ -66,6 +96,12 @@ public class ActivityService
         return null;
     }
 
+    /**
+     * Finds the activity from id and changes all given fields in activityRegDTO
+     * @param activityId
+     * @param activityRegDTO input DTO object
+     * @return ActivityDTO object
+     */
     public ActivityDTO editActivity(long activityId, ActivityRegistrationDTO activityRegDTO)
     {
         LOGGER.info("editActivity(long activityId, Activity activity) called with activityId: {}", activityId);
@@ -90,6 +126,11 @@ public class ActivityService
         return null;
     }
 
+    /**
+     * Finds activity from id, removes and sends cancelation mails to all participants, and deletes the activity from the database
+     * @param activityId
+     * @return if deletion was successful
+     */
     public boolean deleteActivity(long activityId)
     {
         LOGGER.info("deleteActivity(long activityId) called with activityId: {}", activityId);
@@ -116,6 +157,13 @@ public class ActivityService
         return false;
     }
 
+    /**
+     * Adds a user to an activity, user becomes a participant
+     * Checks if both are stored in database
+     * @param activityId
+     * @param userId
+     * @return boolean
+     */
     public boolean addUserToActivity(long activityId, long userId)
     {
         LOGGER.info("addUserToActivity(long activityId) called with activityId: {}, and userId: {}", activityId, userId);
@@ -144,6 +192,11 @@ public class ActivityService
         return true;
     }
 
+    /**
+     * Returns activity Chat object
+     * @param activityId
+     * @return Chat object
+     */
     public Chat getChat(long activityId){
         Optional<Activity> optionalActivity = activityRepository.findById(activityId);
         if(optionalActivity.isPresent()){
@@ -152,6 +205,12 @@ public class ActivityService
         return null;
     }
 
+    /**
+     * Returns a boolean value if a user is the organizer of the activity
+     * @param activityId
+     * @param userId
+     * @return boolean
+     */
     public boolean checkIfOrganizerOfActivity(long activityId, long userId){
         Optional<Activity> optionalActivity = activityRepository.findById(activityId);
         if(optionalActivity.isPresent()){
@@ -184,6 +243,11 @@ public class ActivityService
         return new HashSet<>();
     }
 
+    /**
+     * Returns all participants of the given activity
+     * @param activityId
+     * @return Set of UsersDTO objects
+     */
     public Set<UserDTO> getUsers(long activityId)
     {
         LOGGER.info("getUsers(long activityId) called with activityId: {}", activityId); 
@@ -198,5 +262,29 @@ public class ActivityService
             return userDTOs;
         }
         return new HashSet<>();
+    }
+
+    /**
+     * Returns a list from Repository depending on DTO from frontend
+     * @param filter SortFilterQueryDTO input
+     * @param searchQuery title and description search substring
+     * @return List of activities
+     */
+    private List<Activity> sortAndFilter(SortFilterQueryDTO filter, String searchQuery){
+        
+        if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DATE) 
+            return activityRepository.findActivitiesOnDateWithoutFilter(searchQuery, filter.getAmount());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DATE) 
+            return activityRepository.findActivitiesOnDateWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+        else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
+            return activityRepository.findActivitiesOnAmountWithoutFilter(searchQuery, filter.getAmount());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
+            return activityRepository.findActivitiesOnAmountWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+        else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DISTANCE)
+            return activityRepository.findActivitiesOnDistanceWithoutFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DISTANCE)
+            return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty().value);
+
+        return activityRepository.findAll();
     }
 }

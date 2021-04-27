@@ -2,7 +2,7 @@ package idatt2106.group3.backend.Model.DTO.User;
 
 import java.time.LocalDate;
 
-import idatt2106.group3.backend.Model.Difficulty;
+import idatt2106.group3.backend.Enum.Difficulty;
 
 public class UserEditDTO extends UserSuperclassDTO {
     private String newPassword;

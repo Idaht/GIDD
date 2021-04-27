@@ -5,6 +5,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+/**
+ * Configuration used for testing purposes
+ * Turns of all WebSecurity
+ * Not used in SecurityControllerTest
+ */
 @Configuration
 @Profile("test")
 public class WebSecurityConfigurationDisabled extends WebSecurityConfigurerAdapter{

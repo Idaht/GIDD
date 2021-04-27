@@ -220,6 +220,17 @@ public class ActivityService
     }
 
     /**
+     * Returns boolean based on if the user is a participant of the given AcitivityId
+     * @param activityId
+     * @param userId
+     * @return true or false
+     */
+    public boolean checkIfParticipant(long activityId, long userId){
+        Optional<Integer> optionalActivityId = activityRepository.findIfUserIsParticipantOfActivity(userId, activityId); 
+        return optionalActivityId.isPresent();
+    }
+
+    /**
      * Method that increases "absence" counter for users that were absent in an activity.
      * Also sets activity's markedAbsence boolean to true, so that we know that that activity
      * already has marked user absences.
@@ -275,15 +286,15 @@ public class ActivityService
         if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DATE) 
             return activityRepository.findActivitiesOnDateWithoutFilter(searchQuery, filter.getAmount());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DATE) 
-            return activityRepository.findActivitiesOnDateWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+            return activityRepository.findActivitiesOnDateWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty());
         else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
             return activityRepository.findActivitiesOnAmountWithoutFilter(searchQuery, filter.getAmount());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
-            return activityRepository.findActivitiesOnAmountWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+            return activityRepository.findActivitiesOnAmountWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty());
         else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DISTANCE)
             return activityRepository.findActivitiesOnDistanceWithoutFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DISTANCE)
-            return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty().value);
+            return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty());
 
         return activityRepository.findAll();
     }

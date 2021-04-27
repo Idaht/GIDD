@@ -20,6 +20,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/SignUp.vue"),
   },
   {
+    path: "/welcome",
+    name: "Welcome",
+    component: () => import("../views/Welcome.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/activity/:id",
     name: "ActivityInfo",
     component: () => import("../views/ActivityInformation.vue"),
@@ -78,6 +86,14 @@ const routes: Array<RouteRecordRaw> = [
     },
     props: true,
     component: () => import("../views/Profile.vue"),
+  },
+  {
+    path: "/make-activity",
+    name: "MakeActivity",
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import("../views/MakeActivity.vue"),
   },
   {
     path: "/calendar",

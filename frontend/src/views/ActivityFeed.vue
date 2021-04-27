@@ -1,41 +1,97 @@
 <template>
-  <div id="activity-feed">
-    <div>
-      <div class="header" id="upper-header">
-        <div id="header-title">
-          <h2>Finn aktiviteter</h2>
+  <div>
+    <div id="activity-feed">
+      <div>
+        <div class="header" id="upper-header">
+          <div id="header-title">
+            <h2>Finn aktiviteter</h2>
+          </div>
+          <div id="view-container">
+            <button id="view-list" class="icon"></button>
+            <button @click="mapViewClicked" id="view-map" class="icon"></button>
+          </div>
         </div>
-        <div id="view-container">
-          <button id="view-list" class="icon"></button>
-          <button @click="mapViewClicked" id="view-map" class="icon"></button>
+
+        <div class="header" id="lower-header">
+          <select
+            class="dropdown lower-header-item"
+            v-model="sortingType"
+            @change="sortClicked"
+          >
+            <option selected hidden>Sortering</option>
+            <option value="DATE">Første kommende</option>
+            <option value="DISTANCE">Avstand</option>
+            <option value="PARTICIPANT_AMOUNT">Antall deltakere</option>
+          </select>
+          <div id="filter-boxes" class="lower-header-item">
+            <div class="checkbox-label">
+              <label for="easy">Lett</label>
+              <input
+                type="checkbox"
+                v-model="easyCheckbox"
+                @change="sortClicked"
+              />
+            </div>
+            <div class="checkbox-label">
+              <label for="easy">Medium</label>
+              <input
+                type="checkbox"
+                v-model="mediumCheckbox"
+                @change="sortClicked"
+              />
+            </div>
+            <div class="checkbox-label">
+              <label for="easy">Hardt</label>
+              <input
+                type="checkbox"
+                v-model="hardCheckbox"
+                @change="sortClicked"
+              />
+            </div>
+          </div>
+          <input
+            type="text"
+            id="search"
+            v-model="searchQuery"
+            @change="sortClicked"
+            class="lower-header-item"
+            placeholder="Søk"
+          />
+          <input
+            type="number"
+            id="amount"
+            v-model="amount"
+            class="lower-header-item"
+            placeholder="Mengde aktiviteter"
+          />
         </div>
       </div>
-      <div class="header" id="lower-header">
-        <select class="dropdown" id="lower-header-sort">
-          <option selected hidden>Sortering</option>
-          <option @click="sortClicked" value="Nyeste">Nyeste</option>
-          <option @click="sortClicked" value="Avstand">Avstand</option>
-          <option @click="sortClicked" value="Antall deltakere">
-            Antall deltakere
-          </option>
-        </select>
-        <div id="lower-header-filter" @click="filterClicked">+ Filter</div>
+      <div id="activities">
+        <ActivityFeedItem
+          v-for="activity in activities"
+          :key="activity.activityId"
+          :activityData="activity"
+        />
       </div>
-    </div>
-    <div id="activities">
-        <ActivityFeedItem v-for="activity in activities" :key="activity.activityId" :activityData="activity"/>
     </div>
   </div>
-  <!-- Et plusstegn på knappen -->
-  <button @click="makeActivity">Opprett aktivitet</button>
+  <div id="add-activity" @click="makeActivity">+</div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref, Ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  reactive,
+  ref,
+  Ref,
+} from "vue";
 import ActivityFeedItem from "../components/ActivityFeedItem.vue";
+import SortAndFilter from "../interfaces/SortAndFilter.interface";
 import axios from "@/axiosConfig";
 import { useRouter } from "vue-router";
-import IActivity from "@/interfaces/IActivity.interface";
+import IActivity from "@/interfaces/Activity/IActivity.interface";
 
 export default defineComponent({
   name: "ActivityFeed",
@@ -46,6 +102,36 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const activities: Ref<IActivity[]> = ref([]);
+    const easyCheckbox: Ref<boolean> = ref(false);
+    const mediumCheckbox: Ref<boolean> = ref(false);
+    const hardCheckbox: Ref<boolean> = ref(false);
+    const amount: Ref<number | null> = ref(null);
+    const sortingType: Ref<string> = ref("Sortering");
+    const searchQuery: Ref<string> = ref("");
+
+    const getDifficulty = computed(() => {
+      let difficulty = 0;
+      if (easyCheckbox.value) difficulty += 1;
+      if (mediumCheckbox.value) difficulty += 2;
+      if (hardCheckbox.value) difficulty += 4;
+
+      if (difficulty > 0) return difficulty;
+      return null;
+    });
+
+    const getAmount = computed(() => {
+      if (amount.value === null || amount.value < 0) return 7;
+      return amount.value;
+    });
+
+    const filter = computed(() => {
+      return {
+        sortingType: sortingType.value,
+        searchQuery: searchQuery.value,
+        difficulty: getDifficulty.value,
+        amount: getAmount.value,
+      } as SortAndFilter;
+    });
 
     onBeforeMount(async () => {
       try {
@@ -56,14 +142,46 @@ export default defineComponent({
       }
     });
 
-    const sortClicked = (): void => {
-      //TODO: Open the sorting functionality, and remove console.log
-      console.log("Sort clicked");
+    /**
+     * Runs when any inputs has been changed
+     * Sends the filter to backend server
+     */
+    const sortClicked = async (): Promise<void> => {
+      if (sortingType.value === "DISTANCE") {
+        // Finds latitude and longtidue to user
+        navigator.geolocation.getCurrentPosition(
+          (posistion) => {
+            filter.value.userLongitude = posistion.coords.longitude;
+            filter.value.userLatitude = posistion.coords.latitude;
+            getFilteredAndSortedActivities();
+          },
+          (err) => {
+            delete filter.value.userLongitude;
+            delete filter.value.userLatitude;
+            sortingType.value = "Sortering";
+          }
+        );
+      } else if (sortingType.value === "Sortering") {
+        sortingType.value = "DATE";
+        getFilteredAndSortedActivities();
+        sortingType.value = "Sortering";
+      } else {
+        getFilteredAndSortedActivities();
+      }
     };
-
-    const filterClicked = (): void => {
-      //TODO: Open the filtering functionality, and remove console.log
-      console.log("Filter clicked");
+    /**
+     * Sends filter to backend, and sets activities list to reponse data
+     */
+    const getFilteredAndSortedActivities = async () => {
+      try {
+        const response = await axios.post(
+          "/activities/alternatives",
+          filter.value
+        );
+        activities.value = response.data as IActivity[];
+      } catch (error) {
+        router.push("/error");
+      }
     };
 
     const mapViewClicked = (): void => {
@@ -76,7 +194,12 @@ export default defineComponent({
 
     return {
       sortClicked,
-      filterClicked,
+      easyCheckbox,
+      mediumCheckbox,
+      hardCheckbox,
+      amount,
+      sortingType,
+      searchQuery,
       mapViewClicked,
       activities,
       makeActivity,
@@ -115,6 +238,7 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
 #lower-header {
   display: grid;
   grid-template-columns: 1fr 3fr;
+  row-gap: 20px;
 }
 
 h2 {
@@ -147,8 +271,24 @@ h2 {
   background-color: unset;
 }
 
-#lower-header-sort,
-#lower-header-filter {
+.checkbox-label {
+  display: flex;
+  flex-direction: column;
+  width: 10%;
+  align-items: center;
+  margin-left: 30px;
+}
+
+#filter-boxes {
+  display: flex;
+  flex-direction: row;
+}
+
+#search {
+  display: block;
+}
+
+.lower-header-item {
   border-radius: 20px;
   font-size: 10px;
   letter-spacing: 1px;
@@ -170,6 +310,12 @@ h2 {
 
 option {
   line-height: 1rem;
+}
+
+#activity-button {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
 }
 
 select {
@@ -205,5 +351,28 @@ li {
   @media only screen and (min-width: 800px) {
     width: 50%;
   }
+}
+
+#add-activity {
+  line-height: 38px;
+  border-radius: 40px;
+  position: fixed;
+  font-size: 1.3rem;
+  bottom: 20px;
+  height: 40px;
+  width: 40px;
+  left: 50%;
+  margin-left: -20px;
+  color: #ffffff;
+  background-color: $secondary-color;
+  @media only screen and (min-width: 600px) {
+    left: 76%;
+    bottom: 40px;
+  }
+}
+
+#add-activity:hover {
+  cursor: pointer;
+  background-color: #ff6666;
 }
 </style>

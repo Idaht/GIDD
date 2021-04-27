@@ -9,6 +9,10 @@
         <p id="feedback" v-if="isThereFeedback">{{ feedback }}</p>
       </div>
       <router-link to="/forgotten-password">Glemt passord?</router-link>
+      <div id="signup">
+        <span>Har du ikke bruker?</span
+        ><router-link to="/sign-up">Opprett en her</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -73,5 +77,13 @@ input {
 button {
   margin: 1.5em 0 1em 0;
   align-content: center;
+}
+
+a {
+  display: block;
+}
+
+div #signup {
+  margin: 1em;
 }
 </style>

@@ -31,7 +31,6 @@
           <h4>Fødselsdato</h4>
           <div id="sign-up-form-birthday">
             <div id="birthday-year" class="birthday-form">
-              <h5>År</h5>
               <select class="dropdown" v-model="selectedYear">
                 <option value="0" hidden disabled>Velg år</option>
                 <option
@@ -44,7 +43,6 @@
               </select>
             </div>
             <div id="birthday-month" class="birthday-form">
-              <h5>Måned</h5>
               <select name="month" v-model="selectedMonth">
                 <option value="0" selected disabled hidden>Velg måned</option>
                 <option
@@ -57,7 +55,6 @@
               </select>
             </div>
             <div id="birthday-day" class="birthday-form">
-              <h5>Dag</h5>
               <select name="day" v-model="selectedDay">
                 <option value="0" selected disabled hidden>Velg dato</option>
                 <option
@@ -72,16 +69,18 @@
           </div>
         </div>
         <!-- Maybe change name to since its not a birthday form -->
-        <div class="birthday-form">
-          <h5>Treningsnivå</h5>
+        <div class="fitness-form">
+          <h4>Treningsnivå</h4>
+          <div id="fitness-form-boxes">
           <label v-for="(trainingLevel, index) in trainingLevels" :key="index">
-            <input
+            <input id="fitness-form-input"
               type="radio"
               :value="trainingLevel.value"
               :checked="trainingLevel.value === selectedTrainingLevel"
               @change="changeTrainingLevel(trainingLevel.value)"
             />{{ trainingLevel.title }}
           </label>
+          </div>
         </div>
       </div>
       <div id="conditions-container">
@@ -506,7 +505,7 @@ export default defineComponent({
       user.dateOfBirth = birthdate.value;
       user.trainingLevel = trainingLevelAsString.value;
       if (await store.dispatch("register", user)) {
-        router.replace("/activity-feed");
+        router.replace("/welcome");
       } else {
         router.push("/error");
       }
@@ -589,12 +588,16 @@ h5 {
 
 #sign-up {
   margin: 35px;
+  top:0px;
+  height:90%;
+  overflow:scroll;
   text-align: left;
   color: $primary-color;
   margin-bottom: 130px;
   @media only screen and (min-width: 600px) {
     width: 30%;
     margin: auto;
+    margin-top: 0px;
   }
 }
 
@@ -631,7 +634,8 @@ h5 {
 #sign-up-form-birthday {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  margin-top: 10px;
+  margin-top: 15px;
+  column-gap: 15px;
 }
 
 .birthday-form {
@@ -639,8 +643,26 @@ h5 {
   text-align: center;
 }
 
+.fitness-form {
+  margin-top:5px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+}
+
+#fitness-form-boxes {
+  display: grid;
+  text-align: center;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+#fitness-form-input {
+  margin:10px
+}
+
 select {
-  width: 90%;
+  width: 100%;
   height: 2rem;
   border-radius: 0;
   border-width: 0;

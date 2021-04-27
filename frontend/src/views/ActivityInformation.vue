@@ -4,9 +4,9 @@
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
       Tilbake 
     </div>
-    <!-- TODO: implementer kart -->
     <div id="map">
-      <img id="map-img" src="../../img/map.png" alt="Map" />
+      <!--TODO: Fiks så API key hentes fra fil-->
+      <img id="map-img" :src="'https://maps.googleapis.com/maps/api/staticmap?center=' + activity.latitude + ',' + activity.longitude + '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' + activity.latitude + ',' + activity.longitude + '&key=' + apiKey" alt="Map" />
     </div>
     <h2 id="activity-title">{{ activity.title }}</h2>
     <div id="host">Arrangeres av {{ activity.organizer }}</div>
@@ -68,6 +68,7 @@
 import { computed, defineComponent, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
+import data from "@/../config.json";
 import { store } from "../store";
 
 export default defineComponent({
@@ -82,6 +83,7 @@ export default defineComponent({
     const signedUp = ref(false);
     const router = useRouter();
     const activity = ref({});
+    const apiKey = data.googleAPIKey;
 
     const isSignedUp = computed(() => {
       return signedUp.value;
@@ -163,6 +165,7 @@ export default defineComponent({
       back,
       openChat,
       activity,
+      apiKey,
     };
   },
 });

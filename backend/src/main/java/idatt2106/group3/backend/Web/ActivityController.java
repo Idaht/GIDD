@@ -46,7 +46,7 @@ public class ActivityController
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
 
-    @GetMapping("/alternatives")
+    @PostMapping("/alternatives")
     public ResponseEntity<List<ActivityDTO>> getActivitiesWithFilterAndSorting(@RequestBody SortFilterQueryDTO filter){
         return new ResponseEntity<>(activityService.getActivitiesWithFilterAndSorting(filter),HttpStatus.OK);
     }
@@ -89,7 +89,7 @@ public class ActivityController
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping("/{activity_id}/users/{user_id}")
+    @GetMapping("/{activity_id}/organizer/{user_id}")
     //TODO: ADD AUTH
     public ResponseEntity<Boolean> isOrganizerOfActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId) {
         ActivityDTO activityDTO = activityService.getActivity(activityId);
@@ -103,6 +103,11 @@ public class ActivityController
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
         return new ResponseEntity<>(false, HttpStatus.OK);
+    }
+
+    @GetMapping("/{activity_id}/users/{user_id}")
+    public ResponseEntity<Boolean> isUserParticipantOfActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId){
+        return new ResponseEntity<>(activityService.checkIfParticipant(activityId, userId), HttpStatus.OK);
     }
 
     @GetMapping("/{activity_id}/users")

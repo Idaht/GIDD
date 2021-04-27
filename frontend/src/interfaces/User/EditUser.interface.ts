@@ -7,4 +7,5 @@ export default interface EditUser {
   newPassword?: string;
   oldPassword?: string;
   profilePicture?: string;
+  trainingLevel: string;
 }

@@ -25,37 +25,38 @@
         </a>
         <!--Changed to logged out menu img-->
       </span>
+    </div>
+    <div id="menu-toggle" v-if="menuVisible">
+      <span id="close-menu" class="icon" @click="toggleMenu">
+        <i class="fa fa-times"></i>
+      </span>
+      <div class="seperator"></div>
+      <span v-if="loggedIn">
+        <router-link
+          id="logged-in-option"
+          v-for="(option, index) in loggedInOptions"
+          :key="index"
+          class="menu-options"
+          :to="option.path"
+          >{{ option.title }}</router-link
+        >
+        <span class="menu-options find-activity" @click="findActivity"
+          >Finn aktivitet</span
+        >
+        <span class="menu-options logout" @click="logout"
+          ><i class="fa fa-power-off" aria-hidden="true"></i> Logg ut</span
+        >
+      </span>
 
-      <span id="menu-toggle" v-if="menuVisible">
-        <div id="close-menu" class="icon" @click="toggleMenu">
-          <i class="fa fa-times"></i>
-        </div>
-        <span v-if="loggedIn">
-          <router-link
-            id="logged-in-option"
-            v-for="(option, index) in loggedInOptions"
-            :key="index"
-            class="menu-options"
-            :to="option.path"
-            >{{ option.title }}</router-link
-          >
-          <span class="menu-options find-activity" @click="findActivity"
-            >Finn aktivitet</span
-          >
-          <span class="menu-options logout" @click="logout"
-            ><i class="fa fa-power-off" aria-hidden="true"></i> Logg ut</span
-          >
-        </span>
-        <span v-else>
-          <router-link
-            v-for="(option, index) in loggedOutOptions"
-            :key="index"
-            class="menu-options"
-            :to="option.path"
-          >
-            {{ option.title }}
-          </router-link>
-        </span>
+      <span v-else>
+        <router-link
+          v-for="(option, index) in loggedOutOptions"
+          :key="index"
+          class="menu-options"
+          :to="option.path"
+        >
+          {{ option.title }}
+        </router-link>
       </span>
     </div>
   </div>
@@ -81,6 +82,14 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
+      //Adding afterEach to make sure the menu closes afte every route
+    router.afterEach((to, from) => {
+      //Have to check that the paths are not equal, since closing a window when staying on the same page gives bad user experience, and also leads to the menu not working
+      if (to.fullPath !== from.fullPath) {
+        menuVisible.value = false;
+      }
+    });
+    
     const loggedInOptions: Ref<MenuOption[]> = computed(() => {
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
@@ -128,9 +137,13 @@ $primary-color: #282828;
 $secondary-color: #ea4b4b;
 
 .the-header {
+  background-color: #ffffff;
+  z-index: 2;
+  position: fixed;
+  top:0px;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 25px;
   box-shadow: 0px 13px 26px 0px RGBA(0 0 0 / 4%);
   @media only screen and (min-width: 600px) {
     margin-bottom: 30px;
@@ -138,11 +151,13 @@ $secondary-color: #ea4b4b;
 }
 
 .menu-box {
-  grid-column: 3/4;
-  justify-self: end;
+  padding: 25px;
+  text-align: right;
+  grid-column: 3;
 }
 
 a.icon {
+  padding-top: 100px;
   color: $primary-color;
 }
 
@@ -151,17 +166,18 @@ a.icon {
 }
 
 #menu-toggle {
-  position: absolute;
+  padding-top: 25px;
+  position: fixed;
+  background-color: #f7f7f7;
   height: 100%;
-  background-color: #f9f9f9;
   width: 200px;
-  float: right;
-  z-index: 1;
   right: 0px;
-  top: -5px;
+  top: 0px;
+  z-index: 2;
 }
 
 .logo-nav {
+  padding: 25px;
   justify-self: start;
 }
 
@@ -192,8 +208,7 @@ a.icon {
 
 .menu-options.logout {
   position: absolute;
-  bottom: 0px;
-  width: 100px;
+  bottom: 20px;
 }
 
 .menu-options.logout:hover {
@@ -202,9 +217,14 @@ a.icon {
 }
 
 #close-menu {
-  padding: 33px;
-  text-align: right;
+  padding-top: 300px;
+  margin-left: 135px;
   cursor: pointer;
+  padding-bottom: 40px;
+}
+
+.menu-options {
+  margin-top: 30px;
 }
 
 .fa-times {

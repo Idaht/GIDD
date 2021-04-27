@@ -1,4 +1,4 @@
-image: node:latest
+image: node:14.16
 
 stages:
   - install
@@ -13,8 +13,6 @@ install:
   stage: install
   script:
     - cd frontend
-    - npm install node-sass --force
-    - npm rebuild node-sass --force
     - npm install
   artifacts:
     paths:

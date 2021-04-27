@@ -1,10 +1,12 @@
 package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Component.EmailComponent;
+import idatt2106.group3.backend.Enum.SortingType;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserSecurityDetails;
+import idatt2106.group3.backend.Model.DTO.SortFilterQueryDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
@@ -51,6 +53,14 @@ public class ActivityService
     {
         LOGGER.info("getActivities() called");
         return activityRepository.findAll().stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
+    }
+
+    public List<ActivityDTO> getActivitiesWithFilterAndSorting(SortFilterQueryDTO filter){
+        LOGGER.info("getActivitiesWithFilterAndSorting(SortFilterQueryDTO) called with amount: {} sortQuery: {}",filter.getAmount(), filter.getSearchQuery());
+        String searchQuery = "%" + filter.getSearchQuery() + "%";
+        List<Activity> list;
+        list = sortAndFilter(filter, searchQuery);
+        return list.stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
     }
 
     public ActivityDTO createActivity(ActivityRegistrationDTO activity)
@@ -198,5 +208,29 @@ public class ActivityService
             return userDTOs;
         }
         return new HashSet<>();
+    }
+
+    /**
+     * Returns a list from Repository depending on DTO from frontend
+     * @param filter SortFilterQueryDTO input
+     * @param searchQuery title and description search substring
+     * @return List of activities
+     */
+    private List<Activity> sortAndFilter(SortFilterQueryDTO filter, String searchQuery){
+        
+        if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DATE) 
+            return activityRepository.findActivitiesOnDateWithoutFilter(searchQuery, filter.getAmount());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DATE) 
+            return activityRepository.findActivitiesOnDateWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+        else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
+            return activityRepository.findActivitiesOnAmountWithoutFilter(searchQuery, filter.getAmount());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
+            return activityRepository.findActivitiesOnAmountWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+        else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DISTANCE)
+            return activityRepository.findActivitiesOnDistanceWithoutFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DISTANCE)
+            return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty().value);
+
+        return activityRepository.findAll();
     }
 }

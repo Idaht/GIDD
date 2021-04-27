@@ -2,8 +2,8 @@ package idatt2106.group3.backend.Web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import idatt2106.group3.backend.Enum.Difficulty;
 import idatt2106.group3.backend.Model.Activity;
-import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;

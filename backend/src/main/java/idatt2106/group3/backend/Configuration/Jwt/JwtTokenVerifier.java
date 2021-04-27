@@ -3,8 +3,6 @@ package idatt2106.group3.backend.Configuration.Jwt;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
@@ -27,6 +25,9 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
+/**
+ * Filter for verifying a token given in request header
+ */
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenVerifier.class);
@@ -38,13 +39,14 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-
+        // If request tries to create user, it will not try to verify token, but continue the through filters until it gets to registration endpoint
         if(request.getRequestURI().equals("/api/v1/users") && request.getMethod().equals("POST")){ 
             filterChain.doFilter(request, response); 
             return;
         }
         String token = request.getHeader("Authorization");
         try{
+                //Parses and verifies token
                 Jws<Claims> claimsJWs = Jwts.parserBuilder()
                     .setSigningKey(JwtSigningKey.getInstance())
                     .build().parseClaimsJws(token);
@@ -61,15 +63,17 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
                 UserSecurityDetails userSecurityDetails = new UserSecurityDetails("", username, userId, grantedAuthorities);
 
+                // Creates an authentication from the JWT token
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userSecurityDetails, token, grantedAuthorities);
 
+                // Sets authentication
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
             }catch(JwtException e){
-                LOGGER.warn("Something went wrong trying to verify JWT token: {}\nException message: {}", token, e.getMessage());
+                LOGGER.warn("Something went wrong trying to verify JWT token: {}\nException message: {}", token, e.getMessage(),e.fillInStackTrace());
             }
-            // Sends the request to the next filter, which will be the controller
+            // Sends the request to the next filter, which will be exception-handler and then the controller
             filterChain.doFilter(request, response);
         
     }

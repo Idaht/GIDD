@@ -23,6 +23,9 @@ import idatt2106.group3.backend.Model.UserSecurityDetails;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+/**
+ * Filter for authenticating user from username and password, if successful it creates and returns a JWT token
+ */
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
@@ -34,7 +37,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     }
 
     /**
-     * Attempts to login to an existing user from response
+     * Attempts to login to an existing user from request username and password
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -46,19 +49,20 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             Authentication auth = new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),
                     authenticationRequest.getPassword());
 
+            // Uses authentication provider to authenticate username and password
             auth = authenticationManager.authenticate(auth);
 
             return auth;
 
         } catch (IOException ex) {
-            LOGGER.info("Something went wrong trying to authenticate. Exception: {}", ex.getLocalizedMessage());
+            LOGGER.info("Something went wrong trying to authenticate. Exception: {}", ex.getLocalizedMessage(), ex.fillInStackTrace());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
         return null;
     }
 
     /**
-     * Creates token and sends it
+     * If username and password was succefully authenticated, it creates a token and returns it
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
@@ -74,6 +78,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .signWith(Keys.hmacShaKeyFor(JwtSigningKey.getInstance())).compact();
 
         // Writes the token and userId as JSON
+        // Could used DTO and objectMapper
         response.setHeader("Content-Type", "application/json;charset=utf-8");
         response.getWriter().write("{\n\t\"token\": \"" + token + "\",\n\t\"userId\": " + user.getUserId() + " \n}");
         response.getWriter().flush();

@@ -7,13 +7,13 @@
         @imageSelected="onSelectedImage"
         @removeImage="onRemoveImage"
         />
-        <h1> {{ activity.title }} </h1>
+        <h1> {{ activityDTO.title }} </h1>
         <h4>Endre tittel på aktiviteten</h4>
         <input v-model="activity.title" type="title" placeholder="Tittel">
         <p v-if="!isTitleValid">Oppgi gyldig tittel</p>
 
         <h4>Endre startdato og -tidspunkt</h4>
-        <select v-model="activity.selectedYear" name="year">
+        <select v-model="selectedYear" name="year">
             <option hidden disabled value>Velg år</option>
             <option v-for="(year, index) in availableYears" :value="year" :key="index">
                 {{ year }}
@@ -38,7 +38,7 @@
             {{ index }}
             </option>
         </select>
-        <select v-model="selectedMinute" name="minutes">
+        <select v-model="activity.selectedMinute" name="minutes">
             <option hidden disabled value>Velg minutt</option>
             <option v-for="index in minutes" :value="index" :key="index">
             {{ index }}
@@ -49,7 +49,7 @@
         <h4>Endre sted</h4>
         <p>Legg til et fysisk sted der aktiviteten skal ta plass</p>
         <input v-model="activity.place" type="place" placeholder="Sted">
-        <input v-model="activity.city" type="place" placeholder="By">
+        <input v-model="activity.city" type="city" placeholder="By">
         <p v-if="!isPlaceValid">Oppgi et gyldig sted</p>
 
         <h4>Endre aktivitets typen</h4>
@@ -57,7 +57,7 @@
         <p v-if="!isTypeValid">Oppgi gyldig type aktivitet</p>
 
         <h4>Endre maks antall deltagere</h4>
-        <input v-model="activity.numberOfParticipants" type="numberOfParticipants" placeholder="Maks antall deltagere">
+        <input v-model="activity.numberOfParticipants" type="maxNumberOfParticipants" placeholder="Maks antall deltagere">
         <p v-if="!isNumberOfParticipantsValid">Oppgi gyldig maks antall deltagere</p>
 
         <h4>Endre varigheten på aktiviteten</h4>
@@ -74,14 +74,14 @@
         <input v-model="activity.equipment" type="equipment" placeholder="Utstyr">
 
         <h4>Endre belastningsnivå</h4>
-        <h5>Hva slags belastningsnivå er aktiviteten?</h5>
+        <h5>Hva slags belastningsnivå har aktiviteten?</h5>
         <input v-model="isEasy" type="checkbox" id="easy" name="easy" />
         <label for="easy">Lett</label><br />
         <input v-model="isMedium" type="checkbox" id="medium" name="medium" />
         <label for="medium">Medium</label><br />
         <input v-model="isHard" type="checkbox" id="hard" name="hard" />
         <label for="hard">Høy</label><br />
-        <p v-if="isDifficultyValid">Oppgi gyldig vanskelighetsgrad</p>
+        <p v-if="!isDifficultyValid">Oppgi gyldig vanskelighetsgrad</p>
 
         <p v-if="!feedbackMissingInfo">Sjekk at du har fylt inn all nødvendig informasjon</p>
         <button 
@@ -99,15 +99,21 @@ import axios from "@/axiosConfig";
 import IEditActivity from "@/interfaces/IEditActivity.interface";
 import Month from "@/interfaces/Month.interface";
 import ImageSelector from "@/components/ImageSelector.vue";
+import { store } from "@/store";
+import User from "@/interfaces/User/User.interface";
 
 export default defineComponent ({
     name: "EditActivity",
     components: { ImageSelector },
-    props: { id: {required: true}},
+    props: { id: { required: true }},
+
+//TODO: få med aktiviteten videre, slik at alle feltene allerede er fylt ut
+//TODO: faktisk endre aktivitetene, fiks det tomme aktivitetsobjektet.
 
     setup(props) {
         const router = useRouter();
         const activity = ref({});
+        //const activity:Ref<User> = ref(store.getters.user.activity);
         const numberOfParticipants = ref();
         const durartion = ref();
         const selectedYear = ref("");
@@ -127,13 +133,19 @@ export default defineComponent ({
             hard = 4,
         };
 
+        /*const actvit = computed(() => {
+            activity.value.title = activityDTO.title;
+        })*/
+
+        //const editActivity = computed(() => )
+
         const onSelectedImage = (image: string) => {
-            activity.picture = image;
-        }
+            activityDTO.activityPicture = image;
+        };
 
         const onRemoveImage = () => {
-            delete activity.picture;
-        }
+            delete activityDTO.activityPicture;
+        };
 
         const feedbackMissingInfo = ref(false);
 
@@ -205,7 +217,8 @@ export default defineComponent ({
             }
         return minutes;
         });
-         /*
+
+        /* 
         onBeforeMount(async () => {
             try {
                 const response = await axios.get(`/activities/${props.id}`);
@@ -216,38 +229,40 @@ export default defineComponent ({
         });*/
 
         const isTitleValid = computed(() => {
-            return activity.title !== "";
-        })
+            return (activityDTO.title !== ""); //henter ikke ut dataen bruker skriver inn, sjekker bare at gammel tittel ikke er null
+        });
+
         const isPlaceValid = computed(() => {
-            return (activity.value.place.trim() !== "" && activity.value.city !== "");
+            return (activityDTO.place.trim() !== "" && activityDTO.city.trim() !== "");
         });
 
         const isStartTimeValid = computed(() => {
-            return (activity.value.startTime.trim() !== "");
+            return (activityDTO.startTime.trim() !== "");
         });
 
         const isTypeValid = computed(() => {
-            return (activity.value.type.trim() !== "");
+            return (activityDTO.type.trim() !== "");
+
         });
 
         const isNumberOfParticipantsValid = computed(() => {
-            return (activity.numberOfParticipants.value !== "" &&
-                activity.value.numberOfParticipants >= 0 && activity.value.numberOfParticipants <= maxNumberOfParticipants);
+            return (numberOfParticipants.value >= 0 &&
+                numberOfParticipants.value >= 0 && 
+                numberOfParticipants.value <= activityDTO.maxNumberOfParticipants);
         });
 
         const isDescriptionValid = computed(() => {
-            return (activity.value.description !== "");
+            return (activityDTO.description !== "");
         });
 
         const isEquipmentNeeded = computed(() => {
-            return (activity.value.equipment !== "");
+            return (activityDTO.equipment !== "");
         });
 
         const isDurationValid = computed(() => {
-            return (activity.durartion.value !== "" &&
-            !isNaN(Number(activity.durartion.value)) &&
-            Number(activity.durartion.value) > 0 &&
-            !activity.duration.value.includes("-"));
+            return (activityDTO.durationMinutes >= 0 &&
+            !isNaN(Number(activityDTO.durationMinutes)) &&
+            Number(activityDTO.durationMinutes) > 0);
         });
         
         const isDateTimeValid = computed(() => {
@@ -261,17 +276,18 @@ export default defineComponent ({
         });
 
         const isValidForm = computed(() => {
-            return (isPlaceValid && 
-            isStartTimeValid && 
-            isTypeValid &&
-            isNumberOfParticipantsValid &&
-            isDescriptionValid);
+            return (isPlaceValid.value && 
+            isStartTimeValid.value && 
+            isTypeValid.value &&
+            isNumberOfParticipantsValid.value &&
+            isDescriptionValid.value &&
+            isDateTimeValid.value);
         });
 
 
         const isDifficultyValid = computed(() => {
             return (
-                activity.difficulty.value !== -1 ||
+                //activityDTO.difficulty !== -1 ||
                 isEasy.value ||
                 isMedium.value ||
                 isHard.value
@@ -296,19 +312,27 @@ export default defineComponent ({
             activityId: 2,
             city: "city",
             description: "desc",
+            type: "type",
+            maxNumberOfParticipants: 30,
             difficulty: "diff",
             durationMinutes: 50,
             equipment: "equip",
             place: "place",
             privateActivity: false,
             startTime: "tid",
-            title: "navn"
+            title: "navn",
+            activityPicture: "picture",
         }
 
         const saveActivityChanges = async(): Promise<void> => {
             if (isValidForm.value) {
                 try {
+                    if (!activityDTO.activityPicture) activityDTO.activityPicture = "null";
+
                     const response = await axios.post(`/activities/${props.id}`, activityDTO);
+                    await store.dispatch("updateActivity", response.data);
+                    activity.value = store.getters.activity;
+
                     if (response.status === 201) {
                         window.alert("Endringene ble lagret");
                     }
@@ -434,6 +458,7 @@ export default defineComponent ({
             selectedDay,
             selectedHour,
             selectedMinute,
+            makeDateTime,
             months,
             hoursList,
             minutes,

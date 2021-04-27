@@ -114,8 +114,7 @@ export default defineComponent ({
     components: { ImageSelector },
     props: { id: { required: true }},
 
-//TODO: fiks sånn at man får ut dato
-//TODO: fiks sånn at man får ut difficulty
+//TODO: fiks sletting av arrangement
 
     setup(props) {
         const router = useRouter();
@@ -139,8 +138,6 @@ export default defineComponent ({
         const onRemoveImage = () => {
             delete activity.value.activityPicture;
         };
-
-        //const feedbackMissingInfo = ref(false);
 
         const daysInFebruary = computed(() => {
             return isLeapYear.value ? 29 : 28;
@@ -372,6 +369,7 @@ export default defineComponent ({
             if (window.confirm("Er du sikker på at du vil avlyse aktiviteten din?")) {
                 try {
                     const response = await axios.delete(`/activities/${props.id}`);
+                    
                     if (response.status === 200) {
                         router.replace("/activity-feed");
                     }
@@ -492,7 +490,6 @@ export default defineComponent ({
             months,
             hoursList,
             minutes,
-            //feedbackMissingInfo,
 
             saveActivityChanges,
             cancelActivity

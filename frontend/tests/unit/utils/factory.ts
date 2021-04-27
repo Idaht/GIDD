@@ -25,7 +25,7 @@ const getWrapper = (
       return { ...data };
     },
     global: {
-      mocks,
+      ...mocks,
     },
   });
 };

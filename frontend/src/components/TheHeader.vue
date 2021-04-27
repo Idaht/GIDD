@@ -81,6 +81,14 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
+      //Adding afterEach to make sure the menu closes afte every route
+    router.afterEach((to, from) => {
+      //Have to check that the paths are not equal, since closing a window when staying on the same page gives bad user experience, and also leads to the menu not working
+      if (to.fullPath !== from.fullPath) {
+        menuVisible.value = false;
+      }
+    });
+    
     const loggedInOptions: Ref<MenuOption[]> = computed(() => {
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },

@@ -1,35 +1,39 @@
 <template>
-<div>
-  <div id="activity-feed">
-    <div>
-      <div class="header" id="upper-header">
-        <div id="header-title">
-          <h2>Finn aktiviteter</h2>
+  <div>
+    <div id="activity-feed">
+      <div>
+        <div class="header" id="upper-header">
+          <div id="header-title">
+            <h2>Finn aktiviteter</h2>
+          </div>
+          <div id="view-container">
+            <button id="view-list" class="icon"></button>
+            <button @click="mapViewClicked" id="view-map" class="icon"></button>
+          </div>
         </div>
-        <div id="view-container">
-          <button id="view-list" class="icon"></button>
-          <button @click="mapViewClicked" id="view-map" class="icon"></button>
+        <div class="header" id="lower-header">
+          <select class="dropdown" id="lower-header-sort">
+            <option selected hidden>Sortering</option>
+            <option @click="sortClicked" value="Nyeste">Nyeste</option>
+            <option @click="sortClicked" value="Avstand">Avstand</option>
+            <option @click="sortClicked" value="Antall deltakere">
+              Antall deltakere
+            </option>
+          </select>
+          <div id="lower-header-filter" @click="filterClicked">+ Filter</div>
         </div>
       </div>
-      <div class="header" id="lower-header">
-        <select class="dropdown" id="lower-header-sort">
-          <option selected hidden>Sortering</option>
-          <option @click="sortClicked" value="Nyeste">Nyeste</option>
-          <option @click="sortClicked" value="Avstand">Avstand</option>
-          <option @click="sortClicked" value="Antall deltakere">
-            Antall deltakere
-          </option>
-        </select>
-        <div id="lower-header-filter" @click="filterClicked">+ Filter</div>
+      <div id="activities">
+        <ActivityFeedItem
+          v-for="activity in activities"
+          :key="activity.activityId"
+          :activityData="activity"
+        />
       </div>
     </div>
-    <div id="activities">
-        <ActivityFeedItem v-for="activity in activities" :key="activity.activityId" :activityData="activity"/>
-    </div>
+    <!-- Et plusstegn på knappen -->
+    <div id="add-activity" @click="makeActivity">+</div>
   </div>
-  <!-- Et plusstegn på knappen -->
-  <div id="add-activity" @click="makeActivity">+</div>
-</div>
 </template>
 
 <script lang="ts">
@@ -37,7 +41,7 @@ import { defineComponent, onBeforeMount, ref, Ref } from "vue";
 import ActivityFeedItem from "../components/ActivityFeedItem.vue";
 import axios from "@/axiosConfig";
 import { useRouter } from "vue-router";
-import IActivity from "@/interfaces/IActivity.interface";
+import IActivity from "@/interfaces/Activity/IActivity.interface";
 
 export default defineComponent({
   name: "ActivityFeed",
@@ -218,12 +222,12 @@ li {
   height: 40px;
   width: 40px;
   left: 50%;
-  margin-left: -20px; 
+  margin-left: -20px;
   color: #ffffff;
   background-color: $secondary-color;
-    @media only screen and (min-width: 600px) {
-      left: 76%;
-      bottom: 40px;
+  @media only screen and (min-width: 600px) {
+    left: 76%;
+    bottom: 40px;
   }
 }
 

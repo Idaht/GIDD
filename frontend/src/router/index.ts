@@ -78,6 +78,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/Profile.vue"),
   },
   {
+    path: "/make-activity",
+    name: "MakeActivity",
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import("../views/MakeActivity.vue"),
+  },
+  {
     path: "/calendar",
     name: "Calendar",
     meta: {

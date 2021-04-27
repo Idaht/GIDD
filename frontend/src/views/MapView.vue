@@ -24,7 +24,11 @@
     </div>
 
     <div id="activities">
-      <Map id="map" :center="{ lat: 63.43049, lng: 10.39506 }" :activityData="activities">
+      <Map
+        id="map"
+        :center="{ lat: 63.43049, lng: 10.39506 }"
+        :activityData="activities"
+      >
       </Map>
     </div>
   </div>
@@ -34,7 +38,7 @@
 import { defineComponent, onBeforeMount, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axiosConfig";
-import IActivity from "@/interfaces/IActivity.interface";
+import IActivity from "@/interfaces/Activity/IActivity.interface";
 import Map from "@/components/Map.vue";
 
 export default defineComponent({

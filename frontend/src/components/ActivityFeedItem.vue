@@ -1,7 +1,22 @@
 <template>
   <div id="activity" @click="activityClicked">
     <div id="map">
-      <img id="map-img" :src="'https://maps.googleapis.com/maps/api/staticmap?center=' + activityData.latitude + ',' + activityData.longitude + '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' + activityData.latitude + ',' + activityData.longitude + '&key=' + apiKey" alt="Map" />
+      <img
+        id="map-img"
+        :src="
+          'https://maps.googleapis.com/maps/api/staticmap?center=' +
+          activityData.latitude +
+          ',' +
+          activityData.longitude +
+          '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' +
+          activityData.latitude +
+          ',' +
+          activityData.longitude +
+          '&key=' +
+          apiKey
+        "
+        alt="Map"
+      />
     </div>
     <div>
       <h3>{{ activityData.title }}</h3>
@@ -14,7 +29,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import IActivity from "../interfaces/IActivity.interface";
+import IActivity from "../interfaces/Activity/IActivity.interface";
 import data from "@/../config.json";
 
 export default defineComponent({
@@ -30,11 +45,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const location = computed((): string => {
-      return (
-        props.activityData.place +
-        ", " +
-        props.activityData.city
-      );
+      return props.activityData.place + ", " + props.activityData.city;
     });
 
     const apiKey = data.googleAPIKey;
@@ -62,7 +73,7 @@ export default defineComponent({
 
 #activity:hover {
   border-radius: 20px;
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
 }
 
 h3 {
@@ -82,5 +93,4 @@ p {
     height: auto;
   }
 }
-
 </style>

@@ -8,4 +8,5 @@ export default interface User {
   role: string;
   dateOfBirth?: string;
   profilePicture?: string;
+  trainingLevel: string;
 }

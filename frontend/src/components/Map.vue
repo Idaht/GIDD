@@ -5,12 +5,8 @@
 
 <script lang="ts">
     /*global google*/ //This line of code MUST be here, otherwise Eslint will have a stroke
-    //This global interface is needed to make the initialization of the map possible
-    declare global {
-        interface Window {
-            initMap: any;
-        }
-    }
+    
+    
     import { defineComponent, watch } from "vue";
     import IActivity from "@/interfaces/IActivity.interface";
     import ICoordinates from "@/interfaces/ICoordinates.interface";

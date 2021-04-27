@@ -1,5 +1,19 @@
 import TheHeader from "@/components/TheHeader.vue";
 import getWrapper from "./utils/factory";
+import Home from "@/views/Home.vue";
+import { createMemoryHistory, createRouter } from "vue-router";
+
+//Have to mokk router to make unit tests run in classes that use the router
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes: [
+    {
+      path: "/",
+      name: "Home",
+      component: Home,
+    },
+  ],
+});
 
 /**
  * Test for TheHeader.vue
@@ -11,7 +25,7 @@ describe("TheHeader.vue", () => {
       TheHeader,
       {},
       { visible: true },
-      { loggedIn: true }
+      { loggedIn: true, plugins: [router] }
     );
     expect(wrapper.find("#menu-toggle").exists()).toBeTruthy;
   });
@@ -21,7 +35,7 @@ describe("TheHeader.vue", () => {
       TheHeader,
       {},
       { visible: false },
-      { loggedIn: true }
+      { loggedIn: true, plugins: [router] }
     );
     expect(wrapper.find("#error").exists()).toBeTruthy;
   });
@@ -31,7 +45,7 @@ describe("TheHeader.vue", () => {
       TheHeader,
       {},
       { visible: true },
-      { loggedIn: true }
+      { loggedIn: true, plugins: [router] }
     );
     expect(wrapper.find("#login-check").exists()).toBeTruthy;
   });

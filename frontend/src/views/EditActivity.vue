@@ -269,14 +269,14 @@ export default defineComponent ({
                 selectedHour.value = activity.value.startTime.substring(11, 13);
                 selectedMinute.value = activity.value.startTime.substring(14, 16);
 
-                if (TrainingLevel.LOW) {
+                if (activity.value.difficulty === 1) {
                     isEasy.value = true;
-                } else if (TrainingLevel.MEDIUM) {
+                } else if (activity.value.difficulty === 2) {
                     isMedium.value = true;
                 } else if (activity.value.difficulty === 3) {
                     isEasy.value = true;
                     isMedium.value = true;
-                } else if (TrainingLevel.HIGH) {
+                } else if (activity.value.difficulty === 4) {
                     isHard.value = true;
                 } 
 

@@ -1,8 +1,8 @@
 <template>
   <div id="activity-information">
-    <div @click="returnToActivityFeed" id="nav-back">
+    <div @click="back" id="nav-back">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      Tilbake til feed
+      Tilbake 
     </div>
     <!-- TODO: implementer kart -->
     <div id="map">
@@ -16,19 +16,21 @@
       <label class="event-variable">Varighet</label>
       <div class="variable-value">{{ activity.durationMinutes }} minutter</div>
       <label class="event-variable">Hvor</label>
-      <div class="variable-value">{{ activity.place }}, {{ activity.city }}</div>
+      <div class="variable-value">
+        {{ activity.place }}, {{ activity.city }}
+      </div>
       <label class="event-variable">Hva</label>
       <div class="variable-value">{{ activity.type }}</div>
       <label class="event-variable">Belastning</label>
       <div class="variable-value">{{ activity.difficulty }}</div>
       <label class="event-variable">Deltakere</label>
-      <div class="variable-value">{{ numberOfParticipants }} / {{ activity.maxParticipants }}</div>
+      <div class="variable-value">
+        {{ numberOfParticipants }} / {{ activity.maxParticipants }}
+      </div>
     </div>
     <div id="signing-up-wrapper">
       <div id="signing-up" v-if="signedUp">
-        <div id="signing-up-conformation">
-        Du er påmeldt!
-        </div>
+        <div id="signing-up-conformation">Du er påmeldt!</div>
         <button
           @click="signOffActivity"
           alt="Knapp for å melde seg av en aktivitet"
@@ -63,9 +65,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, onMounted, ref } from "vue";
+import { computed, defineComponent, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
+import { store } from "../store";
 
 export default defineComponent({
   name: "ActivityInformation",
@@ -73,7 +76,7 @@ export default defineComponent({
   setup(props) {
     //TODO finn arrangøren vha id
     const activityOrganizer = ref("");
-    //TODO hent ut antall påmeldte
+    //TODO hent ut antall påmeldte fra backend
     const numberOfParticipants = ref(5);
     //TODO hent ut fra backend
     const signedUp = ref(false);
@@ -84,21 +87,47 @@ export default defineComponent({
       return signedUp.value;
     });
 
-    const signUpActivity = (): void => {
-      //"Er du sikker?" vindu før påmelding?
+
+/** 
+ * Method for signing up to an activity
+ */
+    const signUpActivity = async (): Promise<void> => {
       signedUp.value = true;
-      numberOfParticipants.value += 1;
-      //TODO connect to backend og få opp bekreftelse
+      try{ 
+        //TODO: må sørge for at visinigen endres når du er påmeldt et arrangement
+      await axios.post(`/activities/${props.id}/users/${store.getters.user.userId}`);
+
+      } catch(error) {
+       router.push("/error");
+       }
     };
 
-    const signOffActivity = (): void => {
+    /*TODO: fiks denne
+    const getOrganizerName = async():Promise<void> => {
+      try{
+          return axios.get('activities/organizerId'); 
+          } catch(error) {
+            router.push("/error")
+          }
+     }*/
+
+/**
+ * Method for signing off an activity
+ */
+    const signOffActivity = async (): Promise<void> => {
       signedUp.value = false;
-      numberOfParticipants.value -= 1;
-      //TODO connect to backend og få opp bekreftelse
+      //numberOfParticipants.value -= 1;
+      try{ 
+        //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
+      await axios.delete(`users/${store.getters.user.userId}/activities/${props.id}`);
+      } catch(error) {
+       router.push("/error");
+       }
+      
     };
 
-    const returnToActivityFeed = (): void => {
-      router.push("/activity-feed");
+    const back = (): void => {
+      router.back(); 
     };
 
     const openChat = (): void => {
@@ -131,7 +160,7 @@ export default defineComponent({
       isSignedUp,
       signUpActivity,
       signOffActivity,
-      returnToActivityFeed,
+      back,
       openChat,
       activity,
     };

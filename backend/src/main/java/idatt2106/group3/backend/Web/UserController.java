@@ -1,7 +1,6 @@
 package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Activity;
-import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserRegistrationCallbackDTO;
@@ -95,5 +94,11 @@ public class UserController
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Activity>> getFutureActivities(@PathVariable("user_id") Long userId){
         return new ResponseEntity<> (userService.findFutureActivities(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{user_id}/organized-activities")
+    @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Activity>> getOrganizedActivities(@PathVariable("user_id") Long userId){
+        return new ResponseEntity<> (userService.findOrganizedActivities(userId), HttpStatus.OK);
     }
 }

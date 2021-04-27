@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import idatt2106.group3.backend.Configuration.Jwt.UsernameAndPasswordAuthenticationRequest;
-import idatt2106.group3.backend.Model.Difficulty;
+import idatt2106.group3.backend.Enum.Difficulty;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.UserRepository;
 import idatt2106.group3.backend.Service.UserService;

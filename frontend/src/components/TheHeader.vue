@@ -39,7 +39,12 @@
             :to="option.path"
             >{{ option.title }}</router-link
           >
-          <div class="menu-options" @click="logout">Logg ut</div>
+          <span class="menu-options find-activity" @click="findActivity"
+            >Finn aktivitet</span
+          >
+          <span class="menu-options logout" @click="logout"
+            ><i class="fa fa-power-off" aria-hidden="true"></i> Logg ut</span
+          >
         </span>
         <span v-else>
           <router-link
@@ -80,7 +85,6 @@ export default defineComponent({
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
         { title: "Profilinnstillinger", path: "/edit-profile" },
-        { title: "Finn aktivitet", path: "/activity-feed" },
       ];
     });
     const loggedOutOptions: Ref<MenuOption[]> = ref([
@@ -100,6 +104,10 @@ export default defineComponent({
       router.replace("/log-in");
     };
 
+    const findActivity = (): void => {
+      router.push("/activity-feed");
+    };
+
     return {
       loggedInOptions,
       loggedOutOptions,
@@ -107,6 +115,7 @@ export default defineComponent({
       menuVisible,
       toggleMenu,
       logout,
+      findActivity,
     };
   },
 });
@@ -121,12 +130,20 @@ $secondary-color: #ea4b4b;
 .the-header {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 30px;
+  padding: 25px;
+  box-shadow: 0px 13px 26px 0px RGBA(0 0 0 / 4%);
+  @media only screen and (min-width: 600px) {
+    margin-bottom: 30px;
+  }
 }
 
 .menu-box {
   grid-column: 3/4;
   justify-self: end;
+}
+
+a.icon {
+  color: $primary-color;
 }
 
 .fa-bars {
@@ -160,7 +177,28 @@ $secondary-color: #ea4b4b;
 
 .menu-options:hover {
   background-color: $secondary-color;
-  color: #ffffff;
+  color: #ffffff !important;
+}
+
+.menu-options:visited {
+  color: $primary-color;
+}
+
+.menu-options.find-activity {
+  border-radius: 0;
+  border: 3px $secondary-color solid;
+  color: #ea4b4b;
+}
+
+.menu-options.logout {
+  position: absolute;
+  bottom: 0px;
+  width: 100px;
+}
+
+.menu-options.logout:hover {
+  color: $secondary-color !important;
+  background-color: unset;
 }
 
 #close-menu {

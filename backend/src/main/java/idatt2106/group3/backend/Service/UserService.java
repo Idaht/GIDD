@@ -20,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,11 @@ public class UserService
     @Autowired
     private ActivityRepository activityRepository;
 
+    /**
+     * Finds user in Database, and creates a DTO object from it
+     * @param userId
+     * @return DTO object from User
+     */
     public UserDTO getUser(long userId)
     {
         LOGGER.info("getUser(long userId) called with userId: {}", userId);
@@ -47,9 +53,13 @@ public class UserService
         return null;
     }
 
+    /**
+     * Creates User object from an UserWithPasswordDTO and stores it in database
+     * @param user
+     * @return UserDTO object with a JWT token
+     */
     public UserRegistrationCallbackDTO createUser(UserWithPasswordDTO user)
     {
-        //TODO: sende en melding at email eksisterer til frontend
         LOGGER.info("createUser(UserPasswordDTO user) called with email: {}", user.getEmail());
         User createdUser = new User();
         createdUser.setForename(user.getForename());
@@ -66,7 +76,12 @@ public class UserService
         
         return new UserRegistrationCallbackDTO(token, createdUser.getUserId(), user);
     }
-
+    /**
+     * Edits a stored User object with userDTO fields
+     * @param userId
+     * @param userDTO input object
+     * @return UserDTO object
+     */
     public UserDTO editUser(long userId, UserEditDTO userDTO)
     {
         LOGGER.info("editUser(long userId, UserDTO userDTO) called with userId: {}", userId);
@@ -89,6 +104,11 @@ public class UserService
         return null;
     }
 
+    /**
+     * Deletes a user from the database, and checks if it exists after
+     * @param userId
+     * @return if it exists or not
+     */
     public boolean deleteUser(long userId)
     {
         LOGGER.info("deleteUser(long userId) called with userId: {}", userId);
@@ -96,6 +116,11 @@ public class UserService
         return !userRepository.existsById(userId);
     }
 
+    /**
+     * Gets all activities where the user has signed up
+     * @param userId
+     * @return List of activities
+     */
     public Set<Activity> getUserActivities(long userId)
     {
         LOGGER.info("getUserActivities(long userId) called with userId: {}", userId);
@@ -148,7 +173,11 @@ public class UserService
         return null;
     }
 
-
+    /**
+     * Checks if the email already exists in the database
+     * @param email
+     * @return
+     */
     public boolean doesEmailAlreadyExist(String email){
         boolean existsEmail = userRepository.findUserByEmail(email).isPresent();
         if(existsEmail) LOGGER.info("Email: {} already exists", email);
@@ -167,6 +196,12 @@ public class UserService
                 .signWith(Keys.hmacShaKeyFor(JwtSigningKey.getInstance())).compact();
     }
 
+    /**
+     * Finds user from id and and compares user's hashed password with input password(oldPassword)
+     * @param oldPassword
+     * @param userId
+     * @return if passwords are equal
+     */
     public boolean isOldPasswordCorrect(String oldPassword, long userId){
         Optional<User> optionalUsers = userRepository.findById(userId);
         if(optionalUsers.isPresent()){
@@ -175,9 +210,27 @@ public class UserService
         return false;
     }
 
+    /**
+     * Finds future activities that the user has signed up to
+     * @param userId
+     * @return List of activities
+     */
     public List<Activity> findFutureActivities(long userId){
         LOGGER.info("findFutureActivities(long userId) called with userId: {}", userId);
         return activityRepository.findFutureUserActivities(userId);
     }
 
+    /**
+     * Finds all acitivites that a user is an organizer of
+     * @param userId
+     * @return List of activities
+     */
+    public List<Activity> findOrganizedActivities(long userId){
+        LOGGER.info("findOrganizedActivities(long userId) called with userId: {}", userId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()) {
+            return new ArrayList<>(userOptional.get().getOrganizedActivities());
+        }
+        return new ArrayList<>();
+    }
 }

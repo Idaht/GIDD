@@ -2,7 +2,7 @@ package idatt2106.group3.backend.Model.DTO.User;
 
 import java.time.LocalDate;
 
-import idatt2106.group3.backend.Model.Difficulty;
+import idatt2106.group3.backend.Enum.Difficulty;
 
 /**
  * This is the superclass for User DTO's.

@@ -10,11 +10,6 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
-    path: "/about",
-    name: "About",
-    component: () => import("../views/About.vue"),
-  },
-  {
     path: "/log-in",
     name: "LogIn",
     component: () => import("../views/LogIn.vue"),
@@ -47,7 +42,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true,
     },
-    //TODO make it so that you cannot edit anyone elses profile
   },
   {
     path: "/activity-feed",
@@ -83,6 +77,15 @@ const routes: Array<RouteRecordRaw> = [
     },
     props: true,
     component: () => import("../views/Profile.vue"),
+  },
+  {
+    path: "/calendar",
+    name: "Calendar",
+    meta: {
+      requiresAuth: true,
+    },
+    props: true,
+    component: () => import("../views/Calendar.vue"),
   },
   {
     //Catch all makes router redirect all unknown URLs to the PageNotFound view

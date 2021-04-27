@@ -19,6 +19,10 @@ import idatt2106.group3.backend.Configuration.Jwt.JwtTokenVerifier;
 import idatt2106.group3.backend.Configuration.Jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import idatt2106.group3.backend.Service.UserSecurityDetailsService;
 
+/**
+ * Configures WebSecurity for endpoints
+ * Not used for tests
+ */
 @Profile("!test")
 @Configuration
 @EnableWebSecurity
@@ -31,6 +35,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserSecurityDetailsService userSecurityDetailsService;
 
+    /**
+     * CSRF is currently countered by CORS, and this app is only used on localhost currently
+     * Authentication by username and password, and JWT.
+     */
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -39,18 +47,28 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
         .addFilterAfter(new ExceptionHandlerFilter(), JwtTokenVerifier.class)
         .authorizeRequests()
-        .antMatchers("/error").permitAll().antMatchers("/api/v1/activities/**").hasAnyRole("USER", "ADMIN")
+        .antMatchers("/error").permitAll()
+        .antMatchers("/api/v1/activities/**").hasAnyRole("USER", "ADMIN")
         .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
         .anyRequest().authenticated()
         .and()
         .cors();
     }
 
+    /**
+     * Sets authentication provider defined in method under
+     */ 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
+    /**
+     * Sets passwordEncoder and userDetailsService from service folder
+     * Needed for getting users from MySQL Database and not In-Memory database
+     * Allows authentication from MySQL Database
+     * @return authentication provider
+     */
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -58,7 +76,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         provider.setUserDetailsService(userSecurityDetailsService);
         return provider;
     }
-
+    /**
+     * Changes login url
+     * @param authenticationManager
+     * @return Username and password filter for login
+     */
      public JwtUsernameAndPasswordAuthenticationFilter getJWTAuthenticationFilter(AuthenticationManager authenticationManager){
         final JwtUsernameAndPasswordAuthenticationFilter filter = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager);
         filter.setFilterProcessesUrl("/api/v1/login");

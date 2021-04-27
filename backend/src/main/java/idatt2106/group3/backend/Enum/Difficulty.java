@@ -1,4 +1,4 @@
-package idatt2106.group3.backend.Model;
+package idatt2106.group3.backend.Enum;
 
 /**
  * Enumerator values for difficulty, as for user's trainingLevel and difficulty of an activity.

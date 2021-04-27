@@ -9,6 +9,11 @@ test_1:
   stage: test
   image: openjdk:11-jdk-slim
   script:
-    - |
-      cd backend
-      ./mvnw test
+    - cd backend
+    - pwd
+    - ls src/main/resources/
+    - echo -e "1\n2\n3" > src/main/resources/config.properties
+    - echo "$EMAIL_USERNAME" >> src/main/resources/config.properties
+    - echo "$EMAIL_PASSWORD" >> src/main/resources/config.properties
+    - cat src/main/resources/config.properties
+    - ./mvnw test

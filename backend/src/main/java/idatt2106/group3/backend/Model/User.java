@@ -15,6 +15,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import idatt2106.group3.backend.Enum.Difficulty;
+
 @Entity
 public class User {
     @Id

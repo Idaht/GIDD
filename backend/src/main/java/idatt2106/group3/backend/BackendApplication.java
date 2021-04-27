@@ -1,5 +1,6 @@
 package idatt2106.group3.backend;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import idatt2106.group3.backend.Component.EmailComponent;
+import idatt2106.group3.backend.Enum.Difficulty;
 import idatt2106.group3.backend.Model.Activity;
-import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
@@ -43,7 +45,6 @@ public class BackendApplication {
 	// 		User user1 = userRepo.findById(1L).get();
 	// 		user1.getActivities().add(activity);
 	// 		userRepo.save(user1);
-
 	// 	};
 	// }
 }	

@@ -2,8 +2,8 @@ package idatt2106.group3.backend.Web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import idatt2106.group3.backend.Enum.Difficulty;
 import idatt2106.group3.backend.Model.Activity;
-import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
@@ -26,6 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.hamcrest.Matchers.*;
 
@@ -191,7 +193,15 @@ public class UserControllerTest
         long activityId = activityRepository.findAll().get(0).getActivityId();
         userService.addUserToActivity(userId, activityId);
         this.mockMvc.perform(get("/api/v1/users/" + userId + "/my-activities"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.[0].title", containsStringIgnoringCase("Football")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].title", containsStringIgnoringCase("Football")));
+    }
+
+    @Test
+    public void getOrganizedActivities_ShouldReturnOrganizedActivities_StatusOk() throws Exception
+    {
+        long userId = userRepository.findAll().get(0).getUserId();
+        this.mockMvc.perform(get("/api/v1/users/" + userId + "/organized-activities"))
+                .andExpect(status().isOk());
     }
 }

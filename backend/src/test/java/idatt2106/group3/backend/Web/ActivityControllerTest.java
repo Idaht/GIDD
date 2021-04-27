@@ -2,8 +2,8 @@ package idatt2106.group3.backend.Web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import idatt2106.group3.backend.Enum.Difficulty;
 import idatt2106.group3.backend.Model.Activity;
-import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserSecurityDetails;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
@@ -217,6 +217,27 @@ public class ActivityControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(absenceJson))
                 .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void isOrganizerOfActivity_ShouldCheckIfOrganizerOfActivity_StatusOk() throws Exception {
+        Activity activity = activityRepository.findAll().get(0);
+
+        long activityId = activity.getActivityId();
+        long organizerId = activity.getOrganizer().getUserId();
+
+        this.mockMvc.perform(get("/api/v1/activities/" + activityId + "/users/" + organizerId))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void getUsers_ShouldReturnAllUsersRegisteredInActivity_StatusOk() throws Exception {
+        long activityId = activityRepository.findAll().get(0).getActivityId();
+        this.mockMvc.perform(get("/api/v1/activities/" + activityId + "/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))))
                 .andReturn();
     }
 }

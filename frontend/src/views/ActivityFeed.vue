@@ -26,6 +26,8 @@
         <ActivityFeedItem v-for="activity in activities" :key="activity.activityId" :activityData="activity"/>
     </div>
   </div>
+  <!-- Et plusstegn på knappen -->
+  <button @click="makeActivity">Opprett aktivitet</button>
 </template>
 
 <script lang="ts">
@@ -68,11 +70,16 @@ export default defineComponent({
       router.push("/activity-map");
     };
 
+    const makeActivity = (): void => {
+      router.push("/make-activity");
+    };
+
     return {
       sortClicked,
       filterClicked,
       mapViewClicked,
       activities,
+      makeActivity,
     };
   },
 });

@@ -42,10 +42,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-        .requiresChannel()
-        .anyRequest()
-        .requiresSecure();
-        http.csrf().disable()
+        .requiresChannel().anyRequest().requiresSecure()
+        .and()
+        .csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .addFilter(getJWTAuthenticationFilter(authenticationManager()))
         .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)

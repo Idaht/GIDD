@@ -209,6 +209,9 @@ export default defineComponent ({
             }
         });
 
+        /**
+         * Loads activity from database, has to set date, time, and difficulty.
+         */
         onBeforeMount(async () => {
             try {
                 const response = await axios.get(`/activities/${props.id}`);
@@ -330,7 +333,6 @@ export default defineComponent ({
             );
         });
 
-
         const calculateDifficulty = computed(() => {
             let difficultyNumber = 0;
             if (isEasy.value) {
@@ -345,6 +347,12 @@ export default defineComponent ({
             return difficultyNumber;
         });
 
+        /**
+         * Method to save activity changes. Checks if form is valid,
+         * if so, it starts saving. If there is no activity picture,
+         * this is set to string "null". Send response via axios, 
+         * awaits respons from update activity, and sets updated activity
+         */
         const saveActivityChanges = async(): Promise<void> => {
             if (isValidForm.value) {
                 try {
@@ -365,6 +373,9 @@ export default defineComponent ({
             }
         };
 
+        /**
+         * Cancels/deletes activity, makes a confirm window
+         */
         const cancelActivity = async(): Promise<void> => {
             if (window.confirm("Er du sikker på at du vil avlyse aktiviteten din?")) {
                 try {

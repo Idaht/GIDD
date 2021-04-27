@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!--Add TheHeader component -->
     <h1>Instillinger</h1>
     <img src="" alt="Profilbilde" />
     <ImageSelector
@@ -69,16 +68,25 @@ export default defineComponent({
     //Using ref since we are setting values
     const user: Ref<User> = ref(store.getters.user);
 
+    /**
+     * Checks if name is valid; that both name textareas are not empty
+     */
     const isValidName = computed(() => {
       return (
         user.value.forename.trim() !== "" && user.value.surname.trim() !== ""
       );
     });
 
+    /**
+     * When image is selected
+     */
     const onSelectedImage = (image: string) => {
       userDTO.profilePicture = image;
     };
 
+    /**
+     * When image is removed
+     */
     const onRemoveImage = () => {
       delete userDTO.profilePicture;
     };
@@ -87,22 +95,43 @@ export default defineComponent({
     const password = ref("");
     const passwordFeedback = ref("");
     const repeatPassword = ref("");
+
+    /**
+     * Checks if the password and the repeat password areas
+     * match
+     */
     const matchingPasswords = computed(() => {
       return password.value == repeatPassword.value;
     });
     const numberOfCharacterPass = 8;
+
+    /**
+     * Checks if password is valid; that the number of characters
+     * is 8 or above
+     */
     const passwordIsValid = computed(() => {
       return password.value.length >= 8;
     });
 
+    /**
+     * Checks that the password is not empty
+     */
     const passwordIsNotEmpty = computed(() => {
       return password.value.trim() !== "";
     });
 
+    /**
+     * Checks if password is valid; that password is not empty and that
+     * the passwords match
+     */
     const isValidPassword = computed(() => {
       return matchingPasswords.value && passwordIsNotEmpty.value;
     });
 
+    /**
+     * Makes the password feedback, either that it is missing
+     * characters or if it is valid
+     */
     const makePasswordFeedback = computed(() => {
       if (password.value.length < numberOfCharacterPass) {
         return (
@@ -118,21 +147,37 @@ export default defineComponent({
     //Gammelt passord
     const oldPassword = ref("");
 
+    /**
+     * Checks that the old password area is not empty
+     */
     const oldPasswordIsNotEmpty = computed(() => {
       return oldPassword.value.trim() !== "";
     });
 
+    //TODO check this with backend?
     const oldPasswordWasCorrect = ref(true);
 
     //Email
+
+    /**
+     * Checks that email area is not empty
+     */
     const emailIsNotEmpty = computed(() => {
       return user.value.email.trim() !== "";
     });
 
+    /**
+     * checks if email is valid; that it includes "@" and "."
+     */
     const isValidEmail = computed(() => {
       return user.value.email.includes("@") && user.value.email.includes(".");
     });
 
+    /**
+     * Checks if the form is valid; that the password is empty or, that the password is valid
+     * and old password is not empty and that the passwords match. Then it checks if the name
+     * and email are valid
+     */
     const isValidForm = computed(() => {
       return (
         (!passwordIsNotEmpty.value ||
@@ -145,6 +190,9 @@ export default defineComponent({
       );
     });
 
+    /**
+     * EditUser object to send to backend
+     */
     const userDTO: EditUser = {
       userId: user.value.userId,
       email: user.value.email,
@@ -152,25 +200,37 @@ export default defineComponent({
       surname: user.value.surname,
     };
 
+    /**
+     * Method to save the profile changes made. First checks if form is valid,
+     * if so, starts saving. Password is not empty, add new and old password
+     * to the editUser object. If not profile picture, set it to string "null".
+     * Send response via axios, await response from update user
+     * and set user to the new user
+     */
     const saveProfileChanges = async (): Promise<void> => {
       oldPasswordWasCorrect.value = true;
       if (isValidForm.value) {
         try {
           //TODO: change to redirect to something went wrong site
           //TODO: handle bug where _ctx.user is undefined
+          //Needs to update the userDTO here, or the old user is sent
+          userDTO.userId = user.value.userId;
+          userDTO.email = user.value.email;
+          userDTO.forename = user.value.forename;
+          userDTO.surname = user.value.surname;
 
           if (passwordIsNotEmpty.value) {
             userDTO.newPassword = password.value;
             userDTO.oldPassword = oldPassword.value;
           }
           if (!userDTO.profilePicture) userDTO.profilePicture = "null";
-          
+
           const response = await axios.post(
             `/users/${userDTO.userId}`,
             userDTO
           );
           await store.dispatch("updateUser", response.data);
-          user.value = store.getters.value;
+          user.value = store.getters.user;
         } catch (error) {
           //TODO fix bug with error.response is undefined
           if (error.response.status === 400) {
@@ -182,10 +242,9 @@ export default defineComponent({
       }
     };
 
-    const changeProfilePic = (): void => {
-      //TODO fix upload
-    };
-
+    /**
+     * Delete user, first make a confirm window
+     */
     const deleteUser = async (): Promise<void> => {
       if (window.confirm("Er du sikker på at du vil slette brukeren din")) {
         try {
@@ -197,6 +256,7 @@ export default defineComponent({
             router.replace("/log-in");
           }
         } catch (error) {
+          router.push("/error");
           //TODO add errorhandling
         }
       }
@@ -213,7 +273,6 @@ export default defineComponent({
       saveProfileChanges,
       makePasswordFeedback,
       emailIsNotEmpty,
-      changeProfilePic,
       repeatPassword,
       matchingPasswords,
       deleteUser,

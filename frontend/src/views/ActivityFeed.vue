@@ -1,4 +1,5 @@
 <template>
+<div>
   <div id="activity-feed">
     <div>
       <div class="header" id="upper-header">
@@ -27,7 +28,8 @@
     </div>
   </div>
   <!-- Et plusstegn på knappen -->
-  <button @click="makeActivity">Opprett aktivitet</button>
+  <div id="add-activity" @click="makeActivity">+</div>
+</div>
 </template>
 
 <script lang="ts">
@@ -205,5 +207,28 @@ li {
   @media only screen and (min-width: 800px) {
     width: 50%;
   }
+}
+
+#add-activity {
+  line-height: 38px;
+  border-radius: 40px;
+  position: fixed;
+  font-size: 1.3rem;
+  bottom: 20px;
+  height: 40px;
+  width: 40px;
+  left: 50%;
+  margin-left: -20px; 
+  color: #ffffff;
+  background-color: $secondary-color;
+    @media only screen and (min-width: 600px) {
+      left: 76%;
+      bottom: 40px;
+  }
+}
+
+#add-activity:hover {
+  cursor: pointer;
+  background-color: #ff6666;
 }
 </style>

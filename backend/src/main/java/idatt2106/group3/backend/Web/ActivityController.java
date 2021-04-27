@@ -46,7 +46,7 @@ public class ActivityController
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
 
-    @GetMapping("/alternatives")
+    @PostMapping("/alternatives")
     public ResponseEntity<List<ActivityDTO>> getActivitiesWithFilterAndSorting(@RequestBody SortFilterQueryDTO filter){
         return new ResponseEntity<>(activityService.getActivitiesWithFilterAndSorting(filter),HttpStatus.OK);
     }

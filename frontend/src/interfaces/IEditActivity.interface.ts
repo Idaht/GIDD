@@ -2,12 +2,12 @@ export default interface IEditActivity {
     activityPicture?: string;
     city: string;
     description: string;
-    difficulty: string;
+    difficulty: number;
     durationMinutes: number;
     equipment: string;
     latitude: number,
     longitude: number,
-    maxNumberOfParticipants: number;
+    maxParticipants: number;
     place: string;
     privateActivity: boolean;
     startTime: string;

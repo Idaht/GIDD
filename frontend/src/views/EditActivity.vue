@@ -32,20 +32,19 @@
             {{ index }}
             </option>
         </select>
-
         <select v-model="selectedHour" name="hour">
             <option hidden disabled value>Velg time</option>
             <option v-for="index in hoursList" :value="index" :key="index">
             {{ index }}
             </option>
         </select>
-        <select v-model="activity.selectedMinute" name="minutes">
+        <select v-model="selectedMinute" name="minutes">
             <option hidden disabled value>Velg minutt</option>
             <option v-for="index in minutes" :value="index" :key="index">
             {{ index }}
             </option>
         </select>
-        <p v-if="!isStartTimeValid">Oppgi gyldig starttid</p>
+        <p v-if="!isDateTimeValid">Oppgi gyldig starttid og -dato</p>
         <br>
 
         <h4>Endre sted</h4>
@@ -55,41 +54,48 @@
         <p v-if="!isPlaceValid">Oppgi et gyldig sted</p>
         <br>
 
-        <h4>Endre aktivitets typen</h4>
+        <h4>Endre aktivitetstypen</h4>
         <input v-model="activity.type" type="type" placeholder="Type aktivitet">
         <p v-if="!isTypeValid">Oppgi gyldig type aktivitet</p>
+        <br>
 
         <h4>Endre maks antall deltagere</h4>
-        <input v-model="activity.numberOfParticipants" type="maxNumberOfParticipants" placeholder="Maks antall deltagere">
+        <input v-model="activity.maxParticipants" type="maxNumberOfParticipants" placeholder="Maks antall deltagere">
         <p v-if="!isNumberOfParticipantsValid">Oppgi gyldig maks antall deltagere</p>
+        <br>
 
         <h4>Endre varigheten på aktiviteten</h4>
-        <input v-model="activity.duration" type="duration" placeholder="Varighet">
+        <input v-model="activity.durationMinutes" type="duration" placeholder="Varighet">
         <p v-if="!isDurationValid">Oppgi gyldig varighet</p>
+        <br>
 
         <h4>Endre beskrivelse</h4>
         <p>Legg til en kort beskrivelse av aktiviteten (frivillig)</p>
         <input v-model="activity.description" type="description" placeholder="Beskrivelse">
+        <br>
 
         <h4>Endre utstyr</h4>
         <p>Legg til utstyr som trengs for å gjennomføre aktiviteten (frivillig)</p>
         <input v-model="activity.equipment" type="equipment" placeholder="Utstyr">
+        <br>
 
         <h4>Endre belastningsnivå</h4>
         <h5>Hva slags belastningsnivå har aktiviteten?</h5>
         <input v-model="isEasy" type="checkbox" id="easy" name="easy" />
-        <label for="easy">Lett</label><br />
+        <label for="easy">Lav</label><br />
         <input v-model="isMedium" type="checkbox" id="medium" name="medium" />
         <label for="medium">Medium</label><br />
         <input v-model="isHard" type="checkbox" id="hard" name="hard" />
         <label for="hard">Høy</label><br />
         <p v-if="!isDifficultyValid">Oppgi gyldig vanskelighetsgrad</p>
+        <br>
 
-        <p v-if="!feedbackMissingInfo">Sjekk at du har fylt inn all nødvendig informasjon</p>
+        <p v-if="!isValidForm">Sjekk at du har fylt inn all nødvendig informasjon</p>
         <button 
         @click="saveActivityChanges" 
         id="saveButton" 
-        :disabled="!isValidForm">LAGRE</button> 
+        :disabled="!isValidForm"
+        >LAGRE</button> 
         <button @click="cancelActivity" id="cancelButton">AVLYS</button>
     </div>
 </template>
@@ -101,21 +107,19 @@ import axios from "@/axiosConfig";
 import IEditActivity from "@/interfaces/IEditActivity.interface";
 import Month from "@/interfaces/Month.interface";
 import ImageSelector from "@/components/ImageSelector.vue";
-import { store } from "@/store";
-import User from "@/interfaces/User/User.interface";
+import { TrainingLevel } from "@/enums/TrainingLevel.enum";
 
 export default defineComponent ({
     name: "EditActivity",
     components: { ImageSelector },
     props: { id: { required: true }},
 
-
-//TODO: faktisk endre aktivitetene, fiks det tomme aktivitetsobjektet.
+//TODO: fiks sånn at man får ut dato
+//TODO: fiks sånn at man får ut difficulty
 
     setup(props) {
         const router = useRouter();
         const activity:Ref<IEditActivity> = ref({} as IEditActivity);
-        const numberOfParticipants = ref();
         const durartion = ref();
         const selectedYear = ref("");
         const selectedMonth = ref("");
@@ -127,22 +131,16 @@ export default defineComponent ({
         const isEasy = ref(false);
         const isMedium = ref(false);
         const isHard = ref(false);
-        const feedbackError = ref(false);
-        enum difficultyValue {
-            easy = 1,
-            medium = 2,
-            hard = 4,
-        };
 
         const onSelectedImage = (image: string) => {
-            activityDTO.activityPicture = image;
+            activity.value.activityPicture = image;
         };
 
         const onRemoveImage = () => {
-            delete activityDTO.activityPicture;
+            delete activity.value.activityPicture;
         };
 
-        const feedbackMissingInfo = ref(false);
+        //const feedbackMissingInfo = ref(false);
 
         const daysInFebruary = computed(() => {
             return isLeapYear.value ? 29 : 28;
@@ -190,7 +188,7 @@ export default defineComponent ({
             "23",
             ]);
 
-        const minutes = [
+        const minutes = ref([
             "00",
             "01",
             "02",
@@ -201,27 +199,92 @@ export default defineComponent ({
             "07",
             "08",
             "09",
-            ];
+            ]);
 
         onBeforeMount(() => {
-            let n = "0";
-            for (let i = 10; i < 60; i++) {
-                n = String(i);
-                // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-                minutes.push(n);
+            if (minutes.value.length <= 10) {
+                let n = "0";
+                for (let i = 10; i < 60; i++) {
+                    n = String(i);
+                    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+                    minutes.value.push(n);
+                }
             }
-        return minutes;
         });
 
         onBeforeMount(async () => {
             try {
                 const response = await axios.get(`/activities/${props.id}`);
                 activity.value = response.data as IEditActivity;
+
+                selectedYear.value = activity.value.startTime.substring(0, 4);
+                if (activity.value.startTime.substring(5, 7) == "01") {
+                    selectedMonth.value = "Januar";
+                } else if (activity.value.startTime.substring(5, 7) == "02") {
+                    selectedMonth.value = "Februar";
+                } else if (activity.value.startTime.substring(5, 7) == "03") {
+                    selectedMonth.value = "Mars";
+                } else if (activity.value.startTime.substring(5, 7) == "04") {
+                    selectedMonth.value = "April";
+                } else if (activity.value.startTime.substring(5, 7) == "05") {
+                    selectedMonth.value = "Mai";
+                } else if (activity.value.startTime.substring(5, 7) == "06") {
+                    selectedMonth.value = "Juni";
+                } else if (activity.value.startTime.substring(5, 7) == "07") {
+                    selectedMonth.value = "Juli";
+                } else if (activity.value.startTime.substring(5, 7) == "08") {
+                    selectedMonth.value = "August";
+                } else if (activity.value.startTime.substring(5, 7) == "09") {
+                    selectedMonth.value = "September";
+                } else if (activity.value.startTime.substring(5, 7) == "10") {
+                    selectedMonth.value = "Oktober";
+                } else if (activity.value.startTime.substring(5, 7) == "11") {
+                    selectedMonth.value = "November";
+                } else if (activity.value.startTime.substring(5, 7) == "12") {
+                    selectedMonth.value = "Desember";
+                }
+
+                if (activity.value.startTime.substring(8, 10) == "01") {
+                    selectedDay.value = "1";
+                } else if (activity.value.startTime.substring(8, 10) == "02") {
+                    selectedDay.value = "2";
+                } else if (activity.value.startTime.substring(8, 10) == "03") {
+                    selectedDay.value = "3";
+                } else if (activity.value.startTime.substring(8, 10) == "04") {
+                    selectedDay.value = "4";
+                } else if (activity.value.startTime.substring(8, 10) == "05") {
+                    selectedDay.value = "5";
+                } else if (activity.value.startTime.substring(8, 10) == "06") {
+                    selectedDay.value = "6";
+                } else if (activity.value.startTime.substring(8, 10) == "07") {
+                    selectedDay.value = "7";
+                } else if (activity.value.startTime.substring(8, 10) == "08") {
+                    selectedDay.value = "8";
+                } else if (activity.value.startTime.substring(8, 10) == "09") {
+                    selectedDay.value = "9";
+                } else {
+                    selectedDay.value = activity.value.startTime.substring(8, 10);
+                }
+
+                selectedHour.value = activity.value.startTime.substring(11, 13);
+                selectedMinute.value = activity.value.startTime.substring(14, 16);
+
+                if (TrainingLevel.LOW) {
+                    isEasy.value = true;
+                } else if (TrainingLevel.MEDIUM) {
+                    isMedium.value = true;
+                } else if (activity.value.difficulty === 3) {
+                    isEasy.value = true;
+                    isMedium.value = true;
+                } else if (TrainingLevel.HIGH) {
+                    isHard.value = true;
+                } 
+
             } catch {
                 router.push("/error");
             }
         });
-
+        
         const isTitleValid = computed(() => {
             return (activity.value.title.trim() !== ""); 
         });
@@ -230,105 +293,74 @@ export default defineComponent ({
             return (activity.value.place.trim() !== "" && activity.value.city.trim() !== "");
         });
 
-        const isStartTimeValid = computed(() => {
-            return (activity.value.startTime.trim() !== "");
-        });
-
         const isTypeValid = computed(() => {
             return (activity.value.type.trim() !== "");
         });
 
         const isNumberOfParticipantsValid = computed(() => {
-            return (numberOfParticipants.value !== "" &&
-                numberOfParticipants.value >= 0 && 
-                numberOfParticipants.value <= activity.value.maxNumberOfParticipants);
-        });
-
-        const isDescriptionValid = computed(() => {
-            return (activity.value.description !== "");
-        });
-
-        const isEquipmentNeeded = computed(() => {
-            return (activity.value.equipment !== "");
+            return (!isNaN(activity.value.maxParticipants) && 
+            activity.value.maxParticipants >= 2);
         });
 
         const isDurationValid = computed(() => {
-            return (activity.value.durationMinutes >= 0 &&
-            !isNaN(Number(activity.value.durationMinutes)) &&
-            Number(activity.value.durationMinutes) > 0);
+            return (activity.value.durationMinutes > 0);
         });
         
-        const isDateTimeValid = computed(() => {
+        const isDateTimeValid = computed(() => {            
             return (
-                selectedYear.value !== "" ||
-                selectedMonth.value !== "" ||
-                selectedDay.value !== "" ||
-                selectedHour.value !== "" ||
+                selectedYear.value !== "" &&
+                selectedMonth.value !== "" &&
+                selectedDay.value !== "" &&
+                selectedHour.value !== "" &&
                 selectedMinute.value !== ""
             );
         });
 
         const isValidForm = computed(() => {
             return (isPlaceValid.value && 
-            isStartTimeValid.value && 
             isTypeValid.value &&
             isNumberOfParticipantsValid.value &&
-            isDescriptionValid.value &&
             isDateTimeValid.value);
         });
 
 
         const isDifficultyValid = computed(() => {
             return (
-                //activity.value.difficulty !== -1 ||
-                isEasy.value ||
+                activity.value.difficulty !== -1 && 
+                (isEasy.value ||
                 isMedium.value ||
-                isHard.value
+                isHard.value)
             );
         });
+
 
         const calculateDifficulty = computed(() => {
             let difficultyNumber = 0;
             if (isEasy.value) {
-                difficultyNumber += difficultyValue.easy;
+                difficultyNumber += TrainingLevel.LOW;
             }
             if (isMedium.value) {
-                difficultyNumber += difficultyValue.medium;
+                difficultyNumber += TrainingLevel.MEDIUM;
             }
             if (isHard.value) {
-                difficultyNumber += difficultyValue.hard;
+                difficultyNumber += TrainingLevel.HIGH;
             }
             return difficultyNumber;
         });
 
-        const activityDTO: IEditActivity = {
-            city: "city",
-            description: "desc",
-            type: "type",
-            maxNumberOfParticipants: 30,
-            difficulty: "diff",
-            durationMinutes: 50,
-            equipment: "equip",
-            place: "place",
-            privateActivity: false,
-            startTime: "tid",
-            title: "navn",
-            latitude: 0,
-            longitude: 0,
-            activityPicture: "picture",
-        }
-
         const saveActivityChanges = async(): Promise<void> => {
             if (isValidForm.value) {
                 try {
-                    if (!activityDTO.activityPicture) activityDTO.activityPicture = "null";
+                    if (!activity.value.activityPicture) activity.value.activityPicture = "null";
+                    
+                    activity.value.difficulty = calculateDifficulty.value;
+                    activity.value.startTime = makeDateTime.value;
 
                     const response = await axios.put(`/activities/${props.id}`, activity.value);
-                    //await store.dispatch("updateActivity", response.data);
-                    //activity.value = store.getters.activity;
 
-                    if (response.status === 201) {
+                    if (response.status === 200) {
                         window.alert("Endringene ble lagret");
+                        //router.push("activity/:id");
                     }
                 } catch (error) {
                     router.push("/error");
@@ -430,16 +462,20 @@ export default defineComponent ({
         });
 
         return {
-            numberOfParticipants,
             activity,
-            activityDTO,
             durartion,
             isValidForm,
             isDifficultyValid,
             isTitleValid,
             isDurationValid,
             calculateDifficulty,
-            isEquipmentNeeded,
+            isPlaceValid,
+            isTypeValid,
+            isNumberOfParticipantsValid,
+            isDateTimeValid,
+            isEasy,
+            isMedium,
+            isHard,
 
             onSelectedImage,
             onRemoveImage,
@@ -456,7 +492,7 @@ export default defineComponent ({
             months,
             hoursList,
             minutes,
-            feedbackMissingInfo,
+            //feedbackMissingInfo,
 
             saveActivityChanges,
             cancelActivity

@@ -286,15 +286,15 @@ public class ActivityService
         if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DATE) 
             return activityRepository.findActivitiesOnDateWithoutFilter(searchQuery, filter.getAmount());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DATE) 
-            return activityRepository.findActivitiesOnDateWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+            return activityRepository.findActivitiesOnDateWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty());
         else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
             return activityRepository.findActivitiesOnAmountWithoutFilter(searchQuery, filter.getAmount());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.PARTICIPANT_AMOUNT) 
-            return activityRepository.findActivitiesOnAmountWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty().value);
+            return activityRepository.findActivitiesOnAmountWithFilter(searchQuery, filter.getAmount(), filter.getDifficulty());
         else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.DISTANCE)
             return activityRepository.findActivitiesOnDistanceWithoutFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DISTANCE)
-            return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty().value);
+            return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty());
 
         return activityRepository.findAll();
     }

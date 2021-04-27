@@ -1,12 +1,11 @@
 package idatt2106.group3.backend.Model.DTO;
 
-import idatt2106.group3.backend.Enum.Difficulty;
 import idatt2106.group3.backend.Enum.SortingType;
 
 public class SortFilterQueryDTO {
     private SortingType sortingType;
     private String searchQuery;
-    private Difficulty difficulty;
+    private Integer difficulty;
     private int amount;
     private double userLongitude;
     private double userLatitude;
@@ -29,11 +28,11 @@ public class SortFilterQueryDTO {
         this.searchQuery = searchQuery;
     }
 
-    public Difficulty getDifficulty() {
+    public Integer getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(Difficulty difficulty) {
+    public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
     }
 

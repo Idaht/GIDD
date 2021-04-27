@@ -1,26 +1,56 @@
 <template>
-    <div id="activity-feed">
-        <div id="header-title">
-            <h2>Kommende aktiviteter</h2>
-        </div>
-        <div class="topnav">
-            <button @click="toParicipant" :disabled="disableButtons">Deltaker</button>
-            <button @click="toOrganizer" :disabled="!disableButtons">Arrangør</button>
-        </div>
-        <div id="participant" v-if="stage === 1">
-            <ActivityFeedItem v-for="activity in activitiesParticipant" :key="activity.activityId" :activityData="activity" />
-        </div>
-        <div id="organizer" v-if="stage === 2">
-            <h2>Her er dine aktiviteter</h2>
-            <li v-for="activity in activitiesOrganizer" :key="activity.activityId">
-            <ActivityFeedItem :activityData="activity" />
-            </li>
-        </div>
+  <div id="activity-feed">
+    <div id="header-title">
+      <h2>Mine aktiviteter</h2>
+    </div>
+    <div class="topnav">
+      <button
+        class="nav-button"
+        id="participant-button"
+        @click="toParicipant"
+        :disabled="disableButtons"
+      >
+        Deltaker
+      </button>
+      <button
+        class="nav-button"
+        id="organizer-button"
+        @click="toOrganizer"
+        :disabled="!disableButtons"
+      >
+        Arrangør
+      </button>
+    </div>
+    <div id="participant" v-if="stage === 1">
+      <h3>Overskrift</h3>
+      <div class="activities">
+        <ActivityFeedItem
+          v-for="activity in activitiesParticipant"
+          :key="activity.activityId"
+          :activityData="activity"
+        />
+      </div>
+    </div>
+    <div id="organizer" v-if="stage === 2">
+      <h3>Her er dine aktiviteter</h3>
+      <div class="activities">
+        <li v-for="activity in activitiesOrganizer" :key="activity.activityId">
+          <ActivityFeedItem :activityData="activity" />
+        </li>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, ref, Ref, watchEffect } from "vue";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  ref,
+  Ref,
+  watchEffect,
+} from "vue";
 import ActivityFeedItem from "../components/ActivityFeedItem.vue";
 import axios from "@/axiosConfig";
 import { useRouter } from "vue-router";
@@ -37,15 +67,19 @@ export default defineComponent({
     const stage = ref(1);
     const activitiesParticipant: Ref<IActivity[]> = ref([]);
     const activitiesOrganizer: Ref<IActivity[]> = ref([]);
-    const userId:number = store.getters.user.userId;
+    const userId: number = store.getters.user.userId;
 
     onBeforeMount(async () => {
       try {
-        const participantResponse = await axios.get(`/users/${userId}/my-activities`);
+        const participantResponse = await axios.get(
+          `/users/${userId}/my-activities`
+        );
         activitiesParticipant.value = participantResponse.data as IActivity[];
         console.log(activitiesParticipant.value);
         //TODO: Fikse slik at det er arrangør og ikke påmeldt her
-        const organizerResponse = await axios.get(`/users/${userId}/organized-activities`);
+        const organizerResponse = await axios.get(
+          `/users/${userId}/organized-activities`
+        );
         activitiesOrganizer.value = organizerResponse.data as IActivity[];
         console.log(userId);
       } catch (error) {
@@ -53,17 +87,17 @@ export default defineComponent({
       }
     });
 
-    const toParicipant = ():void => {
-        stage.value = 1; 
+    const toParicipant = (): void => {
+      stage.value = 1;
     };
 
-    const toOrganizer = ():void => {
-        stage.value = 2;
+    const toOrganizer = (): void => {
+      stage.value = 2;
     };
 
-    const disableButtons = computed(() =>{
-        return stage.value === 1; 
-    })
+    const disableButtons = computed(() => {
+      return stage.value === 1;
+    });
 
     return {
       toParicipant,
@@ -85,14 +119,11 @@ $secondary-color: #ea4b4b;
 $padding: 0.6rem 1rem 0.6rem 1rem;
 
 #activity-feed {
+  color: $primary-color;
   margin: 35px;
-}
-
-.header {
-  display: grid;
-  margin-bottom: 15px;
   @media only screen and (min-width: 600px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: 45%;
+    margin: auto;
   }
 }
 
@@ -106,63 +137,53 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
 h2 {
   font-weight: 600;
   text-align: left;
-  margin: 0;
+  margin: 0px;
   @media only screen and (min-width: 600px) {
     text-align: center;
   }
 }
 
-#map-view {
-  grid-column: 3/4;
-  align-self: center;
-  justify-self: end;
-  @media only screen and (min-width: 600px) {
-    grid-column: 3/4;
-  }
+h3 {
+  margin: 30px 0 30px 0;
 }
 
-#lower-header-sort,
-#lower-header-filter {
-  border-radius: 20px;
-  font-size: 10px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-weight: 600 !important;
-  padding: 5px 10px 5px 10px;
+.topnav {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 15px;
 }
 
-#lower-header-sort {
-  box-shadow: 0px 0px 0px 1px #8b8b8b;
-  border-width: 0;
+.nav-button {
+  border-radius: 0 !important;
+  background-color: #ffffff;
   color: $primary-color;
-  width: 150px;
-  grid-column: 1/2;
-  @media only screen and (min-width: 600px) {
-    grid-column: 2/3;
-    justify-self: right;
-  }
+  box-shadow: inset 0 -3px 0 $secondary-color;
 }
 
-#lower-header-filter {
+.nav-button:disabled {
   background-color: $secondary-color;
   color: #ffffff;
-  grid-column: 2/3;
-  width: 70px;
-  margin-left: 10px;
-  @media only screen and (min-width: 600px) {
-    grid-column: 3/4;
-    justify-self: left;
-    width: 100px;
+}
+
+.activities {
+  display: flex;
+  flex-flow: wrap;
+  text-align: center;
+}
+
+#activity {
+  margin: 0 auto;
+  @media only screen and (min-width: 800px) {
+    padding: 10px;
   }
 }
 
-option {
-  line-height: 1rem;
-}
-
-select {
-  font-family: "Mulish", sans-serif;
-  font-weight: 600;
-  letter-spacing: 1px;
+li {
+  list-style-type: none;
+  padding-bottom: 20px;
+  @media only screen and (min-width: 800px) {
+    width: 50%;
+  }
 }
 </style>

@@ -1,6 +1,7 @@
 package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Chat;
+import idatt2106.group3.backend.Model.DTO.SortFilterQueryDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
@@ -43,6 +44,11 @@ public class ActivityController
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(activities, HttpStatus.OK);
+    }
+
+    @GetMapping("/alternatives")
+    public ResponseEntity<List<ActivityDTO>> getActivitiesWithFilterAndSorting(@RequestBody SortFilterQueryDTO filter){
+        return new ResponseEntity<>(activityService.getActivitiesWithFilterAndSorting(filter),HttpStatus.OK);
     }
 
     @PostMapping

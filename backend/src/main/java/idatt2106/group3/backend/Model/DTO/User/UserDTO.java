@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import idatt2106.group3.backend.Enum.Difficulty;
 import idatt2106.group3.backend.Model.Activity;
-import idatt2106.group3.backend.Model.Difficulty;
 import idatt2106.group3.backend.Model.User;
 
 /**

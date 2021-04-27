@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.User;
 
+/**
+ * Component for sending mails
+ */
 @Component
 public class EmailComponent {
     @Autowired
@@ -26,6 +29,12 @@ public class EmailComponent {
         emailSender.send(message);
     }
 
+    /**
+     * Used when a activity gets deleted/canceled
+     * Sends all participants a cancellation mail
+     * @param user 
+     * @param activity
+     */
     public void sendCancelationMail(User user, Activity activity){
         SimpleMailMessage message = new SimpleMailMessage(); 
         message.setFrom("team.gidd@gmail.com");
@@ -37,6 +46,12 @@ public class EmailComponent {
         emailSender.send(message);
     }
 
+    /**
+     * Creates a formatted "from-to" string with actual date and times
+     * @param dateTime start time
+     * @param durationMinutes duration of the activity
+     * @return formatted String
+     */
     private String getTimeAndDateString(LocalDateTime dateTime, int durationMinutes){
         DateTimeFormatter initialDateTimeFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy 'fra' HH:mm 'til' ");
         DateTimeFormatter endingDateTimeFormat = DateTimeFormatter.ofPattern("HH:mm");

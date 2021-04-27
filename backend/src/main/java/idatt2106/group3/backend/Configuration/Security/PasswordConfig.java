@@ -7,7 +7,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.SecureRandom;
 
-
+/**
+ * Configures PasswordEncoder for hashing and salting password for users
+ * Also checks if a inputted password matches a hashed password
+ */
 @Configuration
 public class PasswordConfig
 {

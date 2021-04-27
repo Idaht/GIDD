@@ -22,7 +22,7 @@ public class SourceData {
 
     /**
      * Creates a MySQL datasource
-     * Reads password and username from config.properties file
+     * Reads url, password and username from config.properties file
      * @return DataSource object
      */
     @Bean

@@ -20,6 +20,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/SignUp.vue"),
   },
   {
+    path: "/welcome",
+    name: "Welcome",
+    component: () => import("../views/Welcome.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/activity/:id",
     name: "ActivityInfo",
     component: () => import("../views/ActivityInformation.vue"),

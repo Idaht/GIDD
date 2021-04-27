@@ -506,7 +506,7 @@ export default defineComponent({
       user.dateOfBirth = birthdate.value;
       user.trainingLevel = trainingLevelAsString.value;
       if (await store.dispatch("register", user)) {
-        router.replace("/activity-feed");
+        router.replace("/welcome");
       } else {
         router.push("/error");
       }

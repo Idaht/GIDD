@@ -220,6 +220,17 @@ public class ActivityService
     }
 
     /**
+     * Returns boolean based on if the user is a participant of the given AcitivityId
+     * @param activityId
+     * @param userId
+     * @return true or false
+     */
+    public boolean checkIfParticipant(long activityId, long userId){
+        Optional<Integer> optionalActivityId = activityRepository.findIfUserIsParticipantOfActivity(userId, activityId); 
+        return optionalActivityId.isPresent();
+    }
+
+    /**
      * Method that increases "absence" counter for users that were absent in an activity.
      * Also sets activity's markedAbsence boolean to true, so that we know that that activity
      * already has marked user absences.

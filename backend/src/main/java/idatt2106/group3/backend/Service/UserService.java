@@ -84,7 +84,6 @@ public class UserService
             if(userDTO.getNewPassword() != null && userDTO.getOldPassword() != null)user.setHash(passwordEncoder.encode(userDTO.getNewPassword()));
             
             return new UserDTO(userRepository.save(user));
-            
         }
         LOGGER.warn("Did not find user with userId: {}, while running editUser(long userId, UserDTO userDTO). Returning null", userId);
         return null;

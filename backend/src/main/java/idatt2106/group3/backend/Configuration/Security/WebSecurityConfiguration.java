@@ -21,6 +21,7 @@ import idatt2106.group3.backend.Service.UserSecurityDetailsService;
 
 @Profile("!test")
 @Configuration
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 

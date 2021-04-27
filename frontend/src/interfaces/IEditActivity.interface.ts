@@ -1,16 +1,17 @@
 export default interface IEditActivity {
-    activityId: number;
+    activityPicture?: string;
     city: string;
     description: string;
-    type: string;
-    maxNumberOfParticipants: number;
     difficulty: string;
     durationMinutes: number;
     equipment: string;
+    latitude: number,
+    longitude: number,
+    maxNumberOfParticipants: number;
     place: string;
     privateActivity: boolean;
     startTime: string;
     title: string;
-    activityPicture?: string;
+    type: string;
   }
   

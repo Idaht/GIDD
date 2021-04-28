@@ -120,7 +120,7 @@ export default defineComponent({
     });
 
     const getAmount = computed(() => {
-      if (amount.value === null || amount.value < 0) return 7;
+      if (amount.value === null || amount.value < 0) return 1000;
       return amount.value;
     });
 

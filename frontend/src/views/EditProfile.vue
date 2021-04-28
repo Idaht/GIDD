@@ -1,62 +1,99 @@
 <template>
-  <div>
-    <h1>Instillinger</h1>
-    <img src="" alt="Profilbilde" />
+  <div id="edit-profile">
+    <h2>Instillinger</h2>
+    <h3>Endre profilbilde</h3>
     <ImageSelector
       labelName=""
       @imageSelected="onSelectedImage"
       @removeImage="onRemoveImage"
     />
-
-    <p>Endre fornavn</p>
-    <input v-model="user.forename" type="name" placeholder="Nytt fornavn" />
-    <p>Endre etternavn</p>
-    <input v-model="user.surname" type="name" placeholder="Nytt etternavn" />
-    <p>Endre email</p>
-    <input v-model="user.email" type="email" placeholder="Ny email" />
-    <p v-if="emailIsNotEmpty && !isValidEmail">
-      E-postadressen må inneholde @ og .
-    </p>
-    <p>Endre treningsnivå</p>
-    <label v-for="(trainingLevel, index) in trainingLevels" :key="index">
+    <h3>Endre personlig informasjon</h3>
+    <div id="form-container">
+      <p class="form-title">Fornavn:</p>
       <input
-        type="radio"
-        :value="selectedTrainingLevel"
-        :checked="selectedTrainingLevel === trainingLevel.value"
-        @change="changeTrainingLevel(trainingLevel.value)"
-      />{{ trainingLevel.title }}
-    </label>
-    <p>Endre passord</p>
-    <input v-model="password" type="password" placeholder="Nytt passord" />
-    <input
-      v-model="repeatPassword"
-      type="password"
-      placeholder="Gjenta passord"
-    />
-    <p v-if="!matchingPasswords && passwordIsNotEmpty">
-      Passordene må være like
-    </p>
-    <p v-if="!passwordIsValid && passwordIsNotEmpty">
-      Nytt passord må inneholde minst 8 tegn
-    </p>
-    <p>Gammelt passord</p>
-    <input v-model="oldPassword" type="password" />
-    <p v-if="!oldPasswordWasCorrect">
-      Gammelt passord var ikke riktig. Besøk:
-      <router-link to="/forgotten-password">Glemt passord</router-link> om du
-      har glemt ditt gamle passord
-    </p>
-    <p v-if="isProfileChanged">Profilen er endret!</p>
-    <button
-      :disabled="!isValidForm"
-      @click="saveProfileChanges"
-      alt="Knapp som lagrer profilendringer"
-    >
-      Lagre endringer
-    </button>
-    <button @click="deleteUser" alt="Knapp for å slette brukeren">
-      Slett brukeren
-    </button>
+        class="form-input"
+        v-model="user.forename"
+        type="name"
+        placeholder="Nytt fornavn"
+      />
+      <p class="form-title">Etternavn:</p>
+      <input
+        class="form-input"
+        v-model="user.surname"
+        type="name"
+        placeholder="Nytt etternavn"
+      />
+      <p class="form-title">E-post:</p>
+      <input
+        class="form-input"
+        v-model="user.email"
+        type="email"
+        placeholder="Ny email"
+      />
+      <p v-if="emailIsNotEmpty && !isValidEmail">
+        E-postadressen må inneholde @ og .
+      </p>
+    </div>
+    <h3>Endre treningsnivå</h3>
+    <div id="form-fitness-level">
+      <label v-for="(trainingLevel, index) in trainingLevels" :key="index">
+        <input
+          id="fitness-input"
+          type="radio"
+          :value="selectedTrainingLevel"
+          :checked="selectedTrainingLevel === trainingLevel.value"
+          @change="changeTrainingLevel(trainingLevel.value)"
+        />{{ trainingLevel.title }}
+      </label>
+    </div>
+    <h3>Endre passord</h3>
+    <div id="new-password-container">
+      <div>
+        <input
+          class="password-form"
+          v-model="password"
+          type="password"
+          placeholder="Nytt passord"
+        />
+        <p id="error-message" v-if="!passwordIsValid && passwordIsNotEmpty">
+          ! Nytt passord må inneholde minst 8 tegn
+        </p>
+      </div>
+      <div>
+        <input
+          class="password-form"
+          v-model="repeatPassword"
+          type="password"
+          placeholder="Gjenta passord"
+        />
+        <p id="error-message" v-if="!matchingPasswords && passwordIsNotEmpty">
+          ! Passordene må være like
+        </p>
+      </div>
+    </div>
+
+    <div id="old-password">
+      <h4>Gammelt passord</h4>
+      <input id="old-password-input" v-model="oldPassword" type="password" />
+      <p v-if="!oldPasswordWasCorrect">
+        Gammelt passord var ikke riktig. Besøk:
+        <router-link to="/forgotten-password">Glemt passord</router-link> om du
+        har glemt ditt gamle passord
+      </p>
+    </div>
+
+    <div>
+      <p v-if="isProfileChanged">Profilen er endret!</p>
+      <button
+        id="change-profile-button"
+        :disabled="!isValidForm"
+        @click="saveProfileChanges"
+        alt="Knapp som lagrer profilendringer"
+      >
+        Lagre endringer
+      </button>
+    </div>
+    <div id="delete-user" @click="deleteUser">Slett brukeren</div>
   </div>
 </template>
 
@@ -350,3 +387,98 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped lang="scss">
+@import url("https://fonts.googleapis.com/css2?family=Mulish&display=swap");
+
+$primary-color: #282828;
+$secondary-color: #ea4b4b;
+$padding: 0.6rem 1rem 0.6rem 1rem;
+
+#edit-profile {
+  margin: 35px;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
+    padding: 20px;
+  }
+}
+
+h3 {
+  text-align: left;
+  margin: 40px 0px 20px 0px;
+}
+
+#form-container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+  row-gap: 10px;
+}
+
+.form-title {
+  text-align: left;
+  grid-column: 1/2;
+}
+
+.form-input {
+  grid-column: 2/3;
+  width: 100%;
+}
+
+label {
+  margin: 20px;
+}
+
+#form-fitness-level.input {
+  margin: 10px;
+}
+
+#fitness-input {
+  margin: 10px;
+}
+
+#new-password-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  height: 80px;
+}
+
+.password-form {
+  width: 100%;
+  align-self: end;
+}
+
+#error-message {
+  font-weight: 600;
+  color: $secondary-color;
+  font-size: 10px;
+  line-height: 20px;
+}
+
+#old-password {
+  text-align: left;
+}
+
+#old-password-input {
+  width: 45%;
+  margin-bottom: 20px;
+}
+
+#change-profile-button {
+  margin: 20px;
+}
+
+#delete-user {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+#delete-user:hover {
+  text-decoration: underline;
+  color: $secondary-color;
+  cursor: pointer;
+}
+</style>

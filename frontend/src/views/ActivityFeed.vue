@@ -22,6 +22,7 @@
             <option value="DATE">Første kommende</option>
             <option value="DISTANCE">Avstand</option>
             <option value="PARTICIPANT_AMOUNT">Antall deltakere</option>
+            <option value="REMOVE_SORT">Nullstill</option>
           </select>
           <div id="filter-boxes" class="lower-header-item">
             <div class="checkbox-label">
@@ -165,6 +166,13 @@ export default defineComponent({
         sortingType.value = "DATE";
         getFilteredAndSortedActivities();
         sortingType.value = "Sortering";
+      } else if (sortingType.value === "REMOVE_SORT") {
+        try {
+          const response = await axios.get("/activities");
+          activities.value = response.data as IActivity[];
+        } catch (error) {
+          router.push("/error");
+        }
       } else {
         getFilteredAndSortedActivities();
       }

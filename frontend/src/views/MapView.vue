@@ -24,12 +24,7 @@
     </div>
 
     <div id="activities">
-      <Map
-        id="map"
-        :center="{ lat: 63.43049, lng: 10.39506 }"
-        :activityData="activities"
-      >
-      </Map>
+      <Map id="map" :activityData="activities"></Map>
     </div>
   </div>
 </template>
@@ -50,6 +45,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const activities: Ref<IActivity[]> = ref([]);
+    
 
     onBeforeMount(async () => {
       try {

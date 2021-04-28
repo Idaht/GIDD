@@ -164,18 +164,18 @@ export default defineComponent ({
         });
 
         const months: Ref<Month[]> = ref([
-            { name: "Januar", numberOfDays: 31, monthNumber: 1 },
-            { name: "Februar", numberOfDays: daysInFebruary, monthNumber: 2 },
-            { name: "Mars", numberOfDays: 31, monthNumber: 3 },
-            { name: "April", numberOfDays: 30, monthNumber: 4 },
-            { name: "Mai", numberOfDays: 31, monthNumber: 5 },
-            { name: "Juni", numberOfDays: 30, monthNumber: 6 },
-            { name: "Juli", numberOfDays: 31, monthNumber: 7 },
-            { name: "August", numberOfDays: 31, monthNumber: 8 },
-            { name: "September", numberOfDays: 30, monthNumber: 9 },
-            { name: "Oktober", numberOfDays: 31, monthNumber: 10 },
-            { name: "November", numberOfDays: 30, monthNumber: 11 },
-            { name: "Desember", numberOfDays: 31, monthNumber: 12 },
+            { name: "Januar", numberOfDays: 31 },
+            { name: "Februar", numberOfDays: daysInFebruary },
+            { name: "Mars", numberOfDays: 31 },
+            { name: "April", numberOfDays: 30  },
+            { name: "Mai", numberOfDays: 31 },
+            { name: "Juni", numberOfDays: 30 },
+            { name: "Juli", numberOfDays: 31 },
+            { name: "August", numberOfDays: 31 },
+            { name: "September", numberOfDays: 30 },
+            { name: "Oktober", numberOfDays: 31 },
+            { name: "November", numberOfDays: 30 },
+            { name: "Desember", numberOfDays: 31 },
            ]);
 
         const hoursList = ref([
@@ -383,8 +383,6 @@ export default defineComponent ({
                     activity.value.difficulty = calculateDifficulty.value;
                     activity.value.startTime = makeDateTime.value;
 
-                    console.log(activity.value);
-
                     const response = await axios.put(`/activities/${props.id}`, activity.value);
 
                     if (response.status === 200) {
@@ -405,7 +403,6 @@ export default defineComponent ({
             if (window.confirm("Er du sikker på at du vil avlyse aktiviteten din?")) {
                 try {
                     const response = await axios.delete(`/activities/${props.id}`);
-                    console.log(response);
                     
                     if (response.status === 200) {
                         router.replace("/activity-feed");

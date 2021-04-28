@@ -34,7 +34,7 @@ export default defineComponent({
   props: ["id"],
   setup(props) {
     const user = ref({}) as Ref<User>;
-    const trusted = ref(true); //TODO Hente ut dette fra backend
+    const trusted = ref(false);
 
     const profilePicture = computed(() => {
       let val =
@@ -51,6 +51,8 @@ export default defineComponent({
       try {
         const response = await axios.get(`/users/${props.id}`);
         user.value = response.data;
+        trusted.value = user.value.trusted;
+        console.log(trusted.value);
       } catch {
         router.push("/error");
       }

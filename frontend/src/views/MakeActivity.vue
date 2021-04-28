@@ -1,6 +1,10 @@
 <template>
   <h2>Opprett en ny aktivitet</h2>
-  <div>Profilbilde</div>
+  <ImageSelector
+    labelName=""
+    @imageSelected="onSelectedImage"
+    @removeImage="onRemoveImage"
+  />
   <div>{{ user.forename }} {{ user.surname }}</div>
   <div>Arrangør</div>
   <input v-model="activity.title" type="title" placeholder="Tittel" />
@@ -64,17 +68,22 @@
   <h3>Sted</h3>
   <div id="map-view">
     <!--TODO: ':center' fjernes når appen finner brukers lokasjon selv-->
-    <Map id="map" :center="{ lat: 63.43049, lng: 10.39506 }" :getLocation="true" :activityData="[]"></Map>
+    <Map
+      id="map"
+      :center="{ lat: 63.43049, lng: 10.39506 }"
+      :getLocation="true"
+      :activityData="[]"
+    ></Map>
   </div>
   <!--Midlertidig løsning for å se alle fletene, fjernes ved styling-->
-  <br>
-  <br>
-  <br>
-  <br>
-  <br><br><br><br><br><br><br><br><br><br><br><br>
-  <br>
-  <br>
-  <br>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+  <br />
+  <br />
+  <br />
   <p>Legg til et fysisk sted der arrangementet skal ta plass</p>
   <input v-model="activity.place" type="place" placeholder="Sted" />
   <input v-model="activity.city" type="city" placeholder="By" />
@@ -89,16 +98,12 @@
   <h3>Utstyr</h3>
   <p>Legg til utstyr som trengs for å gjennomføre aktiviteten (frivillig)</p>
   <input v-model="activity.equipment" type="equipment" placeholder="Utstyr" />
-  <h3>Bilde</h3>
-  <p>Her kan du laste opp et bilde som vises på aktivitetsfeeden (frivillig)</p>
   <p>Last opp</p>
   <p v-if="feedbackError">Noe gikk galt, prøv igjen!</p>
   <p v-if="feedbackMissingInfo">
     Sjekk at du har fylt inn all nødvendig informasjon
   </p>
-  <p v-if="feedbackSomethingWentWrong">
-    Noe gikk galt, prøv igjen
-  </p>
+  <p v-if="feedbackSomethingWentWrong">Noe gikk galt, prøv igjen</p>
   <button @click="makeActivity">Opprett aktivitet</button>
 </template>
 
@@ -122,14 +127,12 @@ import Map from "@/components/Map.vue";
 import ICoordinates from "@/interfaces/ICoordinates.interface";
 import ILocation from "@/interfaces/ILocation.interface";
 import { TrainingLevel } from "@/enums/TrainingLevel.enum";
+import ImageSelector from "@/components/ImageSelector.vue";
 import axiosNotConfig from "axios";
 import data from "@/../config.json";
 
 export default defineComponent({
-  components: {
-    Map,
-  },
-
+  components: { ImageSelector, Map },
   setup() {
     const apiKey = data.googleAPIKey;
     const durationHour = ref("");
@@ -155,9 +158,9 @@ export default defineComponent({
     }
     const participants = ref("");
     const feedbackMissingInfo = ref(false);
-    const feedbackSomethingWentWrong = ref(false)
+    const feedbackSomethingWentWrong = ref(false);
     const coordinates = reactive({ lat: 0.0, lng: 0.0 } as ICoordinates);
-    provide('coordinates', coordinates);
+    provide("coordinates", coordinates);
 
     //Activity object
     const activity = reactive({
@@ -174,7 +177,7 @@ export default defineComponent({
       durationMinutes: -1,
       privateActivity: false,
       maxParticipants: -1,
-      //activityPicture: "", //TODO send med bilde
+      activityPicture: "",
     } as MakeActivity);
 
     const daysInFebruary = computed(() => {
@@ -240,14 +243,24 @@ export default defineComponent({
 
     const updateCityPlace = async () => {
       try {
-        const response = await axiosNotConfig.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.lat + "," + coordinates.lng}&key=${apiKey}`).then();
+        const response = await axiosNotConfig
+          .get(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+              coordinates.lat + "," + coordinates.lng
+            }&key=${apiKey}`
+          )
+          .then();
         const responseData = response.data;
         if (response.status == 200) {
-          let address: string[] = (responseData.results[0].formatted_address as string).split(",");
+          let address: string[] = (responseData.results[0]
+            .formatted_address as string).split(",");
           let place = address[0];
           let city = address[1].split(" ");
-          place != "Unnamed Road" ? activity.place = place : activity.place = ""; //Setting the place value
-          city = city.filter(element =>  { //Filters away city names that is not valid
+          place != "Unnamed Road"
+            ? (activity.place = place)
+            : (activity.place = ""); //Setting the place value
+          city = city.filter((element) => {
+            //Filters away city names that is not valid
             if (element == "") {
               return false;
             }
@@ -257,18 +270,23 @@ export default defineComponent({
             return true;
           });
 
-          city[0] || city[0] != "Unnamed" ? activity.city = city[0] : activity.city = ""; //Setting the city value
+          city[0] || city[0] != "Unnamed"
+            ? (activity.city = city[0])
+            : (activity.city = ""); //Setting the city value
         }
       } catch (error) {
-      //Something went wrong, user has to write place and city
+        //Something went wrong, user has to write place and city
       }
     };
 
-    watch(() => coordinates.lat || coordinates.lng, (newValue, oldValue) => {
-      if (newValue != oldValue) {
-        updateCityPlace();
+    watch(
+      () => coordinates.lat || coordinates.lng,
+      (newValue, oldValue) => {
+        if (newValue != oldValue) {
+          updateCityPlace();
+        }
       }
-    });
+    );
 
     //Before page loads, make the rest of the minutes list
     onBeforeMount(() => {
@@ -295,8 +313,7 @@ export default defineComponent({
       activity.durationMinutes = parseFloat(durationHour.value) * 60.0;
       activity.maxParticipants = parseInt(participants.value);
       activity.startTime = makeDateTime.value;
-      if (coordinates.lat != 0.0 || coordinates.lng != 0.0)
-      {
+      if (coordinates.lat != 0.0 || coordinates.lng != 0.0) {
         activity.latitude = coordinates.lat;
         activity.longitude = coordinates.lng;
       }
@@ -504,6 +521,20 @@ export default defineComponent({
       )?.numberOfDays;
     });
 
+    /**
+     * When image is selected
+     */
+    const onSelectedImage = (image: string) => {
+      activity.activityPicture = image;
+    };
+
+    /**
+     * When image is removed
+     */
+    const onRemoveImage = () => {
+      delete activity.activityPicture;
+    };
+
     return {
       makeActivity,
       user,
@@ -534,13 +565,14 @@ export default defineComponent({
       minutes,
       feedbackMissingInfo,
       feedbackSomethingWentWrong,
+      onSelectedImage,
+      onRemoveImage,
     };
   },
 });
 </script>
 
 <style scoped lang="scss">
-
 $primary-color: #282828;
 
 #map {

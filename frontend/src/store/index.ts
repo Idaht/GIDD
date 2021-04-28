@@ -4,12 +4,14 @@ import User from "../interfaces/User/User.interface";
 import { InjectionKey } from "vue";
 import LogInUser from "@/interfaces/User/LoginUser.interface";
 import { BackendStatus } from "@/enums/BackendStatus.enum";
+import ICoordinates from "@/interfaces/ICoordinates.interface";
 
 //The interface describing the State of th Vuex store
 export interface State {
   status: BackendStatus;
   user: string;
   token: string;
+  userLocation: string;
 }
 
 //The store needs an injection Key to provide typings when using useStore() with the composition api
@@ -21,6 +23,7 @@ export const store = createStore<State>({
     status: BackendStatus.OK,
     token: localStorage.getItem("token") || "",
     user: localStorage.getItem("user") || "",
+    userLocation: localStorage.getItem("userLocation") || "",
   },
   //The mutators methods, to mutate the state
   mutations: {
@@ -42,6 +45,9 @@ export const store = createStore<State>({
     },
     updateUser(state, user: User) {
       state.user = JSON.stringify(user);
+    },
+    updateUserLocation(state, userLocation: ICoordinates) {
+      state.userLocation = JSON.stringify(userLocation);
     },
   },
   actions: {
@@ -94,11 +100,21 @@ export const store = createStore<State>({
       localStorage.setItem("user", JSON.stringify(user));
       commit("updateUser", user);
     },
+    async updateUserLocation({ commit }, userLocation: ICoordinates) {
+      localStorage.setItem("userLocation", JSON.stringify(userLocation));
+      commit("updateUserLocation", userLocation);
+    },
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
     authenticationStatus: (state) => state.status,
     user: (state): User => JSON.parse(state.user),
+    userLocation: (state): ICoordinates => {
+      if (state.userLocation != "") {
+        return JSON.parse(state.userLocation);
+      }
+      return {} as ICoordinates;
+    },
   },
   modules: {},
 });

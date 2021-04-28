@@ -71,6 +71,9 @@
   <br>
   <br>
   <br>
+  <br><br><br><br><br><br><br><br><br><br><br><br>
+  <br>
+  <br>
   <br>
   <p>Legg til et fysisk sted der arrangementet skal ta plass</p>
   <input v-model="activity.place" type="place" placeholder="Sted" />
@@ -109,6 +112,7 @@ import {
   Ref,
   ref,
   provide,
+  watch,
 } from "vue";
 import { useRouter } from "vue-router";
 import MakeActivity from "@/interfaces/Activity/MakeActivity.interface";
@@ -116,7 +120,10 @@ import { useStore } from "@/store";
 import Month from "../interfaces/Month.interface";
 import Map from "@/components/Map.vue";
 import ICoordinates from "@/interfaces/ICoordinates.interface";
+import ILocation from "@/interfaces/ILocation.interface";
 import { TrainingLevel } from "@/enums/TrainingLevel.enum";
+import axiosNotConfig from "axios";
+import data from "@/../config.json";
 
 export default defineComponent({
   components: {
@@ -124,6 +131,7 @@ export default defineComponent({
   },
 
   setup() {
+    const apiKey = data.googleAPIKey;
     const durationHour = ref("");
     //TODO må fikse kart
     const isEasy = ref(false);
@@ -229,6 +237,38 @@ export default defineComponent({
       "08",
       "09",
     ];
+
+    const updateCityPlace = async () => {
+      try {
+        const response = await axiosNotConfig.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.lat + "," + coordinates.lng}&key=${apiKey}`).then();
+        const responseData = response.data;
+        if (response.status == 200) {
+          let address: string[] = (responseData.results[0].formatted_address as string).split(",");
+          let place = address[0];
+          let city = address[1].split(" ");
+          place != "Unnamed Road" ? activity.place = place : activity.place = ""; //Setting the place value
+          city = city.filter(element =>  { //Filters away city names that is not valid
+            if (element == "") {
+              return false;
+            }
+            if (!isNaN(Number(element))) {
+              return false;
+            }
+            return true;
+          });
+
+          city[0] || city[0] != "Unnamed" ? activity.city = city[0] : activity.city = ""; //Setting the city value
+        }
+      } catch (error) {
+      //Something went wrong, user has to write place and city
+      }
+    };
+
+    watch(() => coordinates.lat || coordinates.lng, (newValue, oldValue) => {
+      if (newValue != oldValue) {
+        updateCityPlace();
+      }
+    });
 
     //Before page loads, make the rest of the minutes list
     onBeforeMount(() => {

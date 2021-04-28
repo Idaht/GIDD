@@ -22,6 +22,7 @@
       <h3>{{ activityData.title }}</h3>
       <p>{{ activityData.startTime }}</p>
       <p>{{ location }}</p>
+      <p>{{ difficulty }}</p>
     </div>
   </div>
 </template>
@@ -31,6 +32,7 @@ import { computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import IActivity from "../interfaces/Activity/IActivity.interface";
 import data from "@/../config.json";
+import getActivityDifficultyName from "../utils/getActivityDifficultyName";
 
 export default defineComponent({
   name: "ActivityPreviewFeed",
@@ -50,6 +52,10 @@ export default defineComponent({
 
     const apiKey = data.googleAPIKey;
 
+    const difficulty = computed(() => {
+      return getActivityDifficultyName(props.activityData.difficulty || 0);
+    });
+
     const activityClicked = (): void => {
       //TODO: Route til siden som viser aktiviteten
       router.push("/activity/" + props.activityData.activityId);
@@ -57,6 +63,7 @@ export default defineComponent({
     };
 
     return {
+      difficulty,
       location,
       activityClicked,
       apiKey,
@@ -94,3 +101,8 @@ p {
   }
 }
 </style>
+
+function getActivityDifficultyName(difficulty: number): any { throw new
+Error("Function not implemented."); } function
+getActivityDifficultyName(difficulty: number): any { throw new Error("Function
+not implemented."); }

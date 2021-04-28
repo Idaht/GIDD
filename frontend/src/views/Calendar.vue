@@ -54,7 +54,7 @@ import {
 import ActivityFeedItem from "../components/ActivityFeedItem.vue";
 import axios from "@/axiosConfig";
 import { useRouter } from "vue-router";
-import IActivity from "@/interfaces/IActivity.interface";
+import IActivity from "@/interfaces/Activity/IActivity.interface";
 import { store } from "../store";
 
 export default defineComponent({

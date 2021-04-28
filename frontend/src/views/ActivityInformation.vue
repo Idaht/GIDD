@@ -2,11 +2,26 @@
   <div id="activity-information">
     <div @click="back" id="nav-back">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      Tilbake 
+      Tilbake
     </div>
     <div id="map">
       <!--TODO: Fiks så API key hentes fra fil-->
-      <img id="map-img" :src="'https://maps.googleapis.com/maps/api/staticmap?center=' + activity.latitude + ',' + activity.longitude + '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' + activity.latitude + ',' + activity.longitude + '&key=' + apiKey" alt="Map" />
+      <img
+        id="map-img"
+        :src="
+          'https://maps.googleapis.com/maps/api/staticmap?center=' +
+          activity.latitude +
+          ',' +
+          activity.longitude +
+          '&zoom=14&size=600x350&markers=color:blue%7Clabel:A%7C' +
+          activity.latitude +
+          ',' +
+          activity.longitude +
+          '&key=' +
+          apiKey
+        "
+        alt="Map"
+      />
     </div>
     <h2 id="activity-title">{{ activity.title }}</h2>
     <div id="host">Arrangeres av {{ activity.organizer }}</div>
@@ -27,6 +42,8 @@
       <div class="variable-value">
         {{ numberOfParticipants }} / {{ activity.maxParticipants }}
       </div>
+      <label class="event-variable">Aktivitetsnivå</label>
+      <div class="variable-value">{{ difficulty }}</div>
     </div>
     <div id="signing-up-wrapper">
       <div id="signing-up" v-if="signedUp">
@@ -70,6 +87,8 @@ import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import data from "@/../config.json";
 import { store } from "../store";
+import getActivityDifficultyName from "../utils/getActivityDifficultyName";
+import IActivity from "../interfaces/Activity/IActivity.interface";
 
 export default defineComponent({
   name: "ActivityInformation",
@@ -82,26 +101,30 @@ export default defineComponent({
     //TODO hent ut fra backend
     const signedUp = ref(false);
     const router = useRouter();
-    const activity = ref({});
+    const activity = ref({} as IActivity);
     const apiKey = data.googleAPIKey;
 
     const isSignedUp = computed(() => {
       return signedUp.value;
     });
 
+    const difficulty = computed(() => {
+      return getActivityDifficultyName(activity.value.difficulty || 0);
+    });
 
-/** 
- * Method for signing up to an activity
- */
+    /**
+     * Method for signing up to an activity
+     */
     const signUpActivity = async (): Promise<void> => {
       signedUp.value = true;
-      try{ 
+      try {
         //TODO: må sørge for at visinigen endres når du er påmeldt et arrangement
-      await axios.post(`/activities/${props.id}/users/${store.getters.user.userId}`);
-
-      } catch(error) {
-       router.push("/error");
-       }
+        await axios.post(
+          `/activities/${props.id}/users/${store.getters.user.userId}`
+        );
+      } catch (error) {
+        router.push("/error");
+      }
     };
 
     /*TODO: fiks denne
@@ -113,23 +136,24 @@ export default defineComponent({
           }
      }*/
 
-/**
- * Method for signing off an activity
- */
+    /**
+     * Method for signing off an activity
+     */
     const signOffActivity = async (): Promise<void> => {
       signedUp.value = false;
       //numberOfParticipants.value -= 1;
-      try{ 
+      try {
         //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
-      await axios.delete(`users/${store.getters.user.userId}/activities/${props.id}`);
-      } catch(error) {
-       router.push("/error");
-       }
-      
+        await axios.delete(
+          `users/${store.getters.user.userId}/activities/${props.id}`
+        );
+      } catch (error) {
+        router.push("/error");
+      }
     };
 
     const back = (): void => {
-      router.back(); 
+      router.back();
     };
 
     const openChat = (): void => {
@@ -156,6 +180,7 @@ export default defineComponent({
     return {
       //activityDate,
       //activityTime
+      difficulty,
       activityOrganizer,
       numberOfParticipants,
       signedUp,

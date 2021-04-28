@@ -15,10 +15,12 @@
         </div>
       </div>
       <div id="profile-information">
-        <div id="profile-information-poins">
-          <label>Poeng</label>
-          <div>{{ user.score }}</div>
+        <div id="profile-information-fitness-level">
+          <h5>Treningsnivå: {{ user.trainingLevel }}</h5>
         </div>
+        <button id="my-activities-button" @click="calendar">
+          Mine aktiviteter
+        </button>
       </div>
     </div>
   </div>
@@ -45,6 +47,14 @@ export default defineComponent({
     });
 
     /**
+     * Re-routes user to calendar-page
+     */
+
+    const calendar = (): void => {
+      router.push("/calendar");
+    };
+
+    /**
      * Connects to backend using a get request to get the user
      */
     onBeforeMount(async () => {
@@ -59,6 +69,7 @@ export default defineComponent({
     });
 
     return {
+      calendar,
       profilePicture,
       trusted,
       user,
@@ -120,7 +131,7 @@ label {
   grid-column: 2/4;
   justify-self: center;
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: auto;
   text-align: center;
 }
 
@@ -137,7 +148,10 @@ label {
 }
 
 #profile-information {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  text-align: center;
+}
+
+button {
+  margin: 20px;
 }
 </style>

@@ -35,7 +35,16 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/edit-profile",
+    path: "/edit-activity/:id",
+    name: "EditActivity",
+    props: true,
+    component: () => import("../views/EditActivity.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/edit-profile/",
     name: "EditProfile",
     component: () => import("../views/EditProfile.vue"),
     meta: {
@@ -93,6 +102,11 @@ const routes: Array<RouteRecordRaw> = [
     },
     props: true,
     component: () => import("../views/Calendar.vue"),
+  },
+  {
+    path: "/read-more",
+    name: "ReadMore",
+    component: () => import("../views/ReadMore.vue")
   },
   {
     path: "/activity/:id/chat-page",

@@ -4,7 +4,7 @@ import router from "@/router";
 import { BackendStatus } from "./enums/BackendStatus.enum";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8080/api/v1",
+  baseURL: "https://localhost:8443/api/v1",
 });
 const token = localStorage.getItem("token");
 instance.defaults.headers.common["Authorization"] = token;

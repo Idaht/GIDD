@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve --port 3000",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "ng serve --proxy-config proxy.conf.json --hmr --port 4201"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.11.3",

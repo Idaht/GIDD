@@ -62,16 +62,6 @@
   <label for="hard">Høy</label><br />
   <p v-if="!validDifficulty">Oppgi en vanskelighetsgrad</p>
   <h3>Sted</h3>
-  <div id="map-view">
-    <!--TODO: ':center' fjernes når appen finner brukers lokasjon selv-->
-    <Map id="map" :center="{ lat: 63.43049, lng: 10.39506 }" :getLocation="true" :activityData="[]"></Map>
-  </div>
-  <!--Midlertidig løsning for å se alle fletene, fjernes ved styling-->
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
   <p>Legg til et fysisk sted der arrangementet skal ta plass</p>
   <input v-model="activity.place" type="place" placeholder="Sted" />
   <input v-model="activity.city" type="city" placeholder="By" />
@@ -108,21 +98,14 @@ import {
   reactive,
   Ref,
   ref,
-  provide,
 } from "vue";
 import { useRouter } from "vue-router";
 import MakeActivity from "@/interfaces/Activity/MakeActivity.interface";
 import { useStore } from "@/store";
 import Month from "../interfaces/Month.interface";
-import Map from "@/components/Map.vue";
-import ICoordinates from "@/interfaces/ICoordinates.interface";
 import { TrainingLevel } from "@/enums/TrainingLevel.enum";
 
 export default defineComponent({
-  components: {
-    Map,
-  },
-
   setup() {
     const durationHour = ref("");
     //TODO må fikse kart
@@ -148,8 +131,6 @@ export default defineComponent({
     const participants = ref("");
     const feedbackMissingInfo = ref(false);
     const feedbackSomethingWentWrong = ref(false)
-    const coordinates = reactive({ lat: 0.0, lng: 0.0 } as ICoordinates);
-    provide('coordinates', coordinates);
 
     //Activity object
     const activity = reactive({
@@ -255,12 +236,6 @@ export default defineComponent({
       activity.durationMinutes = parseFloat(durationHour.value) * 60.0;
       activity.maxParticipants = parseInt(participants.value);
       activity.startTime = makeDateTime.value;
-      if (coordinates.lat != 0.0 || coordinates.lng != 0.0)
-      {
-        activity.latitude = coordinates.lat;
-        activity.longitude = coordinates.lng;
-      }
-      console.log(activity);
       try {
         if (!isActivityInvalid.value) {
           const response = await axios.post("/activities", activity);
@@ -493,34 +468,8 @@ export default defineComponent({
       hoursList,
       minutes,
       feedbackMissingInfo,
-      feedbackSomethingWentWrong,
+      feedbackSomethingWentWrong
     };
   },
 });
 </script>
-
-<style scoped lang="scss">
-
-$primary-color: #282828;
-
-#map {
-  padding-top: 20px;
-  position: absolute;
-  width: 100%;
-  left: 0px;
-  height: 25%;
-  @media only screen and (min-width: 600px) {
-    height: 350px;
-  }
-}
-
-#map-view {
-  color: $primary-color;
-  margin: 35px;
-  @media only screen and (min-width: 600px) {
-    width: 45%;
-    margin: auto;
-    grid-template-columns: 1fr 1fr;
-  }
-}
-</style>

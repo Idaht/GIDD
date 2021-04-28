@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <img :src="imageData" alt="Profilbildet visining:" />
     <form @submit.prevent="">
       <div class="form-group" id="file-button-group">
         <div id="label-input">
@@ -11,10 +12,9 @@
             @change="uploadFile"
           />
         </div>
-        <button @click="removeImage">Fjern bildet</button>
       </div>
+      <button @click="removeImage"><i class="fa fa-times" aria-hidden="true"></i> Fjern bildet</button>
     </form>
-    <img :src="imageData" alt="Profilbildet visining:" />
   </div>
 </template>
 
@@ -58,15 +58,43 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.container {
+  text-align: center;
+}
+
 label {
   display: block;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
+
 img {
   width: 150px;
   height: 150px;
   border-radius: 50%;
+   object-fit: cover;
+   margin: 20px;
 }
+
+input {
+  border-radius: 100px;
+}
+
 #label-input {
   display: inline-block;
+}
+
+button {
+  background-color: unset;
+  color:#282828;
+  margin: 5px;
+}
+
+button:hover {
+  cursor: pointer;
+  color: #ea4b4b;
 }
 </style>

@@ -29,6 +29,7 @@ export default defineComponent({
       required: true,
     },
     getLocation: Boolean,
+    setLocation: Boolean,
   },
 
   setup(props) {
@@ -47,6 +48,12 @@ export default defineComponent({
         mapTypeId: props.mapTypeId || "roadmap",
         disableDefaultUI: props.disableDefaultUI || true,
       });
+      if (props.setLocation) {
+        marker = new window.google.maps.Marker({
+            position: map.getCenter()
+          });
+        marker.setMap(map);
+      }
       if (props.getLocation) {
         //If the map will be used to retrive a postion based on a click
         map.addListener("click", (mapsMouseEvent: any) => {

@@ -51,6 +51,19 @@
         <br>
 
         <h4>Endre sted</h4>
+        <div id="map-view">
+            <!--TODO: ':center' fjernes når appen finner brukers lokasjon selv-->
+            <Map id="map" :center="getCoordinates" :setLocation="true" :getLocation="true" :activityData="[]"></Map>
+        </div>
+        <!--Midlertidig løsning for å se alle fletene, fjernes ved styling-->
+        <br>
+        <br>
+        <br>
+        <br>
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+        <br>
+        <br>
+        <br>
         <p>Legg til et fysisk sted der aktiviteten skal ta plass</p>
         <input v-model="activity.place" type="place" placeholder="Sted">
         <input v-model="activity.city" type="city" placeholder="By">
@@ -105,23 +118,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, computed, Ref } from "vue";
+import { defineComponent, ref, onBeforeMount, computed, Ref, provide, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axiosConfig";
 import IEditActivity from "@/interfaces/EditActivity.interface";
 import Month from "@/interfaces/Month.interface";
+import ICoordinates from "@/interfaces/ICoordinates.interface";
 import ImageSelector from "@/components/ImageSelector.vue";
 import { TrainingLevel } from "@/enums/TrainingLevel.enum";
+import Map from "@/components/Map.vue";
+import data from "@/../config.json";
+import axiosNotConfig from "axios";
 
 export default defineComponent ({
     name: "EditActivity",
-    components: { ImageSelector },
+    components: { 
+        ImageSelector,
+        Map,
+    },
     props: { id: { required: true }},
 
 //TODO: fiks sletting av arrangement
 
     setup(props) {
         const router = useRouter();
+        const apiKey = data.googleAPIKey;
         const activity:Ref<IEditActivity> = ref({
             title: "",
             activityPicture: "",
@@ -150,6 +171,8 @@ export default defineComponent ({
         const isMedium = ref(false);
         const isHard = ref(false);
         const showSuccessMessage = ref(false);
+        const coordinates = reactive({ lat: 0.0, lng: 0.0 } as ICoordinates);
+        provide('coordinates', coordinates);
 
         const onSelectedImage = (image: string) => {
             activity.value.activityPicture = image;
@@ -217,6 +240,42 @@ export default defineComponent ({
             "08",
             "09",
             ]);
+
+
+        const getCoordinates = computed((): ICoordinates => {
+            return { lat: activity.value.latitude, lng: activity.value.longitude } as ICoordinates;
+        });
+
+        const updateCityPlace = async () => {
+            try {
+                const response = await axiosNotConfig.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.lat + "," + coordinates.lng}&key=${apiKey}`).then();
+                const responseData = response.data;
+                if (response.status == 200) {
+                    let address: string[] = (responseData.results[0].formatted_address as string).split(",");
+                    let place = address[0];
+                    let city = address[1].split(" ");
+                    place != "Unnamed Road" ? activity.value.place = place : activity.value.place = ""; //Setting the place value
+                    city = city.filter(element =>  { //Filters away city names that is not valid
+                        if (element == "") {
+                          return false;
+                        }
+                        if (!isNaN(Number(element))) {
+                         return false;
+                        }
+                        return true;
+                    });
+                    city[0] || city[0] != "Unnamed" ? activity.value.city = city[0] : activity.value.city = ""; //Setting the city value
+                }
+            } catch (error) {
+            //Something went wrong, user has to write place and city
+            }
+        };
+
+        watch(() => coordinates.lat || coordinates.lng, (newValue, oldValue) => {
+            if (newValue != oldValue) {
+                updateCityPlace();
+            }
+        });
 
         /**
          * Loads activity from database, has to set date, time, and difficulty.
@@ -382,6 +441,8 @@ export default defineComponent ({
                     
                     activity.value.difficulty = calculateDifficulty.value;
                     activity.value.startTime = makeDateTime.value;
+                    activity.value.latitude = coordinates.lat;
+                    activity.value.longitude = coordinates.lng;
 
                     const response = await axios.put(`/activities/${props.id}`, activity.value);
 
@@ -508,6 +569,8 @@ export default defineComponent ({
             isMedium,
             isHard,
 
+            getCoordinates,
+
             onSelectedImage,
             onRemoveImage,
 
@@ -533,6 +596,28 @@ export default defineComponent ({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
+$primary-color: #282828;
+
+#map {
+  padding-top: 20px;
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  height: 25%;
+  @media only screen and (min-width: 600px) {
+    height: 350px;
+  }
+}
+
+#map-view {
+  color: $primary-color;
+  margin: 35px;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
+    grid-template-columns: 1fr 1fr;
+  }
+}
 </style>

@@ -50,6 +50,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers("/error").permitAll()
         .antMatchers("/api/v1/activities/**").hasAnyRole("USER", "ADMIN")
         .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
+        .antMatchers("/api/v1/websocket/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .cors();

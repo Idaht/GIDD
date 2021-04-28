@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import idatt2106.group3.backend.Model.DTO.MessageDTO;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,6 +42,14 @@ public class Message {
     public Message(String message, LocalDateTime timeSent) {
         this.message = message;
         this.timeSent = timeSent;
+    }
+
+    public Message(MessageDTO messageDTO, Chat chat, User user){
+        this.message = messageDTO.getMessage();
+        this.timeSent = messageDTO.getTime();
+        this.chat = chat;
+        this.user = user;
+
     }
 
     public Message() {

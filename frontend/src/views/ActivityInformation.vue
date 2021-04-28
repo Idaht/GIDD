@@ -27,9 +27,9 @@
     <div id="host">Arrangeres av {{ activity.organizer }}</div>
     <div id="information-wrapper">
       <label class="event-variable">Når</label>
-      <div class="variable-value">{{ activity.startTime }}</div>
+      <div class="variable-value">{{ dateTimeFormatter }}</div>
       <label class="event-variable">Varighet</label>
-      <div class="variable-value">{{ activity.durationMinutes }} minutter</div>
+      <div class="variable-value">{{ durationFormatter }}</div>
       <label class="event-variable">Hvor</label>
       <div class="variable-value">
         {{ activity.place }}, {{ activity.city }}
@@ -37,23 +37,24 @@
       <label class="event-variable">Hva</label>
       <div class="variable-value">{{ activity.type }}</div>
       <label class="event-variable">Belastning</label>
-      <div class="variable-value">{{ activity.difficulty }}</div>
+      <div class="variable-value">{{ difficultyString }}</div>
       <label class="event-variable">Deltakere</label>
       <div class="variable-value">
         {{ numberOfParticipants }} / {{ activity.maxParticipants }}
       </div>
-      <label class="event-variable">Aktivitetsnivå</label>
-      <div class="variable-value">{{ difficulty }}</div>
     </div>
+
     <div id="signing-up-wrapper">
       <div id="signing-up" v-if="signedUp">
         <div id="signing-up-conformation">Du er påmeldt!</div>
         <button
           @click="signOffActivity"
           alt="Knapp for å melde seg av en aktivitet"
+          v-if="!isOrganizer()"
         >
           Meld deg av
         </button>
+        <button @click="edit" v-else>Rediger</button>
         <button
           @click="openChat"
           alt="Knapp for å chatte med andre på samme aktivitet"
@@ -82,68 +83,84 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  Ref,
+  ref,
+  watchEffect,
+} from "vue";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import data from "@/../config.json";
 import { store } from "../store";
-import getActivityDifficultyName from "../utils/getActivityDifficultyName";
-import IActivity from "../interfaces/Activity/IActivity.interface";
+import IActivity from "@/interfaces/Activity/IActivity.interface";
+import User from "@/interfaces/User/User.interface";
 
 export default defineComponent({
   name: "ActivityInformation",
   props: ["id"],
   setup(props) {
-    //TODO finn arrangøren vha id
-    const activityOrganizer = ref("");
-    //TODO hent ut antall påmeldte fra backend
-    const numberOfParticipants = ref(5);
-    //TODO hent ut fra backend
-    const signedUp = ref(false);
+    /**
+     * TODO:
+     *  1. Hente navnet til arrangør og trusted og displaye det
+     *  2. Rute chat page - venter på merge request
+     *  3. Rute til edit activty - venter på MR
+     *  6. Fikse redigeringsknappen sånn at det ruter deg til redigering - MR
+     *  7. Lage fraværsregistrering - Nora :'(
+     */
+
+    //General methods
+    const activityOrganizer = ref(""); //TODO: navnet til arrangør må hentes
     const router = useRouter();
-    const activity = ref({} as IActivity);
     const apiKey = data.googleAPIKey;
-
-    const isSignedUp = computed(() => {
-      return signedUp.value;
+    const activity: Ref<IActivity> = ref({
+      activityId: -1,
+      organizerId: -1,
+      title: "",
+      description: "",
+      equipment: "",
+      difficulty: -1,
+      city: "",
+      place: "",
+      longitude: 0,
+      latitude: 0,
+      startTime: "",
+      durationMinutes: 0,
+      maxParticipants: 0,
+      type: "",
+      privateActivity: false,
     });
+    const participants = ref([]); //list with all participants
 
-    const difficulty = computed(() => {
-      return getActivityDifficultyName(activity.value.difficulty || 0);
+    /**
+     * Method for getting number of participants on an activity
+     */
+    const numberOfParticipants = computed((): number => {
+      if (signedUp.value) return participants.value.length + 1;
+      return participants.value.length;
     });
 
     /**
-     * Method for signing up to an activity
+     * Button back
      */
-    const signUpActivity = async (): Promise<void> => {
-      signedUp.value = true;
-      try {
-        //TODO: må sørge for at visinigen endres når du er påmeldt et arrangement
-        await axios.post(
-          `/activities/${props.id}/users/${store.getters.user.userId}`
-        );
-      } catch (error) {
-        router.push("/error");
-      }
+    const back = (): void => {
+      router.back();
     };
 
-    /*TODO: fiks denne
-    const getOrganizerName = async():Promise<void> => {
-      try{
-          return axios.get('activities/organizerId'); 
-          } catch(error) {
-            router.push("/error")
-          }
-     }*/
+    //User methods
+    const userId = ref(); //the logged in users ID
+    const signedUp = ref(); //boolean, tells if the logged in user is signed op to that activity
 
     /**
-     * Method for signing off an activity
+     * Method for signing off an activity. Gives an alert window
+     * when you sign off
      */
     const signOffActivity = async (): Promise<void> => {
       signedUp.value = false;
-      //numberOfParticipants.value -= 1;
+      window.alert("Du er nå meldt av");
       try {
-        //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
         await axios.delete(
           `users/${store.getters.user.userId}/activities/${props.id}`
         );
@@ -152,45 +169,162 @@ export default defineComponent({
       }
     };
 
-    const back = (): void => {
-      router.back();
-    };
-
+    /**
+     * Opens chat
+     */
     const openChat = (): void => {
-      router.push("/chatPage");
-      //TODO check chat router
+      router.push("/chatPage"); //TODO: check chat router
     };
 
+    //Organizer methods
+    const organizerId = ref(); //id of the organizer
+
+    /**
+     * Checks if the loggen on user is the organizer of an activity
+     */
+    const isOrganizer = ref((): boolean => {
+      if (organizerId.value) {
+        signedUp.value = true;
+      }
+      return organizerId.value;
+    });
+
+    /**
+     * Button to edit activity
+     */
+    const edit = ref(() => {
+      router.push("/#"); ///TODO: endre denne til edit activity siden
+    });
+
+    /**
+     * Method for signing up to an activity
+     */
+    const signUpActivity = async (): Promise<void> => {
+      signedUp.value = true;
+      try {
+        await axios.post(
+          `/activities/${props.id}/users/${store.getters.user.userId}`
+        );
+      } catch (error) {
+        router.push("/error");
+      }
+    };
+
+    //connection
     /**
      * Connects to backend using a get request to get the activity
      */
     onBeforeMount(async () => {
       try {
-        const response = await axios.get(`/activities/${props.id}`);
-        activity.value = response.data;
-      } catch {
+        //gets the info from backend
+        const response = axios.get(`/activities/${props.id}`);
+        const participantResponse = axios.get(`/activities/${props.id}/users`);
+        const organizerResponse = axios.get(
+          `/activities/${props.id}/organizer/${store.getters.user.userId}`
+        );
+        const userResponse = axios.get(`users/${store.getters.user.userId}`);
+        const signedUpResponse = axios.get(
+          `/activities/${props.id}/users/${store.getters.user.userId}`
+        );
+
+        //collects all the data and collects in array
+
+        const res = await Promise.all([
+          response,
+          participantResponse,
+          organizerResponse,
+          userResponse,
+          signedUpResponse,
+        ]);
+
+        //assignes the data to the right value
+        activity.value = res[0].data;
+        participants.value = res[1].data;
+        organizerId.value = res[2].data;
+        userId.value = res[3].data;
+        signedUp.value = res[4].data;
+      } catch (error) {
         router.push("/error");
       }
     });
 
-    //TODO del opp startTime og display det fint
-    //const activityDate = ref(activity.startTime.toString());
-    //const activityTime = ref(activity.startTime)
+    /**
+     * Formats the duration to show hours and minutes
+     */
+    const durationFormatter = computed(() => {
+      if (activity.value.durationMinutes > 60) {
+        const timeHour = ref(activity.value.durationMinutes / 60);
+        const extraMin = ref(activity.value.durationMinutes % 60);
+        if (activity.value.durationMinutes % 60 === 0) {
+          return timeHour.value + " timer";
+        }
+        return timeHour.value + " timer og " + extraMin.value + " minutter";
+      }
+      return activity.value.durationMinutes + " minutter";
+    });
+
+    /**
+     * Formats the date and time
+     */
+    const dateTimeFormatter = computed(() => {
+      const temp = activity.value.startTime.split(" ");
+      const dateArray = temp[0].split("-");
+      const date = ref(dateArray[2] + "/" + dateArray[1] + "/" + dateArray[0]);
+      const time = ref(temp[1]);
+      return date.value + " kl. " + time.value;
+    });
+
+    /**
+     * Gets the activity difficulty
+     */
+    const difficultyString = computed(() => {
+      let string = "";
+      switch (activity.value.difficulty) {
+        case 1:
+          string = "Lett";
+          break;
+        case 2:
+          string = "Middels";
+          break;
+        case 3:
+          string = "Lett, Middels";
+          break;
+        case 4:
+          string = "Krevende";
+          break;
+        case 5:
+          string = "Lett, Krevende";
+          break;
+        case 6:
+          string = "Middels, Krevende";
+          break;
+        case 7:
+          string = "Lett, Middels, Krevende";
+          break;
+        default:
+          string = "Fant ikke belastning";
+      }
+      return string;
+    });
 
     return {
-      //activityDate,
-      //activityTime
-      difficulty,
       activityOrganizer,
       numberOfParticipants,
       signedUp,
-      isSignedUp,
       signUpActivity,
       signOffActivity,
       back,
       openChat,
       activity,
       apiKey,
+      isOrganizer,
+      edit,
+      dateTimeFormatter,
+      durationFormatter,
+      difficultyString,
+
+      //dette skla fjernes
+      organizerId,
     };
   },
 });

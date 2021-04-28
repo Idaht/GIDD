@@ -1,5 +1,8 @@
 <template>
     <div>
+        <button id="backButton"
+        @click="goBack">BACK</button>
+
         <h1>Endre Aktivitet</h1>
         <img src="" alt="Aktivitetsbilde"/>
         <ImageSelector 
@@ -91,6 +94,7 @@
         <br>
 
         <p v-if="!isValidForm">Sjekk at du har fylt inn all nødvendig informasjon</p>
+        <p v-if="showSuccessMessage">Endringene ble lagret!</p>
         <button 
         @click="saveActivityChanges" 
         id="saveButton" 
@@ -104,7 +108,7 @@
 import { defineComponent, ref, onBeforeMount, computed, Ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axiosConfig";
-import IEditActivity from "@/interfaces/IEditActivity.interface";
+import IEditActivity from "@/interfaces/EditActivity.interface";
 import Month from "@/interfaces/Month.interface";
 import ImageSelector from "@/components/ImageSelector.vue";
 import { TrainingLevel } from "@/enums/TrainingLevel.enum";
@@ -118,8 +122,23 @@ export default defineComponent ({
 
     setup(props) {
         const router = useRouter();
-        const activity:Ref<IEditActivity> = ref({} as IEditActivity);
-        const durartion = ref();
+        const activity:Ref<IEditActivity> = ref({
+            title: "",
+            activityPicture: "",
+            city: "",
+            description: "",
+            difficulty: 0,
+            durationMinutes: 0,
+            equipment: "",
+            latitude: 0,
+            longitude: 0,
+            maxParticipants: 0,
+            place: "",
+            privateActivity: false,
+            startTime: "",
+            type: "",
+        } as IEditActivity);
+
         const selectedYear = ref("");
         const selectedMonth = ref("");
         const selectedDay = ref("");
@@ -130,6 +149,7 @@ export default defineComponent ({
         const isEasy = ref(false);
         const isMedium = ref(false);
         const isHard = ref(false);
+        const showSuccessMessage = ref(false);
 
         const onSelectedImage = (image: string) => {
             activity.value.activityPicture = image;
@@ -197,17 +217,6 @@ export default defineComponent ({
             "08",
             "09",
             ]);
-
-        onBeforeMount(() => {
-            if (minutes.value.length <= 10) {
-                let n = "0";
-                for (let i = 10; i < 60; i++) {
-                    n = String(i);
-                    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-                    minutes.value.push(n);
-                }
-            }
-        });
 
         /**
          * Loads activity from database, has to set date, time, and difficulty.
@@ -280,10 +289,23 @@ export default defineComponent ({
                     isHard.value = true;
                 } 
 
+                if (minutes.value.length <= 10) {
+                let n = "0";
+                for (let i = 10; i < 60; i++) {
+                    n = String(i);
+                    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+                    minutes.value.push(n);
+                }
+            };
+
             } catch {
                 router.push("/error");
             }
         });
+
+        const goBack = ():void => {
+            router.back();
+        }
         
         const isTitleValid = computed(() => {
             return (activity.value.title.trim() !== ""); 
@@ -361,11 +383,14 @@ export default defineComponent ({
                     activity.value.difficulty = calculateDifficulty.value;
                     activity.value.startTime = makeDateTime.value;
 
+                    console.log(activity.value);
+
                     const response = await axios.put(`/activities/${props.id}`, activity.value);
 
                     if (response.status === 200) {
-                        window.alert("Endringene ble lagret");
-                        //router.push("activity/:id");
+                        //window.alert("Endringene ble lagret");
+                        showSuccessMessage.value = true;
+                        //router.back();
                     }
                 } catch (error) {
                     router.push("/error");
@@ -374,12 +399,13 @@ export default defineComponent ({
         };
 
         /**
-         * Cancels/deletes activity, makes a confirm window
+         * Cancels/deletes an activity, makes a confirm window
          */
         const cancelActivity = async(): Promise<void> => {
             if (window.confirm("Er du sikker på at du vil avlyse aktiviteten din?")) {
                 try {
                     const response = await axios.delete(`/activities/${props.id}`);
+                    console.log(response);
                     
                     if (response.status === 200) {
                         router.replace("/activity-feed");
@@ -472,7 +498,6 @@ export default defineComponent ({
 
         return {
             activity,
-            durartion,
             isValidForm,
             isDifficultyValid,
             isTitleValid,
@@ -502,6 +527,8 @@ export default defineComponent ({
             hoursList,
             minutes,
 
+            goBack,
+            showSuccessMessage,
             saveActivityChanges,
             cancelActivity
         }

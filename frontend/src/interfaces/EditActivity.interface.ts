@@ -1,4 +1,4 @@
-export default interface IEditActivity {
+export default interface EditActivity {
     activityPicture?: string;
     city: string;
     description: string;

@@ -5,7 +5,7 @@
 <script lang="ts">
 /*global google*/ //This line of code MUST be here, otherwise Eslint will have a stroke
 
-import { defineComponent, watch, inject} from "vue";
+import { defineComponent, watch } from "vue";
 import IActivity from "@/interfaces/IActivity.interface";
 import ICoordinates from "@/interfaces/ICoordinates.interface";
 import data from "@/../config.json";
@@ -26,13 +26,10 @@ export default defineComponent({
       type: Array,
       required: true,
     },
-    getLocation: Boolean,
   },
 
   setup(props) {
     let map: google.maps.Map;
-    let marker: google.maps.Marker; //This is used to place a marker when retriving coordinates from the map
-    const choosenLocation = inject('coordinates', { lat: 0.0, lng: 0.0 } as ICoordinates);
 
     function initMap(): google.maps.Map {
       map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
@@ -41,21 +38,6 @@ export default defineComponent({
         mapTypeId: props.mapTypeId || "roadmap",
         disableDefaultUI: props.disableDefaultUI || true,
       });
-      if (props.getLocation) //If the map will be used to retrive a postion based on a click
-      {
-        map.addListener("click", (mapsMouseEvent: any) => {
-          if (marker != null)
-          {
-            marker.setMap(null); //If the marker is already on the map; remove it
-          }
-          marker = new window.google.maps.Marker({
-              position: mapsMouseEvent.latLng,
-            });
-          marker.setMap(map);
-          choosenLocation.lat = mapsMouseEvent.latLng.lat();
-          choosenLocation.lng = mapsMouseEvent.latLng.lng();
-        });
-      }
       return map;
     }
 
@@ -69,6 +51,7 @@ export default defineComponent({
             const activity = element as IActivity;
             let marker = new window.google.maps.Marker({
               position: { lat: activity.latitude, lng: activity.longitude },
+              title: "Hello World!",
             });
 
             marker.setMap(map);
@@ -105,9 +88,7 @@ export default defineComponent({
       }
     });
 
-    return {
-      choosenLocation,
-    };
+    return {};
   },
 });
 </script>

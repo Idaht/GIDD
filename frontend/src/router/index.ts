@@ -35,7 +35,16 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/edit-profile",
+    path: "/edit-activity/:id",
+    name: "EditActivity",
+    props: true,
+    component: () => import("../views/EditActivity.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/edit-profile/",
     name: "EditProfile",
     component: () => import("../views/EditProfile.vue"),
     meta: {

@@ -1,7 +1,8 @@
 <template>
   <div id="activity" @click="activityClicked">
     <div id="map">
-      <img
+      <img v-if="activityHasImage" :src="getImagesFromDb">
+      <img v-else
         id="map-img"
         :src="
           'https://maps.googleapis.com/maps/api/staticmap?center=' +
@@ -62,11 +63,21 @@ export default defineComponent({
       console.log("Activity clicked: " + props.activityData.activityId);
     };
 
+    const getImagesFromDb = computed(() => {
+      return props.activityData.activityPicture;
+    })
+
+    const activityHasImage = computed(() => {
+      return (props.activityData.activityPicture !== "" && props.activityData.activityPicture !== null); 
+    });
+
     return {
       difficulty,
       location,
       activityClicked,
       apiKey,
+      activityHasImage,
+      getImagesFromDb
     };
   },
 });

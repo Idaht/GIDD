@@ -12,6 +12,9 @@
         <img src="../../img/logo.png" alt="Logo" height="20" />
       </router-link>
     </span>
+    <div v-if="loggedIn">
+      <NotificationCenter />
+    </div>
     <div class="menu-box">
       <span v-if="loggedIn">
         <a href="#" class="icon" @click="toggleMenu">
@@ -67,6 +70,7 @@ import { useStore } from "@/store";
 import { computed, defineComponent, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import MenuOption from "../interfaces/MenuOption.interface";
+import NotificationCenter from "@/components/NotificationCenter.vue";
 
 /**
  * Defines components to be used
@@ -79,22 +83,23 @@ import MenuOption from "../interfaces/MenuOption.interface";
  */
 export default defineComponent({
   name: "TheHeader",
+  components: { NotificationCenter },
   setup() {
     const store = useStore();
     const router = useRouter();
-      //Adding afterEach to make sure the menu closes afte every route
+    //Adding afterEach to make sure the menu closes afte every route
     router.afterEach((to, from) => {
       //Have to check that the paths are not equal, since closing a window when staying on the same page gives bad user experience, and also leads to the menu not working
       if (to.fullPath !== from.fullPath) {
         menuVisible.value = false;
       }
     });
-    
+
     const loggedInOptions: Ref<MenuOption[]> = computed(() => {
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
         { title: "Profilinnstillinger", path: "/edit-profile" },
-        { title: "Mine aktiviteter", path: "/calendar"},
+        { title: "Mine aktiviteter", path: "/calendar" },
       ];
     });
     const loggedOutOptions: Ref<MenuOption[]> = ref([
@@ -141,7 +146,7 @@ $secondary-color: #ea4b4b;
   background-color: #ffffff;
   z-index: 2;
   position: fixed;
-  top:0px;
+  top: 0px;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

@@ -17,8 +17,8 @@ trigger_frontend:
     strategy: depend
   rules:
     - changes:
-      - frontend/**/*
-    
+        - frontend/**/*
+
 # Triggers a backend CI, if changes have been made in that folder
 trigger_backend:
   stage: triggers
@@ -27,17 +27,17 @@ trigger_backend:
     strategy: depend
   rules:
     - changes:
-      - backend/**/*
+        - backend/**/*
 
 pages:
   stage: deploy
   image: node:latest
   rules:
     - changes:
-      - API.yml
+        - API.yml
   script:
-  - npm install -g redoc-cli
-  - redoc-cli bundle -o public/index.html API.yml
+    - npm install -g redoc-cli
+    - redoc-cli bundle -o public/index.html API.yml
   artifacts:
     paths:
-    - public
+      - public

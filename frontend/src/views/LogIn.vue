@@ -10,8 +10,8 @@
       </div>
       <router-link to="/forgotten-password">Glemt passord?</router-link>
       <div id="signup">
-        <span>Har du ikke bruker?</span
-        ><router-link to="/sign-up">Opprett en her</router-link>
+        <p>Har du ikke bruker?</p>
+        <router-link to="/sign-up">Opprett bruker</router-link>
       </div>
     </div>
   </div>
@@ -59,11 +59,17 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+$primary-color: #282828;
+$secondary-color: #ea4b4b;
+
 #login {
   width: 340px;
   margin: 0 auto;
   box-sizing: border-box;
   padding-top: 90px;
+  @media only screen and (min-width: 600px) {
+    padding-top: 0px;
+  }
 }
 
 .login-field {
@@ -75,15 +81,33 @@ input {
 }
 
 button {
-  margin: 1.5em 0 1em 0;
+  margin: 2em 0 2em 0;
   align-content: center;
 }
 
 a {
   display: block;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  color: $secondary-color;
+}
+
+a:hover {
+  color: $primary-color;
+}
+
+a:visited {
+  color: $secondary-color;
 }
 
 div #signup {
-  margin: 1em;
+  margin: 3em;
+}
+
+p {
+  font-size: 1rem;
+  font-weight: 800;
 }
 </style>

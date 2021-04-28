@@ -15,7 +15,7 @@
         Har du allerede bruker?
         <router-link to="/log-in">Logg inn</router-link>
       </div>
-      <div id="header-read-more-scroll">
+      <div @click="scrollToReadMore" id="header-read-more-scroll">
         Les mer
         <i class="fa fa-caret-down"></i>
       </div>
@@ -24,11 +24,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "Home",
   components: {},
+  setup() {
+    const router = useRouter();
+    const scrollToReadMore = ref(()=>{ 
+      router.push("/read-more")
+    });
+
+    return{
+      scrollToReadMore,
+    }
+  }
 });
 </script>
 

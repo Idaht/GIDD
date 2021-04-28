@@ -104,6 +104,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/Calendar.vue"),
   },
   {
+    path: "/read-more",
+    name: "ReadMore",
+    component: () => import("../views/ReadMore.vue")
+  },
+  {
     path: "/activity/:id/chat-page",
     name: "Chat",
     meta: {

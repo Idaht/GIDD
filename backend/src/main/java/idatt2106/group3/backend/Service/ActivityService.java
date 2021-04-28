@@ -12,6 +12,7 @@ import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserNameDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
+import idatt2106.group3.backend.Repository.ChatRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ public class ActivityService
     private ActivityRepository activityRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ChatRepository chatRepository;
     @Autowired(required = false)
     private EmailComponent emailSender;
 
@@ -89,10 +92,13 @@ public class ActivityService
         UserSecurityDetails creatorUser = (UserSecurityDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         // Finds this user
         Optional<User> optionalUser = userRepository.findById(creatorUser.getUserId());
+        Chat chat = new Chat();
+        if(!optionalUser.isPresent()) return null;
+        Activity createdActivity = activityRepository.save(new Activity(activity, optionalUser.get()));
+        chat.setActivity(createdActivity);;
+        chatRepository.save(chat);
         // Saves User with organizer, and returns a ActivityDTO object
-        if(optionalUser.isPresent()) return new ActivityDTO(activityRepository.save(new Activity(activity, optionalUser.get())));
-
-        return null;
+        return new ActivityDTO(createdActivity);
     }
 
     /**

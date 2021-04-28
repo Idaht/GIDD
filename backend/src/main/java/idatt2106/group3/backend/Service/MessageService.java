@@ -2,8 +2,11 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.Message;
+import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.MessageDTO;
 import idatt2106.group3.backend.Repository.ChatRepository;
 import idatt2106.group3.backend.Repository.MessageRepository;
+import idatt2106.group3.backend.Repository.UserRepository;
 
 import java.util.Optional;
 
@@ -21,13 +24,9 @@ public class MessageService
     private MessageRepository messageRepository;
     @Autowired
     private ChatRepository chatRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    /**
-     * Connects a Message object with the chat it was written in
-     * @param chatId
-     * @param message
-     * @return message object
-     */
     public Message createMessage(long chatId, Message message)
     {
         LOGGER.info("createMessage(Chat chat, Message message) was called with chatId: {}, and messageId: {}", chatId, message.getMessageId());
@@ -38,5 +37,17 @@ public class MessageService
         }
         message.setChat(chat.get());
         return messageRepository.save(message);
+    }
+
+    public MessageDTO createMessageDTO(MessageDTO messageDTO){
+        LOGGER.info("createMessageDTO(MessageDTO messageDTO) was called with chatId: {}", messageDTO.getChatId());
+        Optional<Chat> chat = chatRepository.findById(messageDTO.getChatId());
+        Optional<User> user = userRepository.findById(messageDTO.getUserId());
+        if (!chat.isPresent() && !user.isPresent())
+        {
+            return null;
+        }
+        messageRepository.save(new Message(messageDTO,chat.get(),user.get()));
+        return messageDTO;
     }
 }

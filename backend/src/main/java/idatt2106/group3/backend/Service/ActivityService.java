@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 @Service
 public class ActivityService
@@ -259,6 +261,7 @@ public class ActivityService
      * @param activityId
      * @return Set of UsersDTO objects
      */
+    @JsonIgnoreProperties(value = {"userId", "role", "profilePicture", "trusted", "email", "dateOfBirth", "trainingLevel", "role", "profilePicture"})
     public Set<UserDTO> getUsers(long activityId)
     {
         LOGGER.info("getUsers(long activityId) called with activityId: {}", activityId); 

@@ -6,6 +6,7 @@ import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserNameDTO;
 import idatt2106.group3.backend.Service.ActivityService;
 import idatt2106.group3.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,10 +112,10 @@ public class ActivityController
     }
 
     @GetMapping("/{activity_id}/users")
-    public ResponseEntity<List<UserDTO>> getUsersOfActivity(@PathVariable("activity_id") long activityId) {
-        Set<UserDTO> userDTOs = activityService.getUsers(activityId);
-        if (userDTOs != null) {
-            return new ResponseEntity<>(new ArrayList<>(userDTOs), HttpStatus.OK);
+    public ResponseEntity<List<UserNameDTO>> getUsersOfActivity(@PathVariable("activity_id") long activityId) {
+        Set<UserNameDTO> userNameDTOs = activityService.getUsers(activityId);
+        if (userNameDTOs != null) {
+            return new ResponseEntity<>(new ArrayList<>(userNameDTOs), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

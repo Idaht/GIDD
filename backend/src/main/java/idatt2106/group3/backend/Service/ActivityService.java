@@ -10,8 +10,9 @@ import idatt2106.group3.backend.Model.DTO.SortFilterQueryDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.AbsenceDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityDTO;
 import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
-import idatt2106.group3.backend.Model.DTO.User.UserDTO;
+import idatt2106.group3.backend.Model.DTO.User.UserNameDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
+import idatt2106.group3.backend.Repository.ChatRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
 import org.slf4j.Logger;
@@ -28,9 +29,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-
 @Service
 public class ActivityService
 {
@@ -40,6 +38,8 @@ public class ActivityService
     private ActivityRepository activityRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ChatRepository chatRepository;
     @Autowired(required = false)
     private EmailComponent emailSender;
 
@@ -92,10 +92,13 @@ public class ActivityService
         UserSecurityDetails creatorUser = (UserSecurityDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         // Finds this user
         Optional<User> optionalUser = userRepository.findById(creatorUser.getUserId());
+        Chat chat = new Chat();
+        if(!optionalUser.isPresent()) return null;
+        Activity createdActivity = activityRepository.save(new Activity(activity, optionalUser.get()));
+        chat.setActivity(createdActivity);;
+        chatRepository.save(chat);
         // Saves User with organizer, and returns a ActivityDTO object
-        if(optionalUser.isPresent()) return new ActivityDTO(activityRepository.save(new Activity(activity, optionalUser.get())));
-
-        return null;
+        return new ActivityDTO(createdActivity);
     }
 
     /**
@@ -257,23 +260,22 @@ public class ActivityService
     }
 
     /**
-     * Returns all participants of the given activity
+     * Returns names of all participants of the given activity
      * @param activityId
-     * @return Set of UsersDTO objects
+     * @return Set of UserNameDTO objects
      */
-    @JsonIgnoreProperties(value = {"userId", "role", "profilePicture", "trusted", "email", "dateOfBirth", "trainingLevel", "role", "profilePicture"})
-    public Set<UserDTO> getUsers(long activityId)
+    public Set<UserNameDTO> getUsers(long activityId)
     {
         LOGGER.info("getUsers(long activityId) called with activityId: {}", activityId); 
         Optional<Activity> activityOptional = activityRepository.findById(activityId);
         if(activityOptional.isPresent()) {
             Activity activity = activityOptional.get();
             Set<User> users = activity.getUsers();
-            Set<UserDTO> userDTOs = new HashSet<>();
+            Set<UserNameDTO> userNameDTOs = new HashSet<>();
             for(User user : users) {
-                userDTOs.add(new UserDTO(user));
+                userNameDTOs.add(new UserNameDTO(user));
             }
-            return userDTOs;
+            return userNameDTOs;
         }
         return new HashSet<>();
     }

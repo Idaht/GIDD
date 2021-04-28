@@ -94,6 +94,7 @@ export default defineComponent({
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
         { title: "Profilinnstillinger", path: "/edit-profile" },
+        { title: "Mine aktiviteter", path: "/calendar"},
       ];
     });
     const loggedOutOptions: Ref<MenuOption[]> = ref([

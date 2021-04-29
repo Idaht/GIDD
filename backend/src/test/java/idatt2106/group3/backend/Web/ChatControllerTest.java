@@ -70,12 +70,15 @@ public class ChatControllerTest
         Chat chat = new Chat();
         Chat chat2 = new Chat();
 
-        chatRepository.save(chat);
+        chat = chatRepository.save(chat);
         chatRepository.save(chat2);
+
+        User user = new User();
+        user = userRepository.save(user);
 
         Message message = new Message("A message", null, chat2, null);
         Message message2 = new Message("A second message", null, chat2, null);
-        Message message3 = new Message("Test", null, chat, null);
+        Message message3 = new Message("Test", null, chat, user);
         messageRepository.save(message);
         messageRepository.save(message2);
         messageRepository.save(message3);

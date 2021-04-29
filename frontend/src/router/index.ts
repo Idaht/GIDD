@@ -109,7 +109,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/ReadMore.vue")
   },
   {
-    path: "/activity/:id/chat-page",
+    path: "/activity/:id/chat",
     name: "Chat",
     meta: {
       requiresAuth: true,

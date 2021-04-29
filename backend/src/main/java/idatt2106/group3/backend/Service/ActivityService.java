@@ -93,10 +93,11 @@ public class ActivityService
         // Finds this user
         Optional<User> optionalUser = userRepository.findById(creatorUser.getUserId());
         Chat chat = new Chat();
+        chat = chatRepository.save(chat);
         if(!optionalUser.isPresent()) return null;
-        Activity createdActivity = activityRepository.save(new Activity(activity, optionalUser.get()));
-        chat.setActivity(createdActivity);;
-        chatRepository.save(chat);
+        Activity createdActivity = new Activity(activity, optionalUser.get());
+        createdActivity.setChat(chat);
+        createdActivity = activityRepository.save(createdActivity);
         // Saves User with organizer, and returns a ActivityDTO object
         return new ActivityDTO(createdActivity);
     }

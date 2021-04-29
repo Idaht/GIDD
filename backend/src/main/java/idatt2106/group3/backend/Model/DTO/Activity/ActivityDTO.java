@@ -9,6 +9,7 @@ public class ActivityDTO extends ActivitySuperclassDTO {
     private long organizerId;
     private String organizerForename;
     private String organizerSurname;
+    private long chatId;
 
     public ActivityDTO(Activity activity){
         super(activity.getTitle(), activity.getType(), activity.getDescription(), activity.getEquipment(), activity.getDifficulty(), activity.getCity(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getStartTime(), activity.getDurationMinutes(), activity.isPrivateActivity(), activity.getMaxParticipants(), convertActivityPicture(activity.getActivityPicture()));
@@ -18,6 +19,9 @@ public class ActivityDTO extends ActivitySuperclassDTO {
             this.organizerForename = activity.getOrganizer().getForename();
             this.organizerSurname = activity.getOrganizer().getSurname();
         } 
+        if(activity.getChat() != null){
+            this.chatId = activity.getChat().getChatId();
+        }
     }
 
     public ActivityDTO(){}
@@ -58,6 +62,14 @@ public class ActivityDTO extends ActivitySuperclassDTO {
         String activityPictureString = null;
         if(activityPicture != null)activityPictureString = new String(activityPicture, StandardCharsets.UTF_8);
         return activityPictureString;
+    }
+
+    public long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(long chatId) {
+        this.chatId = chatId;
     }
 
     @Override

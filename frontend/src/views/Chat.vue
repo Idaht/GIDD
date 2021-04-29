@@ -1,151 +1,204 @@
 <template>
-    <div>
-        <div class="header">
-            <h1> {{ activity.title }} </h1>
-            <button id="backButton" @click="goBack">BACK</button>
-        </div>
-        <hr>
-        <div class="displayMessages" id="displayContainer">
-            <div class="messages"
-            v-for="message in messages"
-            :key="message.messageId"
-            :class="{ classForUserMessages: message.user.userId === userId.value }"
-            >
-                <Message :messageData="message"/>
-            </div>
-        </div>
-        <hr>
-        <div class="lower">
-            <input type="message" id="messageInput" placeholder="Skriv melding her..."
-            v-model="messageInput"
-            @keyup.enter="sendMessage">
-            <button @click="sendMessage">SEND</button>
-        </div>
-        
+  <div>
+    <div class="header">
+      <h1>{{ activity.title }}</h1>
+      <button id="backButton" @click="goBack">BACK</button>
     </div>
+    <hr />
+    <div class="displayMessages" id="displayContainer">
+      <div v-if="messages.length > 0">
+        <div
+          class="messages"
+          v-for="(message, index) of messages"
+          :key="index"
+          :class="{ classForUserMessages: message.userId === user.userId }"
+        >
+          <Message :messageData="message" />
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="lower">
+      <input
+        type="message"
+        id="messageInput"
+        placeholder="Skriv melding her..."
+        v-model="messageInput"
+        @keyup.enter="sendMessage"
+      />
+      <button @click="sendMessage">SEND</button>
+    </div>
+  </div>
 </template>
 
-
 <script lang="ts">
-import { defineComponent, Ref, ref, onBeforeMount, computed } from "vue";
-import { useRouter } from "vue-router";
-import IMessage from "@/interfaces/Message.interface";
-import axios from "@/axiosConfig";
-import IUserInMessage from "@/interfaces/User/UserInMessage.interface";
-import { useStore } from "@/store" 
-import Message from "@/components/Message.vue";
+import {
+  defineComponent,
+  Ref,
+  ref,
+  onBeforeMount,
+  computed,
+  onBeforeUnmount,
+  onErrorCaptured,
+} from "vue";
 
+import { useRouter } from "vue-router";
+import IMessage from "@/interfaces/IMessage.interface";
+import axios from "@/axiosConfig";
+import { useStore } from "@/store";
+import Message from "@/components/Message.vue";
+import IActivity from "@/interfaces/IActivity.interface";
+import Stomp from "stompjs";
+import SockJS from "sockjs-client";
 
 export default defineComponent({
-    name: "Chat",
-    components: {
-        Message,
-    },
-    props: { id: {required: true, type: String} },
-    setup(props) {
-        
-        const messageInput = ref("");
-        const store = useStore();
-        const router = useRouter();
+  name: "Chat",
+  components: {
+    Message,
+  },
+  props: { id: { required: true, type: String } },
+  setup(props) {
+    const messageInput = ref("");
+    const store = useStore();
+    const router = useRouter();
+    const messages: Ref<IMessage[]> = ref([]);
+    const user = computed(() => {
+      return store.getters.user;
+    });
 
-        const userId = computed(() => {
-            return store.getters.user.userId;
-        });
+    let stompClient: Stomp.Client;
 
-        const activity = ref({});
+    const activity: Ref<IActivity> = ref({} as IActivity);
 
-        onBeforeMount(async () => {
-            try {
-                const response = await axios.get(`/activities/${props.id}`); 
-                activity.value = response.data;
-            } catch (error) {
-                router.push("/error");
+    onBeforeMount(async () => {
+      try {
+        const response = await axios.get(`/activities/${props.id}`);
+        activity.value = response.data;
+        const response2 = await axios.get(`/chats/${chatId.value}/messages`);
+        messages.value = response2.data as Array<IMessage>;
+      } catch (error) {
+        router.push("/error");
+      }
+      let sockJS = new SockJS("http://localhost:8080/api/v1/websocket");
+      stompClient = Stomp.over(sockJS);
+      stompClient.debug = () => ({});
+      await stompClient.connect(
+        {
+          Authorization: localStorage.getItem("token"),
+        },
+        () => {
+          stompClient.subscribe(
+            `/api/v1/chat/${chatId.value}/messages`,
+            (message) => {
+              messages.value.push(JSON.parse(message.body));
             }
-        });
-        
-        const forename = computed(() => {
-            return store.getters.user.forename;
-        });
+          );
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    });
 
-        const messages:Ref<IMessage[]> = ref([]);
+    onBeforeUnmount(async () => {
+      stompClient.disconnect(() => ({}));
+    });
 
-        let dateTime = new Date();
+    onErrorCaptured((err) => {
+      stompClient.disconnect(() => ({}));
+    });
 
-        const sendMessage = () => {
-            if (messageInput.value === "") return;
+    const forename = computed(() => {
+      return store.getters.user.forename;
+    });
 
-            let message:IMessage = {
-                message: messageInput.value,
-                timeSent: dateTime.toString(),
-                messageId: 2, 
-                user: { 
-                    userId: userId.value,
-                    forename: forename.value,
-                } as IUserInMessage,
-            } as IMessage;
+    const chatId = computed(() => {
+      return activity.value.chatId;
+    });
 
-            messages.value.unshift(message);
-            
-            //Removes message from input field, so the user doesnt have to delete/remove their message before writing a new one
-            messageInput.value = "";
-        };
+    const getDate = computed(() => {
+      const now = new Date();
+      let date =
+        now.getFullYear() +
+        "-" +
+        (now.getMonth() < 10 ? "0" : "") +
+        (now.getMonth() + 1) +
+        (now.getDate() < 10 ? "0" : "") +
+        "-" +
+        now.getDate();
+      let time =
+        (now.getHours() < 10 ? "0" : "") +
+        now.getHours() +
+        ":" +
+        (now.getMinutes() < 10 ? "0" : "") +
+        now.getMinutes();
+      return date + " " + time;
+    });
 
-        const goBack = ():void => {
-            router.back(); 
-        };
+    const sendMessage = () => {
+      if (messageInput.value === "") return;
 
+      let message: IMessage = {
+        userId: user.value.userId,
+        forename: user.value.forename,
+        chatId: chatId.value,
+        message: messageInput.value,
+        time: getDate.value,
+      } as IMessage;
 
-        /**
-        * Retrives messages from the database
-        */
-        onBeforeMount(async () => {
-            try {
-                const response = await axios.get(`/chats/${props.id}/messages`); 
-                console.log(response);
-                messages.value = response.data as IMessage[];
-            } catch (error) {
-                router.push("/error");
-            }
-        });
+      stompClient.send(
+        `/api/v1/chat/${chatId.value}`,
+        {},
+        JSON.stringify(message)
+      );
 
-        return {
-            goBack,
-            sendMessage,
-            messages,
-            userId, 
-            forename,
-            messageInput,
-            activity
-        };
-    },
+      //Removes message from input field, so the user doesnt have to delete/remove their message before writing a new one
+      messageInput.value = "";
+    };
+
+    const goBack = (): void => {
+      router.back();
+    };
+
+    /**
+     * Retrives messages from the database
+     */
+
+    return {
+      goBack,
+      sendMessage,
+      messages,
+      user,
+      forename,
+      messageInput,
+      activity,
+    };
+  },
 });
 </script>
 
 <style scoped>
-
 #messageInput {
-    width: 90%;
+  width: 90%;
 }
 
 .messages {
-    border: black;
-    border-radius: 20px;
-    text-align: left;
-    margin-left: 0.5%;  
+  border: black;
+  border-radius: 20px;
+  text-align: left;
+  margin-left: 0.5%;
 }
 
 .classForUserMessages {
-    text-align: right;
-    margin-right: 0.5%;
+  text-align: right;
+  margin-right: 0.5%;
 }
 
 .displayMessages {
-    height: 140px;
-    overflow-y: scroll;
-    overflow: auto;
-    display: flex;
-    flex-direction: column-reverse;
+  height: 140px;
+  overflow-y: scroll;
+  overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
 }
-
 </style>
-

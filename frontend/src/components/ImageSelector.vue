@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <img :src="imageData" alt="Profilbildet visining:" />
+    <img v-if="imageCheck" :src="imageData" alt="Profilbildet visining:" />
+    <img v-else src="../../img/placeholder.png" />
     <form @submit.prevent="">
       <div class="form-group" id="file-button-group">
         <div id="label-input">
@@ -13,7 +14,9 @@
           />
         </div>
       </div>
-      <button @click="removeImage"><i class="fa fa-times" aria-hidden="true"></i> Fjern bildet</button>
+      <button @click="removeImage">
+        <i class="fa fa-times" aria-hidden="true"></i> Fjern bildet
+      </button>
     </form>
   </div>
 </template>
@@ -29,6 +32,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const imageData = ref("") as Ref<string | ArrayBuffer | null | undefined>;
     const fileInput = ref(null) as Ref<any>;
+    const imageCheck = ref(false);
 
     const uploadFile = (event: any) => {
       let input = event.target.files[0];
@@ -37,6 +41,7 @@ export default defineComponent({
         reader.onload = (e) => {
           imageData.value = e.target?.result;
           emit("imageSelected", imageData.value);
+          imageCheck.value = true;
         };
         reader.readAsDataURL(input);
       }
@@ -46,19 +51,21 @@ export default defineComponent({
       imageData.value = "";
       fileInput.value.value = "";
       emit("removeImage");
+      imageCheck.value = false;
     };
+
     return {
       uploadFile,
       imageData,
       removeImage,
       fileInput,
+      imageCheck,
     };
   },
 });
 </script>
 
 <style scoped>
-
 .container {
   text-align: center;
 }
@@ -75,8 +82,8 @@ img {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-   object-fit: cover;
-   margin: 20px;
+  object-fit: cover;
+  margin: 20px;
 }
 
 input {
@@ -89,7 +96,7 @@ input {
 
 button {
   background-color: unset;
-  color:#282828;
+  color: #282828;
   margin: 5px;
 }
 

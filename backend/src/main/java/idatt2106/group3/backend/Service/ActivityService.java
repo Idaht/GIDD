@@ -63,7 +63,7 @@ public class ActivityService
     public List<ActivityDTO> getActivities()
     {
         LOGGER.info("getActivities() called");
-        return activityRepository.findAll().stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
+        return activityRepository.findAllFromNow().stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
     }
 
     /**
@@ -300,6 +300,10 @@ public class ActivityService
             return activityRepository.findActivitiesOnDistanceWithoutFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DISTANCE)
             return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty());
+        else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.NONE)
+            return activityRepository.findActivitiesOnNoneWithoutFilter(searchQuery, filter.getAmount());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.NONE)
+            return activityRepository.findActivitiesOnNoneWithFilter(searchQuery,filter.getAmount(),filter.getDifficulty());
 
         return activityRepository.findAll();
     }

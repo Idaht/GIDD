@@ -1,7 +1,8 @@
 <template>
   <div id="login">
     <h1>Logg inn</h1>
-    <div class="login-field">
+    <div @keyup.enter="login"
+    class="login-field">
       <input v-model="email" type="email" placeholder="E-post" />
       <input v-model="password" type="password" placeholder="Passord" />
       <div class="login-btn">

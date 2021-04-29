@@ -57,6 +57,9 @@ public class User {
     @Lob
     private byte[] profilePicture;
 
+    @OneToMany(mappedBy = "user", targetEntity = Notification.class)
+    Set<Notification> notifications;
+
     public User(String forename, String surname, String email, LocalDate dateOfBirth, Difficulty trainingLevel, String hash, String salt, int rating, String role, int absence, Set<Activity> activities, Set<Activity> organizedActivities, Set<Report> reportsSent, Set<Report> reportsReceived, Set<Message> messages, byte[] profilePicture) {
         this.forename = forename;
         this.surname = surname;
@@ -229,6 +232,14 @@ public class User {
         this.profilePicture = profilePicture;
     }
 
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
     @Override
     public String toString()
     {
@@ -249,6 +260,7 @@ public class User {
                 ", reportsSent=" + reportsSent + '\'' +
                 ", reportsReceived=" + reportsReceived + '\'' +
                 ", messages=" + messages + '\'' +
+                ", notifications=" + notifications + '\'' +
                 '}';
     }
 }

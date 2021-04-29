@@ -42,6 +42,8 @@ public class ActivityService
     private ChatRepository chatRepository;
     @Autowired(required = false)
     private EmailComponent emailSender;
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * Returns activity from activityId stored in the database
@@ -127,6 +129,11 @@ public class ActivityService
             activity.setDurationMinutes(activityRegDTO.getDurationMinutes());
             activity.setPrivateActivity(activityRegDTO.isPrivateActivity());
             activity.setMaxParticipants(activityRegDTO.getMaxParticipants());
+
+            for(User user : activity.getUsers()) {
+                notificationService.createNotification(user, "Informasjonen om aktiviteten '" + activity.getTitle() + "' ble redigert");
+            }
+
             return new ActivityDTO(activityRepository.save(activity));
         }
         return null;
@@ -154,6 +161,7 @@ public class ActivityService
                 user.getActivities().remove(activity);
                 activityUsers.add(user);
                 emailSender.sendCancelationMail(user, activity);
+                notificationService.createNotification(user, "Aktiviten '" + activity.getTitle() + "' ble avlyst");
             }
             userRepository.saveAll(activityUsers);
             activityRepository.save(activity);

@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Configuration.Jwt.JwtSigningKey;
 import idatt2106.group3.backend.Model.Activity;
+import idatt2106.group3.backend.Model.Notification;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.DTO.User.UserRegistrationCallbackDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
@@ -230,6 +231,20 @@ public class UserService
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent()) {
             return new ArrayList<>(userOptional.get().getOrganizedActivities());
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Finds all notifications of a user
+     * @param userId
+     * @return List of notifications
+     */
+    public List<Notification> getNotifications(long userId) {
+        LOGGER.info("getNotifications(long userId) called with userId: {}", userId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()) {
+            return new ArrayList<>(userOptional.get().getNotifications());
         }
         return new ArrayList<>();
     }

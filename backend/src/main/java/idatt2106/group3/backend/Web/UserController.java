@@ -1,10 +1,12 @@
 package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Activity;
+import idatt2106.group3.backend.Model.Notification;
 import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserRegistrationCallbackDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
+import idatt2106.group3.backend.Service.NotificationService;
 import idatt2106.group3.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ public class UserController
 {
     @Autowired
     private UserService userService;
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
@@ -100,5 +104,13 @@ public class UserController
     @PreAuthorize("#userId == principal.userId or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Activity>> getOrganizedActivities(@PathVariable("user_id") Long userId){
         return new ResponseEntity<> (userService.findOrganizedActivities(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{user_id}/notifications")
+    @PreAuthorize("#userId == principal.userId")
+    public ResponseEntity<List<Notification>> getNotifications(@PathVariable("user_id") Long userId){
+        ResponseEntity<List<Notification>> notifications = new ResponseEntity<>(userService.getNotifications(userId), HttpStatus.OK);
+        notificationService.deleteNotifications(userId);
+        return notifications;
     }
 }

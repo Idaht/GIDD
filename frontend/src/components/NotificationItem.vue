@@ -1,35 +1,28 @@
 <template>
-  <div class="menu-item" @click="isOpen = !isOpen">
-    <a href="#">
-      <img src="../../img/verified.png" height="50" />
-      <!--Sett inn en liten bjelle elns, evt en v-if med en bjelle uten rødt merke og en med?
-      Hvis bruker har notifikasjoner, rød bjelle, hvis ikke, ingen-->
-    </a>
-    <transition name="fade" appear>
-      <div class="sub-menu" v-if="isOpen">
-        <div
-          v-for="(notification, i) in notifications"
-          :key="i"
-          class="menu-item"
-        >
-          <a>{{ notification.notificationTitle }}</a>
-        </div>
-      </div>
-    </transition>
+  <div class="menu-item">
+    <a>{{ notification }}</a
+    ><a @click="removeNotification(index)">x</a>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "notificationItem",
-  props: ["notifications"],
-  setup() {
-    const isOpen = ref(false);
+  props: {
+    notification: {
+      required: true,
+      type: String,
+    },
+  },
+  setup(props, { emit }) {
+    const removeNotification = (index: number): void => {
+      emit("removeNotification", index);
+    };
 
     return {
-      isOpen,
+      removeNotification,
     };
   },
 });

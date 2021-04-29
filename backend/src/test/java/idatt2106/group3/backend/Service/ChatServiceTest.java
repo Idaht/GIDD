@@ -2,6 +2,8 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.Message;
+import idatt2106.group3.backend.Model.User;
+import idatt2106.group3.backend.Model.DTO.MessageDTO;
 import idatt2106.group3.backend.Repository.ChatRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,12 +38,20 @@ public class ChatServiceTest
 
     @BeforeEach
     public void setup() {
-        Set<Message> messages = Set.of(new Message("Hello", LocalDateTime.now()));
+    
         Chat chat1 = new Chat();
         chat1.setChatId(1);
-        chat1.setMessages(messages);
         Chat chat2 = new Chat();
         chat2.setChatId(2);
+
+        Message message = new Message("Hello",LocalDateTime.now());
+        User user = new User();
+        user.setUserId(1);
+        message.setUser(user);
+        message.setChat(chat1);
+        
+        Set<Message> messages = Set.of(message);
+        chat1.setMessages(messages);
 
         Mockito.lenient()
         .when(chatRepository.save(any()))
@@ -92,11 +102,10 @@ public class ChatServiceTest
 
     @Test
     public void getMessages_MessagesExists_ReturnsSet(){
-        Set<Message> messages = chatService.getMessages(1);
-        List<Message> messageList = messages.stream().collect(Collectors.toList());
+        List<MessageDTO> messageList = chatService.getMessages(1);
         
 
-        assertEquals(1, messages.size());
+        assertEquals(1, messageList.size());
         assertEquals("Hello", messageList.get(0).getMessage());
     }
 

@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Service;
 
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.Message;
+import idatt2106.group3.backend.Model.DTO.MessageDTO;
 import idatt2106.group3.backend.Repository.ChatRepository;
 
 import idatt2106.group3.backend.Repository.MessageRepository;
@@ -10,9 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,11 +87,15 @@ public class ChatService
      * @param chatId
      * @return null or a Set of all Message objects
      */
-    public Set<Message> getMessages(long chatId) {
+    public List<MessageDTO> getMessages(long chatId) {
         LOGGER.info("getMessages(long chatId) called with chatId: {}", chatId); 
         Optional<Chat> chat = chatRepository.findById(chatId);
-        if(chat.isPresent()) return chat.get().getMessages();
-        return null;
+        if(chat.isPresent()){
+            List<Message> set = chat.get().getMessages().stream().collect(Collectors.toList());
+            set.sort(Comparator.comparing(Message::getMessageId));
+            return set.stream().map(message -> new MessageDTO(message)).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
 

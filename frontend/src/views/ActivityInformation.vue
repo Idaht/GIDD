@@ -102,8 +102,8 @@ import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import data from "@/../config.json";
 import { store } from "../store";
+import IActivity from "@/interfaces/IActivity.interface"
 import Weather from "../components/Weather.vue";
-import IActivity from "@/interfaces/Activity/IActivity.interface";
 import User from "@/interfaces/User/User.interface";
 
 export default defineComponent({
@@ -142,7 +142,11 @@ export default defineComponent({
       maxParticipants: 0,
       type: "",
       privateActivity: false,
-    });
+      activityPicture: "",
+      chatId: -1,
+      organizerForename: "",
+      organizerSurname: ""
+    } as IActivity);
     const participants = ref([]); //list with all participants
 
     /**
@@ -180,13 +184,17 @@ export default defineComponent({
       }
     };
 
+    const getChatId = computed(() => {
+      return activity.value.chatId;
+    })
+
     /**
      * Opens chat
      */
     const openChat = (): void => {
-      router.push("/chatPage"); //TODO: check chat router
-    };
-
+      router.push(`/activity/${getChatId.value}/chat`);
+    }
+      //TODO check chat router
     //Organizer methods
     const organizerId = ref(); //id of the organizer
 
@@ -228,7 +236,8 @@ export default defineComponent({
     onBeforeMount(async () => {
       try {
         //gets the info from backend
-        const response = axios.get(`/activities/${props.id}`);
+        const response = await axios.get(`/activities/${props.id}`);
+        activity.value = response.data;
         const participantResponse = axios.get(`/activities/${props.id}/users`);
         const organizerResponse = axios.get(
           `/activities/${props.id}/organizer/${store.getters.user.userId}`

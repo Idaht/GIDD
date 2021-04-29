@@ -1,25 +1,43 @@
 <template>
   <div id="profile">
     <h1>Min profil</h1>
-    <img id="profile-picture" :src="profilePicture" alt="profile-picture" />
+    <img
+      id="profile-picture"
+      :src="profilePicture"
+      alt="Visning av profilbilde"
+    />
     <div id="profile-wrapper">
       <div id="profile-name-wrapper">
         <div id="profile-name">
-          <h2 id="profile-name-h3">{{ user.forename }} {{ user.surname }}</h2>
+          <h2 id="profile-name-h3" alt="Fornavn og etternavn">
+            {{ user.forename }} {{ user.surname }}
+          </h2>
           <img
             v-if="trusted"
             id="verified"
             src="../../img/verified.png"
             height="20"
+            alt="Verifisert merke"
           />
         </div>
       </div>
       <div id="profile-information">
         <div id="profile-information-fitness-level">
-          <h5>Treningsnivå: {{ user.trainingLevel }}</h5>
+          <h5 alt="Treningsnivå">Treningsnivå: {{ translateTrainingLevel }}</h5>
         </div>
-        <button id="my-activities-button" @click="calendar">
+        <button
+          id="my-activities-button"
+          @click="calendar"
+          alt="Knapp som tar deg til mine aktiviteter"
+        >
           Mine aktiviteter
+        </button>
+        <button
+          id="edit-profile-button"
+          @click="toEditProfile"
+          alt="Knapp som tar deg til profilinnstillinger"
+        >
+          Profilinnstillinger
         </button>
       </div>
     </div>
@@ -68,11 +86,36 @@ export default defineComponent({
       }
     });
 
+    /**
+     * Change the training level from english to norwegian
+     */
+    const translateTrainingLevel = computed(() => {
+      switch (user.value.trainingLevel) {
+        case "EASY":
+          return "Lav";
+        case "MEDIUM":
+          return "Medium";
+        case "HARD":
+          return "Høy";
+        default:
+          return "";
+      }
+    });
+
+    /**
+     * Router to edit profile
+     */
+    const toEditProfile = (): void => {
+      router.push("/edit-profile");
+    };
+
     return {
       calendar,
       profilePicture,
       trusted,
       user,
+      translateTrainingLevel,
+      toEditProfile,
     };
   },
 });

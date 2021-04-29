@@ -24,12 +24,15 @@
       />
     </div>
     <h2 id="activity-title">{{ activity.title }}</h2>
-    <div id="weather">
+    <div id="weather" v-if="dataReceived">
       <Weather
-        :latitude="activity.longitude"
-        :longitute="activity.latitude"
+        :latitude="activity.latitude"
+        :longitute="activity.longitude"
         :time="activity.startTime"
       />
+    </div>
+    <div v-else>
+      {{ "Ingen værdata" }}
     </div>
     <div id="host">Arrangeres av {{ activity.organizer }}</div>
     <div id="information-wrapper">
@@ -137,7 +140,7 @@ export default defineComponent({
       place: "",
       longitude: 0,
       latitude: 0,
-      startTime: "",
+      startTime: "0000-00-00 00:00",
       durationMinutes: 0,
       maxParticipants: 0,
       type: "",
@@ -148,6 +151,7 @@ export default defineComponent({
       organizerSurname: ""
     } as IActivity);
     const participants = ref([]); //list with all participants
+    const dataReceived = ref(false);
 
     /**
      * Method for getting number of participants on an activity
@@ -263,6 +267,8 @@ export default defineComponent({
         organizerId.value = res[2].data;
         userId.value = res[3].data;
         signedUp.value = res[4].data;
+
+        dataReceived.value = true;
       } catch (error) {
         router.push("/error");
       }
@@ -342,6 +348,7 @@ export default defineComponent({
       dateTimeFormatter,
       durationFormatter,
       difficultyString,
+      dataReceived,
 
       //dette skla fjernes
       organizerId,

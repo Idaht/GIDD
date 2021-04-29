@@ -82,19 +82,18 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
-      //Adding afterEach to make sure the menu closes afte every route
+    //Adding afterEach to make sure the menu closes afte every route
     router.afterEach((to, from) => {
       //Have to check that the paths are not equal, since closing a window when staying on the same page gives bad user experience, and also leads to the menu not working
       if (to.fullPath !== from.fullPath) {
         menuVisible.value = false;
       }
     });
-    
+
     const loggedInOptions: Ref<MenuOption[]> = computed(() => {
       return [
         { title: "Min profil", path: `/profile/${store.getters.user.userId}` },
-        { title: "Profilinnstillinger", path: "/edit-profile" },
-        { title: "Mine aktiviteter", path: "/calendar"},
+        { title: "Mine aktiviteter", path: "/calendar" },
       ];
     });
     const loggedOutOptions: Ref<MenuOption[]> = ref([
@@ -141,7 +140,7 @@ $secondary-color: #ea4b4b;
   background-color: #ffffff;
   z-index: 2;
   position: fixed;
-  top:0px;
+  top: 0px;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

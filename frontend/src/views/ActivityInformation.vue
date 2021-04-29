@@ -24,6 +24,13 @@
       />
     </div>
     <h2 id="activity-title">{{ activity.title }}</h2>
+    <div id="weather">
+      <Weather
+        :latitude="activity.longitude"
+        :longitute="activity.latitude"
+        :time="activity.startTime"
+      />
+    </div>
     <div id="host">Arrangeres av {{ activity.organizer }}</div>
     <div id="information-wrapper">
       <label class="event-variable">Når</label>
@@ -95,11 +102,15 @@ import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import data from "@/../config.json";
 import { store } from "../store";
+import Weather from "../components/Weather.vue";
 import IActivity from "@/interfaces/Activity/IActivity.interface";
 import User from "@/interfaces/User/User.interface";
 
 export default defineComponent({
   name: "ActivityInformation",
+  components: {
+    Weather,
+  },
   props: ["id"],
   setup(props) {
     /**

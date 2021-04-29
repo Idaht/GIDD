@@ -28,16 +28,28 @@ public interface ActivityRepository extends JpaRepository<Activity, Long>
     @Query(value = "SELECT * FROM activity WHERE (activity.title LIKE ?1 OR activity.description LIKE ?1) AND activity.difficulty=?3 AND activity.start_time > NOW() ORDER BY activity.start_time LIMIT ?2", nativeQuery = true)
     public List<Activity> findActivitiesOnDateWithFilter(String searchQuery, Integer amount, Integer difficulty);
 
+    // Returns activities based on a search query and sorted by amount of participant
     @Query(value = "SELECT activity.* FROM activity LEFT JOIN user_activity ON (activity.activity_id = user_activity.activity_id ) WHERE (activity.title LIKE ?1 OR activity.description LIKE ?1) AND activity.start_time > NOW() GROUP BY activity.activity_id ORDER BY COUNT(user_activity.activity_id) DESC LIMIT ?2", nativeQuery = true)
     public List<Activity> findActivitiesOnAmountWithoutFilter(String searchQuery, Integer amount);
 
+    // Returns activities based on a search query and sorted by amount of participant, but filtered by difficulty
     @Query(value = "SELECT activity.* FROM activity LEFT JOIN user_activity ON (activity.activity_id = user_activity.activity_id ) WHERE (activity.title LIKE ?1 OR activity.description LIKE ?1) AND activity.difficulty = ?3 AND activity.start_time > NOW() GROUP BY activity.activity_id ORDER BY COUNT(user_activity.activity_id) DESC LIMIT ?2", nativeQuery = true)
     public List<Activity> findActivitiesOnAmountWithFilter(String searchQuery, Integer amount, Integer difficulty);
 
+    // Returns activities based on a search query and sorted by distance from activity
     @Query(value = "SELECT activity.* FROM activity WHERE (activity.title LIKE ?1 OR activity.description LIKE ?1) AND activity.start_time > NOW() ORDER BY SQRT(POW((?3-longitude),2)+POW((?4-latitude),2)) LIMIT ?2", nativeQuery = true)
     public List<Activity> findActivitiesOnDistanceWithoutFilter(String searchQuery, Integer amount, Double longitude, Double latitude);
 
+    // Returns activities based on a search query and sorted by distance from activity, but filtered by difficulty
     @Query(value = "SELECT activity.* FROM activity WHERE (activity.title LIKE ?1 OR activity.description LIKE ?1) AND activity.difficulty = ?5 AND activity.start_time > NOW() ORDER BY SQRT(POW((?3-longitude),2)+POW((?4-latitude),2)) LIMIT ?2", nativeQuery = true)
     public List<Activity> findActivitiesOnDistanceWithFilter(String searchQuery, Integer amount, Double longitude, Double latitude, Integer difficulty);
     
+    // Returns activities based on a search query and sorted on nothing from activity
+    @Query(value = "SELECT * FROM activity WHERE (activity.title LIKE ?1 OR activity.description LIKE ?1) AND activity.start_time > NOW() LIMIT ?2", nativeQuery = true)
+    public List<Activity> findActivitiesOnNoneWithoutFilter(String searchQuery, Integer amount);
+
+    // Returns activities based on a search query and sorted on nothing from activity, filtered by difficulty
+    @Query(value = "SELECT * FROM activity WHERE (activity.title LIKE ?1 OR activity.description LIKE ?1) AND activity.start_time > NOW() AND activity.difficulty = ?3 LIMIT ?2", nativeQuery = true)
+    public List<Activity> findActivitiesOnNoneWithFilter(String searchQuery, Integer amount, Integer difficulty);
+
 }

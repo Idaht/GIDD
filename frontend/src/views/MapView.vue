@@ -10,16 +10,42 @@
           <button id="view-map" class="icon"></button>
         </div>
       </div>
+
       <div class="header" id="lower-header">
-        <select class="dropdown" id="lower-header-sort">
-          <option selected hidden>Sortering</option>
-          <option @click="sortClicked" value="Nyeste">Nyeste</option>
-          <option @click="sortClicked" value="Avstand">Avstand</option>
-          <option @click="sortClicked" value="Antall deltakere">
-            Antall deltakere
-          </option>
-        </select>
-        <div id="lower-header-filter" @click="filterClicked">+ Filter</div>
+        <div id="filter-boxes" class="lower-header-item">
+            <div class="checkbox-label">
+              <label for="easy">Lett</label>
+              <input
+                type="checkbox"
+                v-model="easyCheckbox"
+                @change="filterClicked"
+              />
+            </div>
+            <div class="checkbox-label">
+              <label for="easy">Medium</label>
+              <input
+                type="checkbox"
+                v-model="mediumCheckbox"
+                @change="filterClicked"
+              />
+            </div>
+            <div class="checkbox-label">
+              <label for="easy">Hardt</label>
+              <input
+                type="checkbox"
+                v-model="hardCheckbox"
+                @change="filterClicked"
+              />
+            </div>
+          </div>
+          <input
+            type="text"
+            id="search"
+            v-model="searchQuery"
+            @change="filterClicked"
+            class="lower-header-item"
+            placeholder="Søk"
+          />
       </div>
     </div>
 
@@ -30,11 +56,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref, Ref } from "vue";
+import { defineComponent, onBeforeMount, ref, Ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axiosConfig";
 import IActivity from "@/interfaces/Activity/IActivity.interface";
 import Map from "@/components/Map.vue";
+import SortAndFilter from "../interfaces/SortAndFilter.interface";
 
 export default defineComponent({
   name: "MapView",
@@ -45,7 +72,11 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const activities: Ref<IActivity[]> = ref([]);
-    
+    const easyCheckbox: Ref<boolean> = ref(false);
+    const mediumCheckbox: Ref<boolean> = ref(false);
+    const hardCheckbox: Ref<boolean> = ref(false);
+    const amount: Ref<number | null> = ref(null);
+    const searchQuery: Ref<string> = ref("");
 
     onBeforeMount(async () => {
       try {
@@ -56,14 +87,50 @@ export default defineComponent({
       }
     });
 
-    const sortClicked = (): void => {
-      //TODO: Open the sorting functionality, and remove console.log
-      console.log("Sort clicked");
+    const getAmount = computed(() => {
+      if (amount.value === null || amount.value < 0) return 1000;
+      return amount.value;
+    });
+
+    /**
+     * When a box is checked it retrives the relevant markers from backend
+     */
+    const filterClicked = async (): Promise<void> => {
+      getFilteredAndSortedActivities();
     };
 
-    const filterClicked = (): void => {
-      //TODO: Open the filtering functionality, and remove console.log
-      console.log("Filter clicked");
+    const filter = computed(() => {
+      return {
+        sortingType: "DATE", //does not need sorting value on mapview, therefore it is hardcoded.
+        searchQuery: searchQuery.value,
+        difficulty: getDifficulty.value,
+        amount: getAmount.value,
+      } as SortAndFilter;
+    });
+
+    const getDifficulty = computed(() => {
+      let difficulty = 0;
+      if (easyCheckbox.value) difficulty += 1;
+      if (mediumCheckbox.value) difficulty += 2;
+      if (hardCheckbox.value) difficulty += 4;
+
+      if (difficulty > 0) return difficulty;
+      return null;
+    });
+
+    /**
+     * Retrives the relevant markers from backend
+     */
+    const getFilteredAndSortedActivities = async () => {
+      try {
+        const response = await axios.post(
+          "/activities/alternatives",
+          filter.value
+        );
+        activities.value = response.data as IActivity[];
+      } catch (error) {
+        router.push("/error");
+      }
     };
 
     const feedViewClicked = (): void => {
@@ -71,10 +138,15 @@ export default defineComponent({
     };
 
     return {
-      sortClicked,
-      filterClicked,
       feedViewClicked,
       activities,
+      getDifficulty,
+      filterClicked,
+      easyCheckbox,
+      mediumCheckbox,
+      hardCheckbox,
+      searchQuery,
+      amount,
     };
   },
 });

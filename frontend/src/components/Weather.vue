@@ -1,7 +1,7 @@
 <template>
     <div class="container">
-        {{ temperature }}
-        <img :src="iconPath" alt="Ingen værdata" />
+        <img id="img" :src="iconPath" alt="Ingen værdata" />
+        <p>{{ temperature }}°C</p>
     </div>
 </template>
 
@@ -65,5 +65,15 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+#container{
+    display: flex;
+}
+p{
+    display: inline;
+    font-size: 20px;
+}
+#img{
+    width: 10vh;
+    display: inline-block;
+}
 </style>

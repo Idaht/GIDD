@@ -127,6 +127,7 @@ public class ActivityService
             activity.setDurationMinutes(activityRegDTO.getDurationMinutes());
             activity.setPrivateActivity(activityRegDTO.isPrivateActivity());
             activity.setMaxParticipants(activityRegDTO.getMaxParticipants());
+            if(activityRegDTO.getActivityPicture() != null)activity.setActivityPicture(activityRegDTO.getActivityPicture().getBytes());
             return new ActivityDTO(activityRepository.save(activity));
         }
         return null;

@@ -1,110 +1,199 @@
 <template>
-  <h2>Opprett en ny aktivitet</h2>
-  <ImageSelector
-    labelName=""
-    @imageSelected="onSelectedImage"
-    @removeImage="onRemoveImage"
-  />
-  <div>{{ user.forename }} {{ user.surname }}</div>
-  <div>Arrangør</div>
-  <input v-model="activity.title" type="title" placeholder="Tittel" />
-  <p v-if="!validTitle">Oppgi en tittel til aktiviteten</p>
-  <h5>Startdato og -tidspunkt</h5>
-  <select v-model="selectedYear" name="year">
-    <option hidden disabled value>Velg år</option>
-    <option v-for="(year, index) in availableYears" :value="year" :key="index">
-      {{ year }}
-    </option>
-  </select>
-  <select v-model="selectedMonth" name="month">
-    <option hidden disabled value>Velg måned</option>
-    <option v-for="(month, index) in months" :value="month.name" :key="index">
-      {{ month.name }}
-    </option>
-  </select>
-  <select v-model="selectedDay" name="day">
-    <option hidden disabled value>Velg dato</option>
-    <option v-for="index in daysInCurrentMonth" :value="index" :key="index">
-      {{ index }}
-    </option>
-  </select>
-
-  <select v-model="selectedHour" name="hour">
-    <option hidden disabled value>Velg time</option>
-    <option v-for="index in hoursList" :value="index" :key="index">
-      {{ index }}
-    </option>
-  </select>
-  <select v-model="selectedMinute" name="minutes">
-    <option hidden disabled value>Velg minutt</option>
-    <option v-for="index in minutes" :value="index" :key="index">
-      {{ index }}
-    </option>
-  </select>
-  <p v-if="!validDateTime">Oppgi riktig starttid</p>
-  <input
-    v-model="durationHour"
-    type="durationHour"
-    placeholder="Varighet timer"
-  />
-  <p v-if="!validDuration">Oppgi varighet på aktiviteten</p>
-  <input v-model="activity.type" type="type" placeholder="Type aktivitet" />
-  <p v-if="!validType">Oppgi aktivitetstype</p>
-  <input
-    v-model="participants"
-    type="maxParticipants"
-    placeholder="Maks antall deltakere"
-  />
-  <p v-if="!validMaxParticipants">Oppgi maks antall deltakere</p>
-  <h4>Belastningsnivå</h4>
-  <h5>Hva slags belastningsnivå er aktiviteten?</h5>
-  <input v-model="isEasy" type="checkbox" id="easy" name="easy" />
-  <label for="easy">Lett</label><br />
-  <input v-model="isMedium" type="checkbox" id="medium" name="medium" />
-  <label for="medium">Medium</label><br />
-  <input v-model="isHard" type="checkbox" id="hard" name="hard" />
-  <label for="hard">Høy</label><br />
-  <p v-if="!validDifficulty">Oppgi en vanskelighetsgrad</p>
-  <h3>Sted</h3>
-  <div id="map-view">
-    <!--TODO: ':center' fjernes når appen finner brukers lokasjon selv-->
-    <Map
-      id="map"
-      :center="{ lat: 63.43049, lng: 10.39506 }"
-      :getLocation="true"
-      :activityData="[]"
-    ></Map>
+  <div id="make-activity">
+    <h2>Opprett en ny aktivitet</h2>
+    <ImageSelector
+      labelName=""
+      @imageSelected="onSelectedImage"
+      @removeImage="onRemoveImage"
+    />
+    <div id="host-container">
+      <h3>Arrangør</h3>
+      <div id="host">
+        <img
+          src="../../src/assets/placeholder-pfp.jpg"
+          alt="Logo"
+          height="20"
+        />
+        <h4>{{ user.forename }} {{ user.surname }}</h4>
+      </div>
+    </div>
+    <div>
+      <h3>Tittel</h3>
+      <input
+        v-model="activity.title"
+        type="title"
+        placeholder="Oppgi beskrivende tittel"
+      />
+      <div class="error-message-container">
+        <p class="error-message" v-if="!validTitle">
+          Oppgi en tittel til aktiviteten
+        </p>
+      </div>
+    </div>
+    <div>
+      <h3>Startdato</h3>
+      <div id="start-date-container">
+        <select v-model="selectedYear" name="year">
+          <option hidden disabled value>Velg år</option>
+          <option
+            v-for="(year, index) in availableYears"
+            :value="year"
+            :key="index"
+          >
+            {{ year }}
+          </option>
+        </select>
+        <select v-model="selectedMonth" name="month">
+          <option hidden disabled value>Velg måned</option>
+          <option
+            v-for="(month, index) in months"
+            :value="month.name"
+            :key="index"
+          >
+            {{ month.name }}
+          </option>
+        </select>
+        <select v-model="selectedDay" name="day">
+          <option hidden disabled value>Velg dato</option>
+          <option
+            v-for="index in daysInCurrentMonth"
+            :value="index"
+            :key="index"
+          >
+            {{ index }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <h3>Start-tidspunkt</h3>
+      <div id="start-time-container">
+        <select v-model="selectedHour" name="hour">
+          <option hidden disabled value>Velg time</option>
+          <option v-for="index in hoursList" :value="index" :key="index">
+            {{ index }}
+          </option>
+        </select>
+        <select v-model="selectedMinute" name="minutes">
+          <option hidden disabled value>Velg minutt</option>
+          <option v-for="index in minutes" :value="index" :key="index">
+            {{ index }}
+          </option>
+        </select>
+      </div>
+      <div class="error-message-container">
+        <p class="error-message" v-if="!validDateTime">Oppgi riktig starttid</p>
+      </div>
+    </div>
+    <div>
+      <h3>Oppgi varighet</h3>
+      <input
+        v-model="durationHour"
+        type="durationHour"
+        placeholder="Varighet timer"
+      />
+      <div class="error-message-container">
+        <p class="error-message" v-if="!validDuration">
+          Oppgi varighet på aktiviteten
+        </p>
+      </div>
+    </div>
+    <div>
+      <h3>Aktivitiet</h3>
+      <input v-model="activity.type" type="type" placeholder="Type aktivitet" />
+      <div class="error-message-container">
+        <p class="error-message" v-if="!validType">Oppgi aktivitetstype</p>
+      </div>
+    </div>
+    <div>
+      <h3>Antall deltakere</h3>
+      <input
+        v-model="participants"
+        type="maxParticipants"
+        placeholder="Maks antall deltakere"
+      />
+      <div class="error-message-container">
+        <p class="error-message" v-if="!validMaxParticipants">
+          Oppgi maks antall deltakere
+        </p>
+      </div>
+    </div>
+    <div>
+      <h3>Belastningsnivå</h3>
+      <h5>Hva slags belastningsnivå er aktiviteten?</h5>
+      <div id="fitness-level-container">
+        <div>
+          <input v-model="isEasy" type="checkbox" id="easy" name="easy" />
+          <label for="easy">Lett</label><br />
+        </div>
+        <div>
+          <input v-model="isMedium" type="checkbox" id="medium" name="medium" />
+          <label for="medium">Medium</label><br />
+        </div>
+        <div>
+          <input v-model="isHard" type="checkbox" id="hard" name="hard" />
+          <label for="hard">Høy</label><br />
+        </div>
+      </div>
+      <div class="error-message-container">
+        <p class="error-message" v-if="!validDifficulty">
+          Oppgi en vanskelighetsgrad
+        </p>
+      </div>
+    </div>
+    <div>
+      <h3>Sted</h3>
+      <h5>Velg sted ved å trykke på kartet eller fyll ut info</h5>
+      <div id="map-view">
+        <!--TODO: ':center' fjernes når appen finner brukers lokasjon selv-->
+        <Map
+          id="map"
+          :center="{ lat: 63.43049, lng: 10.39506 }"
+          :getLocation="true"
+          :activityData="[]"
+        ></Map>
+      </div>
+    </div>
+    <div>
+      <div>
+        <h5>Oppgi sted</h5>
+        <div id="place-container">
+          <input v-model="activity.place" type="place" placeholder="Sted" />
+          <input v-model="activity.city" type="city" placeholder="By" />
+          <div class="error-message-container">
+            <p class="error-message" v-if="!validPlaceCity">Oppgi et sted</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>Beskrivelse</h3>
+      <h5>Legg til en kort beskrivelse av aktiviteten (frivillig)</h5>
+      <textarea
+        id="description"
+        v-model="activity.description"
+        type="description"
+        placeholder="Beskrivelse"
+      />
+    </div>
+    <div>
+      <h3>Utstyr</h3>
+      <h5>
+        Legg til utstyr som trengs for å gjennomføre aktiviteten (frivillig)
+      </h5>
+      <input
+        v-model="activity.equipment"
+        type="equipment"
+        placeholder="Utstyr"
+      />
+    </div>
+    <p v-if="feedbackError">Noe gikk galt, prøv igjen!</p>
+    <p v-if="feedbackMissingInfo">
+      Sjekk at du har fylt inn all nødvendig informasjon
+    </p>
+    <p v-if="feedbackSomethingWentWrong">Noe gikk galt, prøv igjen</p>
+    <button @click="makeActivity">Opprett aktivitet</button>
   </div>
-  <!--Midlertidig løsning for å se alle fletene, fjernes ved styling-->
-  <br />
-  <br />
-  <br />
-  <br />
-  <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-  <br />
-  <br />
-  <br />
-  <p>Legg til et fysisk sted der arrangementet skal ta plass</p>
-  <input v-model="activity.place" type="place" placeholder="Sted" />
-  <input v-model="activity.city" type="city" placeholder="By" />
-  <p v-if="!validPlaceCity">Oppgi et sted</p>
-  <h3>Beskrivelse</h3>
-  <p>Legg til en kort beskrivelse av aktiviteten (frivillig)</p>
-  <input
-    v-model="activity.description"
-    type="description"
-    placeholder="Beskrivelse"
-  />
-  <h3>Utstyr</h3>
-  <p>Legg til utstyr som trengs for å gjennomføre aktiviteten (frivillig)</p>
-  <input v-model="activity.equipment" type="equipment" placeholder="Utstyr" />
-  <p>Last opp</p>
-  <p v-if="feedbackError">Noe gikk galt, prøv igjen!</p>
-  <p v-if="feedbackMissingInfo">
-    Sjekk at du har fylt inn all nødvendig informasjon
-  </p>
-  <p v-if="feedbackSomethingWentWrong">Noe gikk galt, prøv igjen</p>
-  <button @click="makeActivity">Opprett aktivitet</button>
 </template>
 
 <script lang="ts">
@@ -574,6 +663,85 @@ export default defineComponent({
 
 <style scoped lang="scss">
 $primary-color: #282828;
+$secondary-color: #ea4b4b;
+$padding: 0.6rem 1rem 0.6rem 1rem;
+
+#make-activity {
+  margin: 35px;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
+    padding: 20px;
+  }
+}
+
+h2 {
+  text-align: center;
+}
+
+h3,
+h5 {
+  text-align: left;
+}
+
+h5 {
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+}
+
+img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 20px;
+}
+
+#host {
+  display: grid;
+  grid-template-rows: 1fr 0.5fr;
+  justify-items: center;
+}
+
+#host.h4 {
+  text-align: left;
+}
+
+select {
+  width: 100%;
+  height: 2rem;
+  border-radius: 10px;
+  border-width: 0;
+  border-bottom: 2px RGBA(0 0 0/4%) solid;
+  font-family: "Mulish", sans-serif;
+  font-size: 1rem;
+  text-align-last: center;
+  color: #54545e;
+}
+
+#start-date-container {
+  margin-bottom: 30px;
+}
+
+#start-date-container,
+#start-time-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 30px;
+}
+
+#fitness-level-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+#fitness-level-container input {
+  width: unset;
+  margin: 10px;
+}
 
 #map {
   padding-top: 20px;
@@ -588,11 +756,43 @@ $primary-color: #282828;
 
 #map-view {
   color: $primary-color;
+  height: 270px;
   margin: 35px;
   @media only screen and (min-width: 600px) {
     width: 45%;
     margin: auto;
-    grid-template-columns: 1fr 1fr;
   }
+}
+
+#map {
+  height: 250px;
+}
+
+#place-container {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  row-gap: 15px;
+}
+
+#description {
+  height: 150px;
+  width: 100%;
+  align-content: flex-start;
+  border: 1px solid #9f9f9f;
+  border-radius: 20px;
+  padding: $padding;
+  font: normal 1rem "mulish", sans-serif;
+  color: $primary-color !important;
+}
+
+.error-message-container {
+  height: 30px;
+}
+.error-message {
+  font-weight: 600;
+  color: $secondary-color;
+  font-size: 10px;
+  line-height: 30px;
+  margin: 0px;
 }
 </style>

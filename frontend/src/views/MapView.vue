@@ -177,10 +177,7 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
   position: absolute;
   width: 100%;
   left: 0px;
-  height: 100%;
-  @media only screen and (min-width: 600px) {
-    height: 350px;
-  }
+  height: 350px;
 }
 
 #map-view {

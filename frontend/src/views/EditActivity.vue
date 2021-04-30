@@ -1,8 +1,10 @@
 <template>
   <div id="edit-activity">
-    <div id="nav-back" @click="goBack">
-      <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      Tilbake
+    <div id="nav">
+      <button @click="goBack" class="back-button">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Gå tilbake
+      </button>
     </div>
 
     <h2>Endre Aktivitet</h2>
@@ -194,7 +196,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, computed, Ref, reactive, provide, watch } from "vue";
+import {
+  defineComponent,
+  ref,
+  onBeforeMount,
+  computed,
+  Ref,
+  reactive,
+  provide,
+  watch,
+} from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axiosConfig";
 import IEditActivity from "@/interfaces/EditActivity.interface";
@@ -205,7 +216,6 @@ import Map from "@/components/Map.vue";
 import ICoordinates from "@/interfaces/ICoordinates.interface";
 import data from "@/../config.json";
 import axiosNotConfig from "axios";
-
 
 export default defineComponent({
   name: "EditActivity",
@@ -236,7 +246,7 @@ export default defineComponent({
 
     //Needed for the map
     const coordinates = reactive({ lat: 0.0, lng: 0.0 } as ICoordinates);
-    provide('coordinates', coordinates);
+    provide("coordinates", coordinates);
 
     const selectedYear = ref("");
     const selectedMonth = ref("");
@@ -320,41 +330,61 @@ export default defineComponent({
       "09",
     ]);
 
-
-    const getCoordinates = computed((): ICoordinates => {
-        return { lat: activity.value.latitude, lng: activity.value.longitude } as ICoordinates;
-    });
-
+    const getCoordinates = computed(
+      (): ICoordinates => {
+        return {
+          lat: activity.value.latitude,
+          lng: activity.value.longitude,
+        } as ICoordinates;
+      }
+    );
 
     const updateCityPlace = async () => {
-        try {
-            const response = await axiosNotConfig.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.lat + "," + coordinates.lng}&key=${apiKey}`).then();
-            const responseData = response.data;
-            if (response.status == 200) {
-                let address: string[] = (responseData.results[0].formatted_address as string).split(",");
-                let place = address[0];
-                let city = address[1].split(" ");
-                place != "Unnamed Road" ? activity.value.place = place : activity.value.place = ""; //Setting the place value
-                city = city.filter(element =>  { //Filters away city names that is not valid
-                    if (element == "" || !isNaN(Number(element))) {
-                        return false;
-                    }
-                    return true;
-                });
-                city[0] || city[0] != "Unnamed" ? activity.value.city = city[0] : activity.value.city = ""; //Setting the city value
+      try {
+        const response = await axiosNotConfig
+          .get(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+              coordinates.lat + "," + coordinates.lng
+            }&key=${apiKey}`
+          )
+          .then();
+        const responseData = response.data;
+        if (response.status == 200) {
+          let address: string[] = (responseData.results[0]
+            .formatted_address as string).split(",");
+          let place = address[0];
+          let city = address[1].split(" ");
+          place != "Unnamed Road"
+            ? (activity.value.place = place)
+            : (activity.value.place = ""); //Setting the place value
+          city = city.filter((element) => {
+            //Filters away city names that is not valid
+            if (element == "" || !isNaN(Number(element))) {
+              return false;
             }
-        } catch (error) {
-        //Something went wrong, user has to write place and city
+            return true;
+          });
+          city[0] || city[0] != "Unnamed"
+            ? (activity.value.city = city[0])
+            : (activity.value.city = ""); //Setting the city value
         }
+      } catch (error) {
+        //Something went wrong, user has to write place and city
+      }
     };
 
-    watch(() => coordinates.lat || coordinates.lng || activity.value.latitude || activity.value.longitude, (newValue, oldValue) => {
+    watch(
+      () =>
+        coordinates.lat ||
+        coordinates.lng ||
+        activity.value.latitude ||
+        activity.value.longitude,
+      (newValue, oldValue) => {
         if (newValue != oldValue) {
-            updateCityPlace();
+          updateCityPlace();
         }
-    });
-
-
+      }
+    );
 
     /**
      * Loads activity from database, has to set date, time, and difficulty.
@@ -443,7 +473,7 @@ export default defineComponent({
     });
 
     const goBack = (): void => {
-      router.back();
+      router.push("/activity-feed");
     };
 
     const isTitleValid = computed(() => {
@@ -830,5 +860,22 @@ select {
   margin: auto;
   justify-self: center;
   justify-items: center;
+}
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 10px 0px 10px 0px;
+  display: block;
+}
+
+.back-button:hover {
+  color: $secondary-color;
 }
 </style>

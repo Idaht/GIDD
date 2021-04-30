@@ -383,7 +383,7 @@ export default defineComponent({
     };
 
     const profile = (): void => {
-    router.push(`/profile/${store.getters.user.userId}`);
+    router.back();
     };
 
 

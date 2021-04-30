@@ -74,11 +74,16 @@
           </div>
         </div>
         <div id="activities">
+          <div v-if="isFeedEmpty">
+            <p>Ingen tilgjengelige aktiviteter</p>
+          </div>
+          <div v-else-if="!isFeedEmpty">
           <ActivityFeedItem
             v-for="activity in activities"
             :key="activity.activityId"
             :activityData="activity"
           />
+          </div>
         </div>
       </div>
     </div>
@@ -116,6 +121,7 @@ export default defineComponent({
     const amount: Ref<number | null> = ref(null);
     const sortingType: Ref<string> = ref("Sortering");
     const searchQuery: Ref<string> = ref("");
+    const isFeedEmpty = ref(false);
 
     const getDifficulty = computed(() => {
       let difficulty = 0;
@@ -145,6 +151,11 @@ export default defineComponent({
       try {
         const response = await axios.get("/activities");
         activities.value = response.data as IActivity[];
+        if (activities.value.length === 0 || activities.value === []) {
+          isFeedEmpty.value = true;
+        } else {
+          isFeedEmpty.value = false;
+        }
       } catch (error) {
         router.push("/error");
       }
@@ -188,6 +199,11 @@ export default defineComponent({
           filter.value
         );
         activities.value = response.data as IActivity[];
+        if (activities.value.length === 0 || activities.value === []) {
+          isFeedEmpty.value = true;
+        } else {
+          isFeedEmpty.value = false;
+        }
       } catch (error) {
         router.push("/error");
       }
@@ -212,6 +228,7 @@ export default defineComponent({
       mapViewClicked,
       activities,
       makeActivity,
+      isFeedEmpty,
     };
   },
 });

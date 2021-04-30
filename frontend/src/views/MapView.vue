@@ -23,7 +23,7 @@
                 type="text"
                 id="search"
                 v-model="searchQuery"
-                @change="sortClicked"
+                @change="filterClicked"
                 class="lower-header-item"
                 placeholder="Søk"
               />
@@ -36,7 +36,7 @@
               <input
                 type="checkbox"
                 v-model="easyCheckbox"
-                @change="sortClicked"
+                @change="filterClicked"
               />
             </div>
             <div class="checkbox-label">
@@ -44,7 +44,7 @@
               <input
                 type="checkbox"
                 v-model="mediumCheckbox"
-                @change="sortClicked"
+                @change="filterClicked"
               />
             </div>
             <div class="checkbox-label">
@@ -52,7 +52,7 @@
               <input
                 type="checkbox"
                 v-model="hardCheckbox"
-                @change="sortClicked"
+                @change="filterClicked"
               />
             </div>
           </div>

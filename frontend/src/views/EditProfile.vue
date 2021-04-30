@@ -1,5 +1,11 @@
 <template>
   <div id="edit-profile">
+    <div class="nav">
+    <button @click="profile" class="back-button">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      Gå tilbake
+    </button>
+    </div>
     <h2>Instillinger</h2>
     <h3>Endre profilbilde</h3>
     <ImageSelector
@@ -376,6 +382,11 @@ export default defineComponent({
       }
     };
 
+    const profile = (): void => {
+    router.push(`/profile/${store.getters.user.userId}`);
+    };
+
+
     return {
       user,
       password,
@@ -401,6 +412,7 @@ export default defineComponent({
       trainingLevelAsNumber,
       isProfileChanged,
       passwordNotChanged,
+      profile,
     };
   },
 });
@@ -499,4 +511,22 @@ label {
   color: $secondary-color;
   cursor: pointer;
 }
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 0;
+  display: block;
+}
+
+.back-button:hover {
+  color: $secondary-color;
+}
+
 </style>

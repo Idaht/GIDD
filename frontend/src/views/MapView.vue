@@ -226,11 +226,11 @@ h2 {
 }
 
 #view-list {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333333' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M9 5h11a1 1 0 010 2H9a1 1 0 110-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm-4.5-6.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 6a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0-12a1.5 1.5 0 110 3 1.5 1.5 0 010-3z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23c2c2c2' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M9 5h11a1 1 0 010 2H9a1 1 0 110-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm-4.5-6.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 6a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0-12a1.5 1.5 0 110 3 1.5 1.5 0 010-3z'/%3E%3C/svg%3E");
 }
 
 #view-map {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23c2c2c2' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 21c-1.5 0-7-6-7-11a7 7 0 1114 0c0 5-5.5 11-7 11zm0-8.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333333' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 21c-1.5 0-7-6-7-11a7 7 0 1114 0c0 5-5.5 11-7 11zm0-8.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z'/%3E%3C/svg%3E");
 }
 
 .icon {

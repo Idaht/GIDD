@@ -50,7 +50,7 @@ export default defineComponent({
       let val =
         user.value.profilePicture !== null
           ? user.value.profilePicture
-          : require("../assets/hamster-pfp.jpg");
+          : require("../../img/placeholder.png");
       return val;
     });
 

@@ -22,7 +22,6 @@
       Velg alle
     </button>
     <button v-else @click="setAbsentValuesForAll(false)">Fjern alle</button>
-    <button @click="goBack">Tilbake</button>
   </div>
 </template>
 
@@ -122,6 +121,19 @@ export default defineComponent({
 $primary-color: #282828;
 $secondary-color: #ea4b4b;
 $padding: 0.6rem 1rem 0.6rem 1rem;
+
+#absence-registration {
+    margin: 35px;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
+    padding: 20px;
+  }
+}
+
+button {
+  margin: $padding;
+}
 
 
 .back-button {

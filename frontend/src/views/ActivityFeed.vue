@@ -1,75 +1,89 @@
 <template>
   <div>
-    <div id="activity-feed">
-      <div>
-        <div class="header" id="upper-header">
-          <div id="header-title">
-            <h2>Finn aktiviteter</h2>
+    <div>
+      <div id="activity-feed">
+        <div>
+          <div class="header" id="upper-header">
+            <div id="header-title">
+              <h2>Finn aktiviteter</h2>
+            </div>
+            <div id="view-container">
+              <button id="view-list" class="icon"></button>
+              <button
+                @click="mapViewClicked"
+                id="view-map"
+                class="icon"
+              ></button>
+            </div>
           </div>
-          <div id="view-container">
-            <button id="view-list" class="icon"></button>
-            <button @click="mapViewClicked" id="view-map" class="icon"></button>
+
+          <div class="header" id="lower-header">
+            <div id="test">
+              <div>
+                <select
+                  class="dropdown lower-header-item"
+                  v-model="sortingType"
+                  @change="sortClicked"
+                >
+                  <option selected hidden>Sortering</option>
+                  <option value="DATE">Startdato</option>
+                  <option value="DISTANCE">Avstand</option>
+                  <option value="PARTICIPANT_AMOUNT">Antall deltakere</option>
+                  <option value="REMOVE_SORT">Nullstill</option>
+                </select>
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  id="search"
+                  v-model="searchQuery"
+                  @change="sortClicked"
+                  class="lower-header-item"
+                  placeholder="Søk"
+                />
+              </div>
+            </div>
+
+            <div id="filter-boxes" class="lower-header-item">
+              <div class="checkbox-label">
+                <label for="easy">Lett</label>
+                <input
+                  type="checkbox"
+                  v-model="easyCheckbox"
+                  @change="sortClicked"
+                />
+              </div>
+              <div class="checkbox-label">
+                <label for="easy">Middels</label>
+                <input
+                  type="checkbox"
+                  v-model="mediumCheckbox"
+                  @change="sortClicked"
+                />
+              </div>
+              <div class="checkbox-label">
+                <label for="easy">Krevende</label>
+                <input
+                  type="checkbox"
+                  v-model="hardCheckbox"
+                  @change="sortClicked"
+                />
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="header" id="lower-header">
-          <select
-            class="dropdown lower-header-item"
-            v-model="sortingType"
-            @change="sortClicked"
-          >
-            <option selected hidden>Sortering</option>
-            <option value="DATE">Førstkommende</option>
-            <option value="DISTANCE">Avstand</option>
-            <option value="PARTICIPANT_AMOUNT">Antall deltakere</option>
-            <option value="NONE">Nullstill</option>
-          </select>
-          <div id="filter-boxes" class="lower-header-item">
-            <div class="checkbox-label">
-              <label for="easy">Lett</label>
-              <input
-                type="checkbox"
-                v-model="easyCheckbox"
-                @change="sortClicked"
-              />
-            </div>
-            <div class="checkbox-label">
-              <label for="easy">Medium</label>
-              <input
-                type="checkbox"
-                v-model="mediumCheckbox"
-                @change="sortClicked"
-              />
-            </div>
-            <div class="checkbox-label">
-              <label for="easy">Hardt</label>
-              <input
-                type="checkbox"
-                v-model="hardCheckbox"
-                @change="sortClicked"
-              />
-            </div>
-          </div>
-          <input
-            type="text"
-            id="search"
-            v-model="searchQuery"
-            @change="sortClicked"
-            class="lower-header-item"
-            placeholder="Søk"
+        <div id="activities">
+          <ActivityFeedItem
+            v-for="activity in activities"
+            :key="activity.activityId"
+            :activityData="activity"
           />
         </div>
       </div>
-      <div id="activities">
-        <ActivityFeedItem
-          v-for="activity in activities"
-          :key="activity.activityId"
-          :activityData="activity"
-        />
-      </div>
     </div>
+    <div id="add-activity" @click="makeActivity">+</div>
   </div>
-  <div id="add-activity" @click="makeActivity">+</div>
 </template>
 
 <script lang="ts">
@@ -216,8 +230,11 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
   @media only screen and (min-width: 600px) {
     width: 45%;
     margin: auto;
-    grid-template-columns: 1fr 1fr;
   }
+}
+
+h2 {
+  text-align: center;
 }
 
 .header {
@@ -249,11 +266,11 @@ h2 {
 }
 
 #view-list {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23C2C2C2' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M9 5h11a1 1 0 010 2H9a1 1 0 110-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm-4.5-6.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 6a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0-12a1.5 1.5 0 110 3 1.5 1.5 0 010-3z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333333' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M9 5h11a1 1 0 010 2H9a1 1 0 110-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm0 6h11a1 1 0 010 2H9a1 1 0 010-2zm-4.5-6.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 6a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0-12a1.5 1.5 0 110 3 1.5 1.5 0 010-3z'/%3E%3C/svg%3E");
 }
 
 #view-map {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333333' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 21c-1.5 0-7-6-7-11a7 7 0 1114 0c0 5-5.5 11-7 11zm0-8.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23c2c2c2' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 21c-1.5 0-7-6-7-11a7 7 0 1114 0c0 5-5.5 11-7 11zm0-8.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z'/%3E%3C/svg%3E");
 }
 
 .icon {
@@ -271,23 +288,51 @@ h2 {
   flex-direction: column;
   width: 10%;
   align-items: center;
-  margin-left: 30px;
 }
 
 #filter-boxes {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  width: 100%;
+  grid-template-columns: 33% 33% 33%;
+  border-radius: 10px;
+  border-bottom: 2px #e1e1e1 solid;
+  justify-items: center;
+  justify-self: center;
+  padding: 5px 0 5px 0;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
+  }
 }
 
 #search {
   display: block;
 }
 
+#test {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+}
+
+#lower-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 10px;
+  align-items: flex-end;
+}
+
+input {
+  width: 100%;
+}
+
 .lower-header-item {
   border-radius: 20px;
   font-size: 10px;
   letter-spacing: 1px;
-  text-transform: uppercase;
+  border-color: #9f9f9f;
+  color: #27282b;
   font-weight: 600 !important;
   padding: 5px 10px 5px 10px;
 }
@@ -318,12 +363,14 @@ select {
     no-repeat 93% 50%;
   font-family: "Mulish", sans-serif;
   font-weight: 600;
+  width: 100%;
   letter-spacing: 1px;
   -moz-appearance: none;
   -webkit-appearance: none;
   -webkit-border-radius: 0px;
   appearance: none;
   outline-width: 0;
+  border-color: #bbbbbb;
 }
 
 #activities {

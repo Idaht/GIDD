@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import idatt2106.group3.backend.Model.DTO.MessageDTO;
@@ -22,7 +21,6 @@ public class Message {
     private String message;
     private LocalDateTime timeSent;
 
-    //@JsonIgnoreProperties({"messages"})
     @ManyToOne
     @JoinColumn(name = "chatId", referencedColumnName = "chatId")
     private Chat chat;

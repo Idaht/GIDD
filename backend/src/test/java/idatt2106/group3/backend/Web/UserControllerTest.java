@@ -80,8 +80,7 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.email", containsStringIgnoringCase("test1@test.com")))
                 .andExpect(jsonPath("$.dateOfBirth", containsStringIgnoringCase("2005-01-01")))
                 .andExpect(jsonPath("$.trainingLevel", is("EASY")))
-                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))
-                //.andExpect(jsonPath("$.profilePic", instanceOf(Blob.class)))               
+                .andExpect(jsonPath("$.role", containsStringIgnoringCase("Organizer")))               
                 .andReturn();
     }
 

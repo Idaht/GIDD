@@ -1,7 +1,7 @@
 <template>
   <div id="activity" @click="activityClicked">
     <div id="map">
-      <img v-if="activityHasImage" :src="getImagesFromDb" />
+      <img id="feed-img" v-if="activityHasImage" :src="getImagesFromDb" />
       <img
         v-else
         id="map-img"
@@ -99,10 +99,11 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #activity {
   cursor: pointer;
   text-align: left;
+  width: 100%;
 }
 
 #activity:hover {
@@ -119,17 +120,21 @@ p {
   margin: 0px;
 }
 
-#map-img {
+#map {
+  width: 100%;
+  margin: 15px 0px 15px 0px;
+}
+
+#map-img,
+#feed-img {
   border-radius: 20px;
   width: 100%;
+  object-fit: cover;
+  height: 200px;
+  object-position: center;
   @media only screen and (min-width: 600px) {
     width: 100%;
-    height: auto;
+    height: 300px;
   }
 }
 </style>
-
-function getActivityDifficultyName(difficulty: number): any { throw new
-Error("Function not implemented."); } function
-getActivityDifficultyName(difficulty: number): any { throw new Error("Function
-not implemented."); }

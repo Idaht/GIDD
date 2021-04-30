@@ -8,6 +8,7 @@ import idatt2106.group3.backend.Model.DTO.User.UserDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserEditDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserWithPasswordDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
+import idatt2106.group3.backend.Repository.MessageRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -41,6 +42,8 @@ public class UserService
     private ActivityRepository activityRepository;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private MessageRepository messageRepository;
 
     /**
      * Finds user in Database, and creates a DTO object from it
@@ -118,6 +121,7 @@ public class UserService
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             user.getOrganizedActivities().stream().forEach(activity -> activityService.deleteActivity(activity.getActivityId()));
+            if(user.getMessages() != null)messageRepository.deleteAll(user.getMessages());
 
             userRepository.delete(user);
             return !userRepository.existsById(userId);

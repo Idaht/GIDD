@@ -78,7 +78,6 @@
     <div>
       <h3>Endre sted</h3>
       <div id="map-view">
-            <!--TODO: ':center' fjernes når appen finner brukers lokasjon selv-->
             <Map id="map" :center="getCoordinates" :setLocation="true" :getLocation="true" :activityData="[]"></Map>
       </div>
       <div id="place-container">
@@ -323,7 +322,7 @@ export default defineComponent({
 
 
     const getCoordinates = computed((): ICoordinates => {
-        return { lat: activity.value.latitude, lng: activity.value.longitude } as ICoordinates;
+        return coordinates;
     });
 
     const updateCityPlace = async () => {
@@ -348,11 +347,12 @@ export default defineComponent({
         }
     };
 
-    watch(() => coordinates.lat || coordinates.lng, (newValue, oldValue) => {
+    watch(() => coordinates.lat || coordinates.lng || activity.value.latitude || activity.value.longitude, (newValue, oldValue) => {
         if (newValue != oldValue) {
             updateCityPlace();
         }
     });
+
 
     /**
      * Loads activity from database, has to set date, time, and difficulty.
@@ -361,7 +361,7 @@ export default defineComponent({
       try {
         const response = await axios.get(`/activities/${props.id}`);
         activity.value = response.data as IEditActivity;
-
+        console.log(activity.value);
         durationDisplay.value = activity.value.durationMinutes / 60;
 
         selectedYear.value = activity.value.startTime.substring(0, 4);

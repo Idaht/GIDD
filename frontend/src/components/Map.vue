@@ -47,7 +47,8 @@ export default defineComponent({
 
     function initMap() : google.maps.Map {
       //If the Map component has a spesified center it will use it, if not, it will get a geolocation
-      const newCenter: ICoordinates = props.center ? props.center : getUsersLocation();
+      let newCenter: ICoordinates = props.center ? props.center : getUsersLocation();
+      console.log(props.center);
       map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
           center: newCenter,
           zoom: props.zoom || 14,
@@ -56,7 +57,7 @@ export default defineComponent({
       });
       if (props.setLocation) {
         marker = new window.google.maps.Marker({
-            position: map.getCenter();
+            position: map.getCenter()
           });
         marker.setMap(map);
       }
@@ -97,6 +98,13 @@ export default defineComponent({
       //Browser doesn't support geolcation
       return pos;
     };
+
+    watch(() => choosenLocation.lat | choosenLocation.lng, (newValue, oldValue) => {
+      console.log("Map center set");
+      if (newValue != oldValue) {
+        map.setCenter(choosenLocation);
+      }
+    });
 
     watch(() => props.activityData, (newValue, oldValue) => {
       if (newValue != oldValue) {

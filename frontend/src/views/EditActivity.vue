@@ -109,12 +109,8 @@
       </div>
     </div>
     <div>
-      <h3>Endre varigheten på aktiviteten</h3>
-      <input
-        v-model="durationDisplay"
-        type="duration"
-        placeholder="Varighet"
-      />
+      <h3>Endre varigheten på aktiviteten (timer)</h3>
+      <input v-model="durationDisplay" type="duration" placeholder="Varighet" />
       <div class="error-message-container">
         <p class="error-message" v-if="!isDurationValid">
           Oppgi gyldig varighet

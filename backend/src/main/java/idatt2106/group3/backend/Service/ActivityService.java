@@ -132,6 +132,7 @@ public class ActivityService
             activity.setPrivateActivity(activityRegDTO.isPrivateActivity());
             activity.setMaxParticipants(activityRegDTO.getMaxParticipants());
             if(activityRegDTO.getActivityPicture() != null)activity.setActivityPicture(activityRegDTO.getActivityPicture().getBytes());
+            activity.getUsers().stream().forEach(user -> emailSender.sendEditMail(user, activity));
             return new ActivityDTO(activityRepository.save(activity));
         }
         return null;

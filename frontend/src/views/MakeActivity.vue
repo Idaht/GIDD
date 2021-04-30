@@ -1,5 +1,9 @@
 <template>
   <div id="make-activity">
+      <button @click="activityFeed" class="back-button">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      Gå tilbake
+    </button>
     <h2>Opprett en ny aktivitet</h2>
     <ImageSelector
       labelName=""
@@ -624,6 +628,10 @@ export default defineComponent({
       delete activity.activityPicture;
     };
 
+    const activityFeed = (): void => {
+    router.push("/");
+    };
+
     return {
       makeActivity,
       user,
@@ -776,7 +784,7 @@ select {
 
 #description {
   height: 150px;
-  width: 100%;
+  width: 90%;
   align-content: flex-start;
   border: 1px solid #9f9f9f;
   border-radius: 20px;
@@ -794,5 +802,22 @@ select {
   font-size: 10px;
   line-height: 30px;
   margin: 0px;
+}
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 0;
+  float:left;
+}
+
+.back-button:hover {
+  color: $secondary-color;
 }
 </style>

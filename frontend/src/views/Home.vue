@@ -1,26 +1,29 @@
 <template>
-  <header>
-    <div id="header-intro">
-      <div id="header-intro-content">
+  <div id="home">
+    <div id="home-intro">
+      <div id="home-intro-content">
         <h4>Gidd å bli kjent med nye folk</h4>
       </div>
     </div>
-    <div id="header-read-more">
-      <div id="header-read-more-signup">
-        <router-link class="router-link-button" to="/sign-up"
-          >Opprett bruker</router-link
-        >
-      </div>
-      <div id="header-read-more-login">
-        Har du allerede bruker?
-        <router-link to="/log-in">Logg inn</router-link>
-      </div>
-      <div @click="scrollToReadMore" id="header-read-more-scroll">
-        Les mer
-        <i class="fa fa-caret-down"></i>
+
+    <div id="info">
+      <div id="info-read-more">
+        <div id="info-read-more-signup">
+          <router-link class="router-link-button" to="/sign-up"
+            >Opprett bruker</router-link
+          >
+        </div>
+        <div id="info-read-more-login">
+          Har du allerede bruker?
+          <router-link id="log-in" to="/log-in">Logg inn</router-link>
+        </div>
+        <div @click="scrollToReadMore" id="info-read-more-scroll">
+          Les mer
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </div>
       </div>
     </div>
-  </header>
+  </div>
 </template>
 
 <script lang="ts">
@@ -32,14 +35,14 @@ export default defineComponent({
   components: {},
   setup() {
     const router = useRouter();
-    const scrollToReadMore = ref(()=>{ 
-      router.push("/read-more")
+    const scrollToReadMore = ref(() => {
+      router.push("/read-more");
     });
 
-    return{
+    return {
       scrollToReadMore,
-    }
-  }
+    };
+  },
 });
 </script>
 
@@ -50,32 +53,35 @@ export default defineComponent({
 $primary-color: #282828;
 $secondary-color: #ea4b4b;
 
-header {
-  display: grid;
-  grid-template-rows: 130% 20%;
-  margin-top: -84px;
-  z-index: -1;
-  @media only screen and (min-width: 600px) {
-    grid-template-rows: 100% 20%;
-  }
-}
-
-#header-intro {
-  background: url("../../img/background.png");
-  background-position: center;
+#home {
+  height: 100%;
+  background: url("../../img/background.jpg");
+  background-position: 40% 50%;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  grid-row: 1;
+  margin-top: -84px;
+  bottom: 0px;
+  z-index: -1;
+  overflow: hidden;
+  @media only screen and (min-width: 600px) {
+    background-position: 50% 60%;
+  }
 }
 
-#header-intro-content {
-  text-align: left;
-  width: 70%;
-  float: left;
-  padding: 35px;
-  margin-top: 40px;
+#home-intro {
+  width: 100%;
+  @media only screen and (min-width: 600px) {
+    width: 50%;
+  }
+}
+
+#home-intro-content {
+  text-align: center;
+  width: 50%;
+  margin: auto;
+  padding-top: 100px;
 }
 
 h4 {
@@ -84,27 +90,42 @@ h4 {
   color: #282828;
   letter-spacing: 0cm;
   line-height: 2.1rem;
+}
+
+#info {
+  width: 100%;
   @media only screen and (min-width: 600px) {
-    color: #ffffff;
+    width: 50%;
+    bottom: 100px;
   }
 }
 
-#header-read-more {
-  grid-row: 2;
-  padding: 1.3rem;
+#info-read-more {
+  width: 100%;
+  margin: auto;
+  @media only screen and (min-width: 600px) {
+    padding: 1.3rem;
+    width: 50%;
+  }
 }
 
-#header-read-more-signup {
+#info-read-more-signup {
   padding: 1rem;
 }
 
-#header-read-more-login {
+#info-read-more-login {
   padding: 0.5rem;
   font-size: 0.833rem;
 }
 
-#header-read-more-scroll {
+#info-read-more-scroll {
   color: $secondary-color;
   padding: 1.2rem;
+}
+
+#log-in {
+  color: $secondary-color;
+  text-shadow: 0 0 7px #ffffff;
+  font-weight: 700;
 }
 </style>

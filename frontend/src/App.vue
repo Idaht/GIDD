@@ -27,10 +27,13 @@ $primary-color: #27282b;
 $secondary-color: #ea4b4b;
 $padding: 0.6rem 1rem 0.6rem 1rem;
 
+html,
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  padding-bottom: 10px;
 }
 
 #app {
@@ -41,8 +44,9 @@ body {
   color: $primary-color;
   font-size: 16px;
   letter-spacing: 0.04rem;
-  display: grid;
   margin-top: 90px;
+  display: grid;
+  height: 100%;
   @media only screen and (min-width: 600px) {
     margin-top: 110px;
   }

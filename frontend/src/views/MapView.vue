@@ -60,8 +60,7 @@
       </div>
       <div id="activities">
         <Map
-          id="map"
-          :center="{ lat: 63.43049, lng: 10.39506 }"
+          id="map" 
           :activityData="activities"
         >
         </Map>

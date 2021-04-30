@@ -18,7 +18,7 @@ public class Notification {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="userId", referencedColumnName = "userId", insertable = false, updatable = false)
+    @JoinColumn(name="userId", referencedColumnName = "userId")
     private User user;
 
     public Notification(String notificationText, User user) {

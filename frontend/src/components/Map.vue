@@ -30,6 +30,7 @@ export default defineComponent({
             required: true,
         },
         getLocation: Boolean,
+        setLocation: Boolean,
     },
 
   setup(props) {
@@ -53,6 +54,12 @@ export default defineComponent({
           mapTypeId: props.mapTypeId || "roadmap",
           disableDefaultUI: props.disableDefaultUI || true,
       });
+      if (props.setLocation) {
+        marker = new window.google.maps.Marker({
+            position: map.getCenter()
+          });
+        marker.setMap(map);
+      }
       if (props.getLocation) {
         //If the map will be used to retrive a postion based on a click
         map.addListener("click", (mapsMouseEvent: any) => {
@@ -91,10 +98,17 @@ export default defineComponent({
       return pos;
     };
 
+    watch(() => props.center, (newValue, oldValue) => {
+      if (newValue != oldValue && props.setLocation) {
+        map.setCenter(newValue as ICoordinates);
+        marker.setPosition(map.getCenter());
+      }
+    });
+
     watch(() => props.activityData, (newValue, oldValue) => {
       if (newValue != oldValue) {
         markers.value.forEach(element => {
-        element.setVisible(false);
+          element.setVisible(false);
         });
 
         markers.value = [];

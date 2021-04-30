@@ -138,12 +138,12 @@ label {
   }
 }
 
-#profile-picture {
-  width: 100px;
+img#profile-picture {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  background-color: #999;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
+  margin: 20px;
 }
 
 #profile-name-wrapper {

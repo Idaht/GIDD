@@ -593,7 +593,7 @@ h5 {
   overflow:scroll;
   text-align: left;
   color: $primary-color;
-  margin-bottom: 130px;
+  padding-bottom: 100px;
   @media only screen and (min-width: 600px) {
     width: 30%;
     margin: auto;
@@ -644,17 +644,15 @@ h5 {
 }
 
 .fitness-form {
-  margin-top:5px;
+  margin-top:10px;
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  align-items: center;
 }
 
 #fitness-form-boxes {
   display: grid;
   text-align: center;
   grid-template-columns: 1fr 1fr 1fr;
+  margin: $padding;
 }
 
 #fitness-form-input {
@@ -682,7 +680,7 @@ select:focus {
 }
 
 #conditions-container {
-  padding-top: 5px;
+  padding-top: 15px;
   padding-bottom: 15px;
   height: 60px;
   font-weight: 600;
@@ -749,7 +747,7 @@ button:disabled {
   overflow-y: scroll;
   font-size: 0.8rem;
   line-height: 1rem;
-  height: 16rem;
+  height: 200px;
   margin-bottom: 20px;
 }
 

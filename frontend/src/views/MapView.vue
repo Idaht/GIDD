@@ -152,6 +152,10 @@ export default defineComponent({
       router.push("/activity-feed");
     };
 
+    const makeActivity = (): void => {
+      router.push("/make-activity");
+    };
+
     return {
       feedViewClicked,
       activities,
@@ -162,6 +166,7 @@ export default defineComponent({
       hardCheckbox,
       searchQuery,
       amount,
+      makeActivity,
     };
   },
 });

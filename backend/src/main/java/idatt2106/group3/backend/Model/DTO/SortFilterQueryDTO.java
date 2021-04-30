@@ -2,6 +2,9 @@ package idatt2106.group3.backend.Model.DTO;
 
 import idatt2106.group3.backend.Enum.SortingType;
 
+/**
+ * DTO used for sorting and filtering of activities
+ */
 public class SortFilterQueryDTO {
     private SortingType sortingType;
     private String searchQuery;
@@ -10,7 +13,9 @@ public class SortFilterQueryDTO {
     private double userLongitude;
     private double userLatitude;
 
-    public SortFilterQueryDTO(){}
+    public SortFilterQueryDTO(){
+        // Must be empty constructor
+    }
 
     public SortingType getSortingType() {
         return sortingType;

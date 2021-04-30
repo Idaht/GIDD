@@ -28,7 +28,7 @@ public class ChatService
     private MessageRepository messageRepository;
 
     /**
-     * Returns a list of all chats stored in the database
+     * Gets a list of all chats stored in the database
      * @return List of chats
      */
     public List<Chat> getChats() {
@@ -37,9 +37,9 @@ public class ChatService
     }
 
     /**
-     * Returns a Chat object if it exists in the database
+     * Gets a Chat object if it exists in the database
      * @param chatId
-     * @return
+     * @return Chat
      */
     public Chat getChat(long chatId) {
         LOGGER.info("getChat(long chatId) called with chatId: {}", chatId); 
@@ -54,7 +54,7 @@ public class ChatService
     /**
      * Stores a given Chat object in the database
      * @param chat
-     * @return
+     * @return Chat
      */
     public Chat createChat(Chat chat) {
         LOGGER.info("createChat(Chat chat) called with chatId: {}", chat.getChatId()); 
@@ -82,7 +82,7 @@ public class ChatService
     /**
      * Returns all messages written in the given Chat
      * @param chatId
-     * @return null or a Set of all Message objects
+     * @return List of all Message objects, empty list in case chat not exists
      */
     public List<MessageDTO> getMessages(long chatId) {
         LOGGER.info("getMessages(long chatId) called with chatId: {}", chatId); 
@@ -97,9 +97,9 @@ public class ChatService
 
 
     /**
-     * Deletes Chat object from the database from the chatId
+     * Deletes Chat object from the database based on chatId
      * @param chatId
-     * @return boolean if it still exists in the database
+     * @return true if was deleted, false if it still exists
      */
     public boolean deleteChat(long chatId) {
         LOGGER.info("deleteChat(long chatId) called with chatId: {}", chatId);

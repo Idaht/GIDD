@@ -23,8 +23,8 @@ public class EmailConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailConfiguration.class);
 
     /**
-     * Creates a email configuration by connecting to an Gmail account
-     * Password and username read from config.properties file
+     * Creates an email configuration by connecting to an Gmail account
+     * Password and username are read from config.properties file
      * @return JavaMailSender
      */
     @Bean

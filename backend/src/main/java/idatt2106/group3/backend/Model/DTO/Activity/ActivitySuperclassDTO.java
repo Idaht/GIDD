@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+/**
+ * Superclass for activity DTO classes
+ */
 public class ActivitySuperclassDTO {
     private String title;
     private String type;

@@ -2,6 +2,10 @@ package idatt2106.group3.backend.Model.DTO.Activity;
 
 import java.util.Set;
 
+/**
+ * DTO used for transfers of data between backend and frontend
+ * about users absent from activities
+ */
 public class AbsenceDTO {
     private Set<Long> absentUsersId;
 

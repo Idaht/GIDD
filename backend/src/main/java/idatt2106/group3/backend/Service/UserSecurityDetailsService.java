@@ -31,6 +31,9 @@ public class UserSecurityDetailsService implements UserDetailsService{
     /**
      * Overrides the method from UserDetailsService interface. We use email as user's username in our case.
      * Gets user with email from our MySQL database and creates an UserSecurityDetails object and returns its
+     * @param email
+     * @return UserDetails
+     * @throws UsernameNotFoundException
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

@@ -19,11 +19,21 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
+/**
+ * Handler class for JWT (JSON Web Tokens)
+ */
 public class JWTHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JWTHandler.class);
 
     private JWTHandler(){}
 
+    /**
+     * Method for verifying JWT. This is important to
+     * make sure that a user has the rights to excecute 
+     * authorised tasks.
+     * @param token
+     * @return Authentication created from the JWT
+     */
     public static Authentication verifyToken(String token){
         try{
             //Parses and verifies token

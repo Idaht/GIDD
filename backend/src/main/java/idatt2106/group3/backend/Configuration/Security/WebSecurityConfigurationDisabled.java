@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 /**
  * Configuration used for testing purposes
- * Turns of all WebSecurity
+ * Turns off all WebSecurity
  * Not used in SecurityControllerTest
  */
 @Configuration

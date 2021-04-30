@@ -91,7 +91,6 @@ public class ActivityController
     }
 
     @GetMapping("/{activity_id}/organizer/{user_id}")
-    //TODO: ADD AUTH
     public ResponseEntity<Boolean> isOrganizerOfActivity(@PathVariable("activity_id") long activityId, @PathVariable("user_id") long userId) {
         ActivityDTO activityDTO = activityService.getActivity(activityId);
         UserDTO userDTO = userService.getUser(userId);

@@ -38,6 +38,9 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
     /**
      * Attempts to login to an existing user from request username and password
+     * @param request
+     * @param response
+     * @throws AuthenticationException
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)

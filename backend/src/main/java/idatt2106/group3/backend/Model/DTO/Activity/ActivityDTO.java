@@ -4,6 +4,9 @@ import java.nio.charset.StandardCharsets;
 
 import idatt2106.group3.backend.Model.Activity;
 
+/**
+ * DTO used for transfers of data about activities
+ */
 public class ActivityDTO extends ActivitySuperclassDTO {
     private long activityId;
     private long organizerId;

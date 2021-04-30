@@ -48,7 +48,7 @@ public class ActivityService
     private EmailComponent emailSender;
 
     /**
-     * Returns activity from activityId stored in the database
+     * Returns activity based on activityId stored in the database
      * @param activityId
      * @return ActivityDTO object
      */
@@ -71,7 +71,7 @@ public class ActivityService
     }
 
     /**
-     * Returns a sorted or filtered list from what the user wants
+     * Returns a sorted or filtered list based on filters defined by the user
      * @param filter
      * @return List of ActivityDTO objects
      */
@@ -107,10 +107,10 @@ public class ActivityService
     }
 
     /**
-     * Finds the activity from id and changes all given fields in activityRegDTO
+     * Finds the activity based on id and changes all given fields based on given activityRegistrationDTO
      * @param activityId
      * @param activityRegDTO input DTO object
-     * @return ActivityDTO object
+     * @return ActivityDTO
      */
     public ActivityDTO editActivity(long activityId, ActivityRegistrationDTO activityRegDTO)
     {
@@ -139,9 +139,10 @@ public class ActivityService
     }
 
     /**
-     * Finds activity from id, removes and sends cancelation mails to all participants, and deletes the activity from the database
+     * Finds activity based on id, removes it, sends cancellation emails
+     * to all participants, and deletes the activity from the database
      * @param activityId
-     * @return if deletion was successful
+     * @return true if deletion was successful, false otherwise
      */
     public boolean deleteActivity(long activityId)
     {
@@ -179,7 +180,7 @@ public class ActivityService
      * Checks if both are stored in database
      * @param activityId
      * @param userId
-     * @return boolean
+     * @return true if user was added successfully
      */
     public boolean addUserToActivity(long activityId, long userId)
     {
@@ -215,9 +216,9 @@ public class ActivityService
     }
 
     /**
-     * Returns activity Chat object
+     * Returns activity's Chat object
      * @param activityId
-     * @return Chat object
+     * @return Chat entity object
      */
     public Chat getChat(long activityId){
         Optional<Activity> optionalActivity = activityRepository.findById(activityId);
@@ -228,10 +229,10 @@ public class ActivityService
     }
 
     /**
-     * Returns a boolean value if a user is the organizer of the activity
+     * Checks if a user is the organizer of the activity
      * @param activityId
      * @param userId
-     * @return boolean
+     * @return true if user is the orhanizer, false otherwise
      */
     public boolean checkIfOrganizerOfActivity(long activityId, long userId){
         Optional<Activity> optionalActivity = activityRepository.findById(activityId);
@@ -242,10 +243,10 @@ public class ActivityService
     }
 
     /**
-     * Returns boolean based on if the user is a participant of the given AcitivityId
+     * Checks if the user is a participant of an existing activity based on activityId
      * @param activityId
      * @param userId
-     * @return true or false
+     * @return true if participant, false otherwise
      */
     public boolean checkIfParticipant(long activityId, long userId){
         Optional<Integer> optionalActivityId = activityRepository.findIfUserIsParticipantOfActivity(userId, activityId); 
@@ -254,7 +255,7 @@ public class ActivityService
 
     /**
      * Method that increases "absence" counter for users that were absent in an activity.
-     * Also sets activity's markedAbsence boolean to true, so that we know that that activity
+     * Also sets activity's markedAbsence boolean to true, so that we know that the activity
      * already has marked user absences.
      * @param activityId
      * @param absenceDTO
@@ -277,7 +278,7 @@ public class ActivityService
     }
 
     /**
-     * Returns names of all participants of the given activity
+     * Returns names of all participants of an existing activity based on activityId
      * @param activityId
      * @return Set of UserNameDTO objects
      */
@@ -298,10 +299,10 @@ public class ActivityService
     }
 
     /**
-     * Returns a list from Repository depending on DTO from frontend
+     * Returns a list of activities from repository depending on sort/filter DTO from frontend
      * @param filter SortFilterQueryDTO input
      * @param searchQuery title and description search substring
-     * @return List of activities
+     * @return List of filtered/sorted activities
      */
     private List<Activity> sortAndFilter(SortFilterQueryDTO filter, String searchQuery){
         

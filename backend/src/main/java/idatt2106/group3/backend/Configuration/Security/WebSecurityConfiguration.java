@@ -36,8 +36,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private UserSecurityDetailsService userSecurityDetailsService;
 
     /**
+     * Method for configuration of http.
      * CSRF is currently countered by CORS, and this app is only used on localhost currently
      * Authentication by username and password, and JWT.
+     * @param http
+     * @throws Exception
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -58,6 +61,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Sets authentication provider defined in method under
+     * @param auth
+     * @throws Exception
      */ 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -68,7 +73,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
      * Sets passwordEncoder and userDetailsService from service folder
      * Needed for getting users from MySQL Database and not In-Memory database
      * Allows authentication from MySQL Database
-     * @return authentication provider
+     * @return DaoAuthenticationProvider
      */
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {

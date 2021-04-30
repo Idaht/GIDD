@@ -4,6 +4,10 @@ import java.time.LocalDate;
 
 import idatt2106.group3.backend.Enum.Difficulty;
 
+/**
+ * DTO class for sending information between backend and frontend
+ * when editing user information
+ */
 public class UserEditDTO extends UserSuperclassDTO {
     private String newPassword;
     private String oldPassword;

@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import idatt2106.group3.backend.Enum.Difficulty;
 
 /**
- * DTO class for User POST-requests: POST api/v1/users
+ * DTO class for User POST-requests when registering a new user
  */
 public class UserWithPasswordDTO extends UserSuperclassDTO{
     private String password;

@@ -16,6 +16,9 @@ import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.ChatRepository;
 
+/**
+ * Component class responsible for creating and scheduling of activities 
+ */
 @Component
 public class ScheduledActivityCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledActivityCreator.class);

@@ -13,6 +13,7 @@ public class CORSConfiguration {
     
     /**
 	 * Allows CORS to frontend application
+	 * @return new WebMvcConfigurer
 	 */
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {

@@ -649,10 +649,8 @@ h5 {
 }
 
 #fitness-form-boxes {
-  display: grid;
   text-align: center;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin: $padding;
+  margin: 15px 0px 15px 0px;
 }
 
 #fitness-form-input {
@@ -680,7 +678,7 @@ select:focus {
 }
 
 #conditions-container {
-  padding-top: 15px;
+  padding-top: 25px;
   padding-bottom: 15px;
   height: 60px;
   font-weight: 600;

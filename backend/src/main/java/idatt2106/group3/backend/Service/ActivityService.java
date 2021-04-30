@@ -4,6 +4,7 @@ import idatt2106.group3.backend.Component.EmailComponent;
 import idatt2106.group3.backend.Enum.SortingType;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
+import idatt2106.group3.backend.Model.Message;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserSecurityDetails;
 import idatt2106.group3.backend.Model.DTO.SortFilterQueryDTO;
@@ -13,6 +14,7 @@ import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserNameDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.ChatRepository;
+import idatt2106.group3.backend.Repository.MessageRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
 import org.slf4j.Logger;
@@ -40,6 +42,8 @@ public class ActivityService
     private UserRepository userRepository;
     @Autowired
     private ChatRepository chatRepository;
+    @Autowired
+    private MessageRepository messageRepository;
     @Autowired(required = false)
     private EmailComponent emailSender;
 
@@ -148,6 +152,7 @@ public class ActivityService
             if(activity.getStartTime().plusMinutes(activity.getDurationMinutes()).isBefore(LocalDateTime.now())) {
                 return false;
             }
+    
 
             List<User> activityUsers = new ArrayList<>();
             for(User user : activity.getUsers()){
@@ -158,6 +163,11 @@ public class ActivityService
             userRepository.saveAll(activityUsers);
             activityRepository.save(activity);
             activityRepository.deleteById(activityId);
+            if(activity.getChat() != null){
+                Set<Message> messages = activity.getChat().getMessages();
+                messageRepository.deleteAll(messages);
+                chatRepository.delete(activity.getChat());
+            }
             return !activityRepository.existsById(activityId);
         }
         return false;

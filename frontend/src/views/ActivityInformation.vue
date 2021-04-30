@@ -1,6 +1,6 @@
 <template>
   <div id="activity-information">
-    <div @click="back" id="nav-back">
+    <div @click="goBack" id="nav-back">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
       Tilbake
     </div>
@@ -24,12 +24,29 @@
       />
     </div>
     <h2 id="activity-title">{{ activity.title }}</h2>
-    <div id="host">Arrangeres av {{ activity.organizer }}</div>
+    <div id="host">
+      Arrangør
+      {{ activityOrganizer.forename }} {{ activityOrganizer.surname }}
+      <img
+        v-if="activityOrganizer.trusted"
+        id="verified"
+        src="../../img/verified.png"
+        height="15"
+      />
+    </div>
+    <div id="weather" v-if="dataReceived">
+      <Weather
+        :latitude="activity.latitude"
+        :longitute="activity.longitude"
+        :time="activity.startTime"
+      />
+    </div>
+    <div v-else>Ingen værdata</div>
     <div id="information-wrapper">
       <label class="event-variable">Når</label>
-      <div class="variable-value">{{ activity.startTime }}</div>
+      <div class="variable-value">{{ dateTimeFormatter }}</div>
       <label class="event-variable">Varighet</label>
-      <div class="variable-value">{{ activity.durationMinutes }} minutter</div>
+      <div class="variable-value">{{ durationFormatter }}</div>
       <label class="event-variable">Hvor</label>
       <div class="variable-value">
         {{ activity.place }}, {{ activity.city }}
@@ -37,23 +54,30 @@
       <label class="event-variable">Hva</label>
       <div class="variable-value">{{ activity.type }}</div>
       <label class="event-variable">Belastning</label>
-      <div class="variable-value">{{ activity.difficulty }}</div>
+      <div class="variable-value">{{ difficulty }}</div>
       <label class="event-variable">Deltakere</label>
       <div class="variable-value">
         {{ numberOfParticipants }} / {{ activity.maxParticipants }}
       </div>
-      <label class="event-variable">Aktivitetsnivå</label>
-      <div class="variable-value">{{ difficulty }}</div>
     </div>
+
     <div id="signing-up-wrapper">
       <div id="signing-up" v-if="signedUp">
-        <div id="signing-up-conformation">Du er påmeldt!</div>
+        <div id="signing-up-conformation" v-if="!isOrganizer">
+          Du er påmeldt!
+        </div>
+        <div id="signing-up-conformation" v-else>Du er arrangør!</div>
         <button
           @click="signOffActivity"
           alt="Knapp for å melde seg av en aktivitet"
+          v-if="!isOrganizer"
         >
           Meld deg av
         </button>
+        <div v-else>
+          <button @click="edit">Rediger</button>
+          <button @click="toRegisterAbsence">Registrer fravær</button>
+        </div>
         <button
           @click="openChat"
           alt="Knapp for å chatte med andre på samme aktivitet"
@@ -68,6 +92,7 @@
         >
           Meld deg på
         </button>
+        <p v-if="loading">Laster inn ...</p>
       </div>
     </div>
     <div class="details-wrapper">
@@ -82,115 +107,241 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, ref } from "vue";
+import { computed, defineComponent, onBeforeMount, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import data from "@/../config.json";
 import { store } from "../store";
 import getActivityDifficultyName from "../utils/getActivityDifficultyName";
+import Weather from "../components/Weather.vue";
 import IActivity from "../interfaces/Activity/IActivity.interface";
+import User from "../interfaces/User/User.interface";
 
 export default defineComponent({
   name: "ActivityInformation",
-  props: ["id"],
+  props: {
+    id: {
+      required: true,
+      type: String,
+    },
+  },
+  components: {
+    Weather,
+  },
   setup(props) {
-    //TODO finn arrangøren vha id
-    const activityOrganizer = ref("");
-    //TODO hent ut antall påmeldte fra backend
-    const numberOfParticipants = ref(5);
-    //TODO hent ut fra backend
-    const signedUp = ref(false);
+    //General methods
+    const activityOrganizer: Ref<User> = ref({
+      userId: -1,
+      forename: "",
+      surname: "",
+      email: "",
+      score: -1,
+      rating: -1,
+      role: "",
+      dateOfBirth: "",
+      profilePicture: "",
+      trainingLevel: "",
+      trusted: false,
+    });
     const router = useRouter();
-    const activity = ref({} as IActivity);
     const apiKey = data.googleAPIKey;
+    const activity: Ref<IActivity> = ref({
+      activityId: -1,
+      organizerId: -1,
+      title: "",
+      description: "",
+      equipment: "",
+      difficulty: -1,
+      city: "",
+      place: "",
+      longitude: 0,
+      latitude: 0,
+      startTime: "0000-00-00 00:00",
+      durationMinutes: 0,
+      maxParticipants: 0,
+      type: "",
+      privateActivity: false,
+      activityPicture: "",
+      chatId: -1,
+      organizerForename: "",
+      organizerSurname: "",
+    } as IActivity);
+    const signedUp = ref(false);
+    const loading = ref(false);
 
-    const isSignedUp = computed(() => {
-      return signedUp.value;
-    });
-
-    const difficulty = computed(() => {
-      return getActivityDifficultyName(activity.value.difficulty || 0);
-    });
+    const participants = ref([]); //list with all participants
+    const dataReceived = ref(false);
 
     /**
-     * Method for signing up to an activity
+     * Method for getting number of participants on an activity
      */
-    const signUpActivity = async (): Promise<void> => {
-      signedUp.value = true;
-      try {
-        //TODO: må sørge for at visinigen endres når du er påmeldt et arrangement
-        await axios.post(
-          `/activities/${props.id}/users/${store.getters.user.userId}`
-        );
-      } catch (error) {
-        router.push("/error");
-      }
-    };
-
-    /*TODO: fiks denne
-    const getOrganizerName = async():Promise<void> => {
-      try{
-          return axios.get('activities/organizerId'); 
-          } catch(error) {
-            router.push("/error")
-          }
-     }*/
+    const numberOfParticipants = computed((): number => {
+      if (signedUp.value) return participants.value.length + 1;
+      return participants.value.length;
+    });
 
     /**
      * Method for signing off an activity
      */
     const signOffActivity = async (): Promise<void> => {
-      signedUp.value = false;
-      //numberOfParticipants.value -= 1;
       try {
-        //TODO: må sørge for at visinigen endres nåår du er påmeldt et arrangement
         await axios.delete(
           `users/${store.getters.user.userId}/activities/${props.id}`
         );
+        signedUp.value = false;
+        await checkServerForUpdate();
       } catch (error) {
         router.push("/error");
       }
     };
 
-    const back = (): void => {
-      router.back();
+    /**
+     * Method for signing up to an activity
+     */
+    const signUpActivity = async (): Promise<void> => {
+      try {
+        await axios.post(
+          `/activities/${props.id}/users/${store.getters.user.userId}`
+        );
+        signedUp.value = true;
+        await checkServerForUpdate();
+      } catch (error) {
+        router.push("/error");
+      }
     };
 
+    /**
+     * Opens chat
+     */
     const openChat = (): void => {
-      router.push("/chatPage");
-      //TODO check chat router
+      router.push(`/activity/${activity.value.activityId}/chat`);
     };
 
+    /**
+     * Checks if the loggen on user is the organizer of an activity
+     */
+    const isOrganizer = computed((): boolean => {
+      return store.getters.user.userId === activity.value.organizerId;
+    });
+
+    /**
+     * Button to edit activity
+     */
+    const edit = () => {
+      router.push(`/edit-activity/${activity.value.activityId}`); ///TODO: endre denne til edit activity siden
+    };
+
+    const checkServerForUpdate = async () => {
+      //eve
+      try {
+        loading.value = true;
+        //gets the info from backend
+        const response = axios.get(`/activities/${props.id}`);
+        const participantResponse = axios.get(`/activities/${props.id}/users`);
+        const signedUpResponse = axios.get(
+          `/activities/${props.id}/users/${store.getters.user.userId}`
+        );
+
+        //collects all the data and collects in array
+
+        const res = await Promise.all([
+          response,
+          participantResponse,
+          signedUpResponse,
+        ]);
+
+        //assignes the data to the right value
+        activity.value = res[0].data;
+        participants.value = res[1].data;
+        signedUp.value = res[2].data;
+        loading.value = false;
+      } catch (error) {
+        router.push("/error");
+      }
+    };
+
+    //connection
     /**
      * Connects to backend using a get request to get the activity
      */
     onBeforeMount(async () => {
       try {
-        const response = await axios.get(`/activities/${props.id}`);
-        activity.value = response.data;
-      } catch {
+        await checkServerForUpdate();
+        const organizerResponse = await axios.get(
+          `/users/${activity.value.organizerId}`
+        );
+        activityOrganizer.value = organizerResponse.data;
+        dataReceived.value = true;
+      } catch (error) {
         router.push("/error");
       }
     });
 
-    //TODO del opp startTime og display det fint
-    //const activityDate = ref(activity.startTime.toString());
-    //const activityTime = ref(activity.startTime)
+    /**
+     * Routes the owner of the activity to register absence
+     */
+    const toRegisterAbsence = (): void => {
+      router.push(`/activity/${props.id}/register-absence`);
+    };
+
+    /**
+     * Routes user to the previous page
+     */
+    const goBack = () => {
+      router.back();
+    };
+
+    /**
+     * Formats the duration to show hours and minutes
+     */
+    const durationFormatter = computed(() => {
+      if (activity.value.durationMinutes > 60) {
+        const timeHour = ref(activity.value.durationMinutes / 60);
+        const extraMin = ref(activity.value.durationMinutes % 60);
+        if (activity.value.durationMinutes % 60 === 0) {
+          return timeHour.value + " timer";
+        }
+        return timeHour.value + " timer og " + extraMin.value + " minutter";
+      }
+      return activity.value.durationMinutes + " minutter";
+    });
+
+    /**
+     * Formats the date and time
+     */
+    const dateTimeFormatter = computed(() => {
+      const temp = activity.value.startTime.split(" ");
+      const dateArray = temp[0].split("-");
+      const date = ref(dateArray[2] + "/" + dateArray[1] + "/" + dateArray[0]);
+      const time = ref(temp[1]);
+      return date.value + " kl. " + time.value;
+    });
+
+    /**
+     * Calculates the difficulty of the activity as a string
+     */
+    const difficulty = computed(() => {
+      return getActivityDifficultyName(activity.value.difficulty || 0);
+    });
 
     return {
-      //activityDate,
-      //activityTime
-      difficulty,
-      activityOrganizer,
-      numberOfParticipants,
-      signedUp,
-      isSignedUp,
+      durationFormatter,
+      dateTimeFormatter,
+      toRegisterAbsence,
       signUpActivity,
       signOffActivity,
-      back,
-      openChat,
+      difficulty,
+      edit,
+      isOrganizer,
       activity,
+      openChat,
+      goBack,
+      activityOrganizer,
       apiKey,
+      numberOfParticipants,
+      loading,
+      signedUp,
+      dataReceived,
     };
   },
 });
@@ -245,6 +396,9 @@ $secondary-color: #ea4b4b;
   width: 100%;
   text-align: left;
   align-items: center;
+  img {
+    margin: -2px auto;
+  }
 }
 
 .event-variable {

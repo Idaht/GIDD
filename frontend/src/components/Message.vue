@@ -1,12 +1,12 @@
 <template>
     <div id="message">
-        <p> {{messageData.user.forename}} {{ messageData.timeSent }} {{ messageData.message }}</p>
+        <p> {{messageData.forename}} {{ messageData.time }}: {{ messageData.message }}</p>
     </div>  
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import IMessage from "@/interfaces/Message.interface";
+import IMessage from "@/interfaces/IMessage.interface";
 
 export default defineComponent ({
     name: "Message",

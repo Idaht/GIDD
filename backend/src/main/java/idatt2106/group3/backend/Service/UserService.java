@@ -39,6 +39,8 @@ public class UserService
     private PasswordEncoder passwordEncoder;
     @Autowired
     private ActivityRepository activityRepository;
+    @Autowired
+    private ActivityService activityService;
 
     /**
      * Finds user in Database, and creates a DTO object from it
@@ -112,8 +114,15 @@ public class UserService
     public boolean deleteUser(long userId)
     {
         LOGGER.info("deleteUser(long userId) called with userId: {}", userId);
-        userRepository.deleteById(userId);
-        return !userRepository.existsById(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isPresent()){
+            User user = optionalUser.get();
+            user.getOrganizedActivities().stream().forEach(activity -> activityService.deleteActivity(activity.getActivityId()));
+
+            userRepository.delete(user);
+            return !userRepository.existsById(userId);
+        }        
+        return false;
     }
 
     /**

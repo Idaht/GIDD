@@ -2,6 +2,7 @@ package idatt2106.group3.backend.Web;
 
 import idatt2106.group3.backend.Model.Chat;
 import idatt2106.group3.backend.Model.Message;
+import idatt2106.group3.backend.Model.DTO.MessageDTO;
 import idatt2106.group3.backend.Service.ChatService;
 import idatt2106.group3.backend.Service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/chats")
@@ -64,8 +64,8 @@ public class ChatController
     }
 
     @GetMapping("/{chat_id}/messages")
-    public ResponseEntity<Set<Message>> getMessages(@PathVariable("chat_id") long chatId) {
-        Set<Message> messages = chatService.getMessages(chatId);
+    public ResponseEntity<List<MessageDTO>> getMessages(@PathVariable("chat_id") long chatId) {
+        List<MessageDTO> messages = chatService.getMessages(chatId);
         if (messages == null)
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

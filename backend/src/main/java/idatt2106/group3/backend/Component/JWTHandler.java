@@ -53,7 +53,7 @@ public class JWTHandler {
 
         }catch(JwtException e){
             LOGGER.warn("Something went wrong trying to verify JWT token: {}\nException message: {}", token, e.getMessage());
-            throw new JwtException(e.getMessage(), e.fillInStackTrace());
+            return null;
         }
     }
 }

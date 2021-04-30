@@ -12,5 +12,5 @@ export default interface MakeActivity {
   maxParticipants: number;
   type: string;
   privateActivity: boolean;
-  //activityPicture: "";
+  activityPicture?: string;
 }

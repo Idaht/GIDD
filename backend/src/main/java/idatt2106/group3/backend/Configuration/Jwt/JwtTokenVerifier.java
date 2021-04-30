@@ -33,7 +33,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         // If request tries to create user, it will not try to verify token, but continue the through filters until it gets to registration endpoint
         if((request.getRequestURI().equals("/api/v1/users") && request.getMethod().equals("POST")) || Pattern.matches("/api/v1/websocket/.+", request.getRequestURI())) { 
-            filterChain.doFilter(request, response); 
+            filterChain.doFilter(request, response);
             return;
         }
         String token = request.getHeader("Authorization");

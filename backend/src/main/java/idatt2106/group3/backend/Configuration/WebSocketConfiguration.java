@@ -1,23 +1,16 @@
 package idatt2106.group3.backend.Configuration;
 
-import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.converter.DefaultContentTypeResolver;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
@@ -26,6 +19,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import idatt2106.group3.backend.Component.JWTHandler;
 
 @Configuration
+@Profile("!test")
 @EnableWebSocketMessageBroker
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
@@ -37,8 +31,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/v1/websocket").setAllowedOriginPatterns("*").withSockJS();
-        registry.addEndpoint("/api/v1/websocket").setAllowedOriginPatterns("*");
+        registry.addEndpoint("/api/v1/websocket").setAllowedOrigins("http://localhost:3000").withSockJS();
     }
 
     @Override
@@ -51,7 +44,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String authToken = accessor.getFirstNativeHeader("Authorization");
-                    if(JWTHandler.verifyToken(authToken) == null) return null;
+                     if(JWTHandler.verifyToken(authToken) == null) return null;
 
                 }
 

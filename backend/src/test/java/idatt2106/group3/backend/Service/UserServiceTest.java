@@ -76,6 +76,7 @@ public class UserServiceTest
         Collection<Activity> activitiesCollection = new ArrayList<>();
         Set<Activity> activities = Set.copyOf(activitiesCollection);
         user1.setActivities(activities);
+        user1.setOrganizedActivities(activities);
 
         //ArgumentCaptor<User> argumentCaptorBook = ArgumentCaptor.forClass(User.class);
 
@@ -161,7 +162,8 @@ public class UserServiceTest
         Mockito.lenient()
                 .when(userRepository.existsById(any(Long.class)))
                 .thenReturn(false);
-        assertThat(userService.deleteUser(1l)).isTrue();
+        
+        assertThat(userService.deleteUser(0l)).isTrue();
     }
 
     @Test

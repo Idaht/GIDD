@@ -1,7 +1,9 @@
 <template>
   <div id="activity" @click="activityClicked">
     <div id="map">
+      <img v-if="activityHasImage" :src="getImagesFromDb" />
       <img
+        v-else
         id="map-img"
         :src="
           'https://maps.googleapis.com/maps/api/staticmap?center=' +
@@ -20,7 +22,7 @@
     </div>
     <div>
       <h3>{{ activityData.title }}</h3>
-      <p>{{ activityData.startTime }}</p>
+      <p>{{ dateTimeFormatter }}</p>
       <p>{{ location }}</p>
       <p>{{ difficulty }}</p>
     </div>
@@ -28,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import IActivity from "../interfaces/Activity/IActivity.interface";
 import data from "@/../config.json";
@@ -62,11 +64,36 @@ export default defineComponent({
       console.log("Activity clicked: " + props.activityData.activityId);
     };
 
+    const getImagesFromDb = computed(() => {
+      return props.activityData.activityPicture;
+    });
+
+    const activityHasImage = computed(() => {
+      return (
+        props.activityData.activityPicture !== "" &&
+        props.activityData.activityPicture !== null
+      );
+    });
+
+    /**
+     * Formats the date and time
+     */
+    const dateTimeFormatter = computed(() => {
+      const temp = props.activityData.startTime.split(" ");
+      const dateArray = temp[0].split("-");
+      const date = ref(dateArray[2] + "/" + dateArray[1] + "/" + dateArray[0]);
+      const time = ref(temp[1]);
+      return date.value + " kl. " + time.value;
+    });
+
     return {
       difficulty,
       location,
       activityClicked,
       apiKey,
+      activityHasImage,
+      getImagesFromDb,
+      dateTimeFormatter,
     };
   },
 });

@@ -44,7 +44,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/edit-profile/",
+    path: "/edit-profile",
     name: "EditProfile",
     component: () => import("../views/EditProfile.vue"),
     meta: {
@@ -104,7 +104,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/Calendar.vue"),
   },
   {
-    path: "/activity/:id/chat-page",
+    path: "/read-more",
+    name: "ReadMore",
+    component: () => import("../views/ReadMore.vue"),
+  },
+  {
+    path: "/activity/:id/chat",
     name: "Chat",
     meta: {
       requiresAuth: true,
@@ -112,7 +117,15 @@ const routes: Array<RouteRecordRaw> = [
     props: true,
     component: () => import("../views/Chat.vue"),
   },
-  
+  {
+    path: "/activity/:id/register-absence",
+    name: "RegisterAbsence",
+    meta: {
+      requiresAuth: true,
+    },
+    props: true,
+    component: () => import("../views/ActivityRegisterAbsence.vue"),
+  },
   {
     //Catch all makes router redirect all unknown URLs to the PageNotFound view
     path: "/:catchAll(.*)",

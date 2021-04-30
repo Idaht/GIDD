@@ -2,14 +2,27 @@ package idatt2106.group3.backend.Model.DTO;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import idatt2106.group3.backend.Model.Message;
+
 public class MessageDTO {
     private long userId;
     private String forename;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime time;
     private String message;
     private long chatId;
 
     public MessageDTO() {}
+
+    public MessageDTO(Message message){
+        this.userId = message.getUser().getUserId();
+        this.forename = message.getUser().getForename();
+        this.time = message.getTimeSent();
+        this.message = message.getMessage();
+        this.chatId = message.getChat().getChatId();
+    }
 
     public long getUserId() {
         return userId;

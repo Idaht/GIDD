@@ -87,7 +87,7 @@ public class UserDTO extends UserSuperclassDTO {
 
         // User is trusted if user has participated in min. 3 activities,
         // and has shown up to more than 75% of all activities user has registered
-        if((numOfActivities - absence) >= 3 && (numOfActivities * 0.25) <= absence) {
+        if((numOfActivities - absence) >= 3 && (numOfActivities * 0.25) >= absence) {
             return true;
         }
         return false;

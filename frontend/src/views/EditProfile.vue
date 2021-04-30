@@ -83,7 +83,10 @@
     </div>
 
     <div>
-      <p v-if="isProfileChanged">Profilen er endret!</p>
+      <p v-if="passwordNotChanged && isProfileChanged">
+        Personlig informasjon er endret, men ikke passord!
+      </p>
+      <p v-else-if="isProfileChanged">Profilen er endret!</p>
       <button
         id="change-profile-button"
         :disabled="!isValidForm"
@@ -250,6 +253,8 @@ export default defineComponent({
           if (response.status === 200) {
             store.dispatch("logout");
             router.replace("/log-in");
+          } else if (response.status === 400) {
+            oldPasswordWasCorrect.value = false;
           }
         } catch (error) {
           router.push("/error");
@@ -313,6 +318,7 @@ export default defineComponent({
     };
 
     const isProfileChanged = ref(false);
+    const passwordNotChanged = ref(false);
 
     /**
      * Method to save the profile changes made. First checks if form is valid,
@@ -324,6 +330,7 @@ export default defineComponent({
     const saveProfileChanges = async (): Promise<void> => {
       oldPasswordWasCorrect.value = true;
       isProfileChanged.value = false;
+      passwordNotChanged.value = false;
       if (isValidForm.value) {
         try {
           //TODO: change to redirect to something went wrong site
@@ -333,13 +340,16 @@ export default defineComponent({
           userDTO.forename = user.value.forename;
           userDTO.surname = user.value.surname;
           userDTO.trainingLevel = trainingLevelAsString.value;
+          if (userDTO.newPassword || userDTO.oldPassword) {
+            delete userDTO.newPassword;
+            delete userDTO.oldPassword;
+          }
 
           if (passwordIsNotEmpty.value) {
             userDTO.newPassword = password.value;
             userDTO.oldPassword = oldPassword.value;
           }
           if (!userDTO.profilePicture) userDTO.profilePicture = "null";
-          console.log(userDTO);
 
           const response = await axios.post(
             `/users/${userDTO.userId}`,
@@ -347,6 +357,13 @@ export default defineComponent({
           );
           await store.dispatch("updateUser", response.data);
           user.value = store.getters.user;
+          if (
+            password.value.trim() === "" &&
+            repeatPassword.value.trim() !== "" &&
+            oldPassword.value.trim() !== ""
+          ) {
+            passwordNotChanged.value = true;
+          }
           isProfileChanged.value = true;
         } catch (error) {
           //TODO fix bug with error.response is undefined
@@ -383,6 +400,7 @@ export default defineComponent({
       selectedTrainingLevel,
       trainingLevelAsNumber,
       isProfileChanged,
+      passwordNotChanged,
     };
   },
 });

@@ -29,6 +29,8 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
 
 body {
   margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {

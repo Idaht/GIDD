@@ -9,4 +9,5 @@ export default interface User {
   dateOfBirth?: string;
   profilePicture?: string;
   trainingLevel: string;
+  trusted: boolean;
 }

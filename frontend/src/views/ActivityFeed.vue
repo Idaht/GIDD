@@ -19,10 +19,10 @@
             @change="sortClicked"
           >
             <option selected hidden>Sortering</option>
-            <option value="DATE">Første kommende</option>
+            <option value="DATE">Førstkommende</option>
             <option value="DISTANCE">Avstand</option>
             <option value="PARTICIPANT_AMOUNT">Antall deltakere</option>
-            <option value="REMOVE_SORT">Nullstill</option>
+            <option value="NONE">Nullstill</option>
           </select>
           <div id="filter-boxes" class="lower-header-item">
             <div class="checkbox-label">
@@ -57,13 +57,6 @@
             @change="sortClicked"
             class="lower-header-item"
             placeholder="Søk"
-          />
-          <input
-            type="number"
-            id="amount"
-            v-model="amount"
-            class="lower-header-item"
-            placeholder="Mengde aktiviteter"
           />
         </div>
       </div>
@@ -162,18 +155,12 @@ export default defineComponent({
             sortingType.value = "Sortering";
           }
         );
-      } else if (sortingType.value === "Sortering") {
-        sortingType.value = "DATE";
+      }else if(sortingType.value === "Sortering"){
+        sortingType.value = "NONE";
         getFilteredAndSortedActivities();
-        sortingType.value = "Sortering";
-      } else if (sortingType.value === "REMOVE_SORT") {
-        try {
-          const response = await axios.get("/activities");
-          activities.value = response.data as IActivity[];
-        } catch (error) {
-          router.push("/error");
-        }
-      } else {
+        sortingType.value = "NONE";
+      } 
+      else {
         getFilteredAndSortedActivities();
       }
     };

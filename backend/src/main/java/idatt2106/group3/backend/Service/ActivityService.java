@@ -4,6 +4,7 @@ import idatt2106.group3.backend.Component.EmailComponent;
 import idatt2106.group3.backend.Enum.SortingType;
 import idatt2106.group3.backend.Model.Activity;
 import idatt2106.group3.backend.Model.Chat;
+import idatt2106.group3.backend.Model.Message;
 import idatt2106.group3.backend.Model.User;
 import idatt2106.group3.backend.Model.UserSecurityDetails;
 import idatt2106.group3.backend.Model.DTO.SortFilterQueryDTO;
@@ -13,6 +14,7 @@ import idatt2106.group3.backend.Model.DTO.Activity.ActivityRegistrationDTO;
 import idatt2106.group3.backend.Model.DTO.User.UserNameDTO;
 import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.ChatRepository;
+import idatt2106.group3.backend.Repository.MessageRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
 
 import org.slf4j.Logger;
@@ -40,6 +42,8 @@ public class ActivityService
     private UserRepository userRepository;
     @Autowired
     private ChatRepository chatRepository;
+    @Autowired
+    private MessageRepository messageRepository;
     @Autowired(required = false)
     private EmailComponent emailSender;
 
@@ -63,7 +67,7 @@ public class ActivityService
     public List<ActivityDTO> getActivities()
     {
         LOGGER.info("getActivities() called");
-        return activityRepository.findAll().stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
+        return activityRepository.findAllFromNow().stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
     }
 
     /**
@@ -93,10 +97,11 @@ public class ActivityService
         // Finds this user
         Optional<User> optionalUser = userRepository.findById(creatorUser.getUserId());
         Chat chat = new Chat();
+        chat = chatRepository.save(chat);
         if(!optionalUser.isPresent()) return null;
-        Activity createdActivity = activityRepository.save(new Activity(activity, optionalUser.get()));
-        chat.setActivity(createdActivity);;
-        chatRepository.save(chat);
+        Activity createdActivity = new Activity(activity, optionalUser.get());
+        createdActivity.setChat(chat);
+        createdActivity = activityRepository.save(createdActivity);
         // Saves User with organizer, and returns a ActivityDTO object
         return new ActivityDTO(createdActivity);
     }
@@ -126,6 +131,7 @@ public class ActivityService
             activity.setDurationMinutes(activityRegDTO.getDurationMinutes());
             activity.setPrivateActivity(activityRegDTO.isPrivateActivity());
             activity.setMaxParticipants(activityRegDTO.getMaxParticipants());
+            if(activityRegDTO.getActivityPicture() != null)activity.setActivityPicture(activityRegDTO.getActivityPicture().getBytes());
             return new ActivityDTO(activityRepository.save(activity));
         }
         return null;
@@ -147,6 +153,7 @@ public class ActivityService
             if(activity.getStartTime().plusMinutes(activity.getDurationMinutes()).isBefore(LocalDateTime.now())) {
                 return false;
             }
+    
 
             List<User> activityUsers = new ArrayList<>();
             for(User user : activity.getUsers()){
@@ -157,6 +164,11 @@ public class ActivityService
             userRepository.saveAll(activityUsers);
             activityRepository.save(activity);
             activityRepository.deleteById(activityId);
+            if(activity.getChat() != null){
+                Set<Message> messages = activity.getChat().getMessages();
+                messageRepository.deleteAll(messages);
+                chatRepository.delete(activity.getChat());
+            }
             return !activityRepository.existsById(activityId);
         }
         return false;
@@ -176,6 +188,11 @@ public class ActivityService
         Optional<Activity> activityOptional = activityRepository.findById(activityId);
         if(!activityOptional.isPresent()) {
             LOGGER.warn("Did not find activity with activityId: {}. Returning false", activityId);
+            return false;
+        }
+
+        if(activityOptional.get().getUsers().size() >= activityOptional.get().getMaxParticipants()){
+            LOGGER.warn("This acitivity is already full: {}. Returning false", activityId);
             return false;
         }
 
@@ -300,6 +317,10 @@ public class ActivityService
             return activityRepository.findActivitiesOnDistanceWithoutFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude());
         else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.DISTANCE)
             return activityRepository.findActivitiesOnDistanceWithFilter(searchQuery, filter.getAmount(), filter.getUserLongitude(), filter.getUserLatitude(), filter.getDifficulty());
+        else if(filter.getDifficulty() == null && filter.getSortingType() == SortingType.NONE)
+            return activityRepository.findActivitiesOnNoneWithoutFilter(searchQuery, filter.getAmount());
+        else if(filter.getDifficulty() != null && filter.getSortingType() == SortingType.NONE)
+            return activityRepository.findActivitiesOnNoneWithFilter(searchQuery,filter.getAmount(),filter.getDifficulty());
 
         return activityRepository.findAll();
     }

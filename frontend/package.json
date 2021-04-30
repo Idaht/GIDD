@@ -12,6 +12,8 @@
     "@googlemaps/js-api-loader": "^1.11.3",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "sockjs-client": "^1.5.1",
+    "stompjs": "^2.3.3",
     "vue": "^3.0.0",
     "vue-chat-scroll": "^2.0.0-alpha.4",
     "vue-router": "^4.0.0-0",
@@ -21,6 +23,8 @@
   "devDependencies": {
     "@types/google.maps": "^3.44.3",
     "@types/jest": "^24.0.19",
+    "@types/sockjs-client": "^1.5.0",
+    "@types/stompjs": "^2.3.4",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~4.5.0",

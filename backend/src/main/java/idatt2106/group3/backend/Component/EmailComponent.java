@@ -51,6 +51,25 @@ public class EmailComponent {
     }
 
     /**
+     * Used when an activity is edited
+     * Sends an edited activity email
+     * @param user
+     * @param activity
+     */
+    public void sendEditMail(User user, Activity activity){
+        SimpleMailMessage message = new SimpleMailMessage(); 
+        message.setFrom("team.gidd@gmail.com");
+        message.setTo(user.getEmail());
+        message.setSubject("Aktivitet " + activity.getTitle() + " i " + activity.getCity() + " er endret");
+        message.setText("En aktivitet du deltar på er blitt endret");
+        try{
+            emailSender.send(message);
+        }catch(Exception ex){
+            //
+        }
+    }
+
+    /**
      * Creates a formatted "from-to" string with actual date and times
      * @param dateTime start time
      * @param durationMinutes duration of the activity

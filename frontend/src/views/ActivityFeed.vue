@@ -420,8 +420,7 @@ li {
   bottom: 20px;
   height: 40px;
   width: 40px;
-  left: 50%;
-  margin-left: -20px;
+  left: 80%;
   color: #ffffff;
   background-color: $secondary-color;
   @media only screen and (min-width: 600px) {

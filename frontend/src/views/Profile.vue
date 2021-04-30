@@ -16,10 +16,13 @@
       </div>
       <div id="profile-information">
         <div id="profile-information-fitness-level">
-          <h5>Treningsnivå: {{ user.trainingLevel }}</h5>
+          <h5>Treningsnivå: {{ translateTrainingLevel }}</h5>
         </div>
         <button id="my-activities-button" @click="calendar">
           Mine aktiviteter
+        </button>
+        <button id="settings-button" @click="settings">
+          Profilinnstillinger
         </button>
       </div>
     </div>
@@ -54,6 +57,10 @@ export default defineComponent({
       router.push("/calendar");
     };
 
+    const settings = (): void => {
+      router.push("/edit-profile");
+    };
+
     /**
      * Connects to backend using a get request to get the user
      */
@@ -68,11 +75,29 @@ export default defineComponent({
       }
     });
 
+    /**
+     * Translates the user training level
+     */
+    const translateTrainingLevel = computed(() => {
+      switch (user.value.trainingLevel) {
+        case "EASY":
+          return "Lav";
+        case "MEDIUM":
+          return "Medium";
+        case "HARD":
+          return "Høy";
+        default:
+          return "Fant ikke treningsnivå";
+      }
+    });
+
     return {
       calendar,
       profilePicture,
       trusted,
       user,
+      settings,
+      translateTrainingLevel,
     };
   },
 });

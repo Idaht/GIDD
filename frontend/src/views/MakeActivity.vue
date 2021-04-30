@@ -153,10 +153,8 @@
       <h3>Sted</h3>
       <h5>Velg sted ved å trykke på kartet eller fyll ut info</h5>
       <div id="map-view">
-        <!--TODO: ':center' fjernes når appen finner brukers lokasjon selv-->
         <Map
           id="map"
-          :center="{ lat: 63.43049, lng: 10.39506 }"
           :getLocation="true"
           :activityData="[]"
         ></Map>

@@ -77,6 +77,15 @@
     </div>
     <div>
       <h3>Endre sted</h3>
+      <div id="map-view">
+        <Map
+          id="map"
+          :center="getCoordinates"
+          :setLocation="true"
+          :getLocation="true"
+          :activityData="[]"
+        ></Map>
+      </div>
       <div id="place-container">
         <h5>Legg til et fysisk sted der aktiviteten skal ta plass</h5>
         <input v-model="activity.place" type="place" placeholder="Sted" />
@@ -189,23 +198,29 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, computed, Ref } from "vue";
+import { defineComponent, ref, onBeforeMount, computed, Ref, reactive, provide, watch } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axiosConfig";
 import IEditActivity from "@/interfaces/EditActivity.interface";
 import Month from "@/interfaces/Month.interface";
 import ImageSelector from "@/components/ImageSelector.vue";
 import { TrainingLevel } from "@/enums/TrainingLevel.enum";
+import Map from "@/components/Map.vue";
+import ICoordinates from "@/interfaces/ICoordinates.interface";
+import data from "@/../config.json";
+import axiosNotConfig from "axios";
+
 
 export default defineComponent({
   name: "EditActivity",
-  components: { ImageSelector },
+  components: { ImageSelector, Map },
   props: { id: { required: true } },
 
   //TODO: fiks sletting av arrangement
 
   setup(props) {
     const router = useRouter();
+    const apiKey = data.googleAPIKey;
     const activity: Ref<IEditActivity> = ref({
       title: "",
       activityPicture: "",
@@ -222,6 +237,10 @@ export default defineComponent({
       startTime: "",
       type: "",
     } as IEditActivity);
+
+    //Needed for the map
+    const coordinates = reactive({ lat: 0.0, lng: 0.0 } as ICoordinates);
+    provide('coordinates', coordinates);
 
     const selectedYear = ref("");
     const selectedMonth = ref("");
@@ -304,6 +323,42 @@ export default defineComponent({
       "08",
       "09",
     ]);
+
+
+    const getCoordinates = computed((): ICoordinates => {
+        return { lat: activity.value.latitude, lng: activity.value.longitude } as ICoordinates;
+    });
+
+
+    const updateCityPlace = async () => {
+        try {
+            const response = await axiosNotConfig.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.lat + "," + coordinates.lng}&key=${apiKey}`).then();
+            const responseData = response.data;
+            if (response.status == 200) {
+                let address: string[] = (responseData.results[0].formatted_address as string).split(",");
+                let place = address[0];
+                let city = address[1].split(" ");
+                place != "Unnamed Road" ? activity.value.place = place : activity.value.place = ""; //Setting the place value
+                city = city.filter(element =>  { //Filters away city names that is not valid
+                    if (element == "" || !isNaN(Number(element))) {
+                        return false;
+                    }
+                    return true;
+                });
+                city[0] || city[0] != "Unnamed" ? activity.value.city = city[0] : activity.value.city = ""; //Setting the city value
+            }
+        } catch (error) {
+        //Something went wrong, user has to write place and city
+        }
+    };
+
+    watch(() => coordinates.lat || coordinates.lng || activity.value.latitude || activity.value.longitude, (newValue, oldValue) => {
+        if (newValue != oldValue) {
+            updateCityPlace();
+        }
+    });
+
+
 
     /**
      * Loads activity from database, has to set date, time, and difficulty.
@@ -474,6 +529,8 @@ export default defineComponent({
 
           activity.value.difficulty = calculateDifficulty.value;
           activity.value.startTime = makeDateTime.value;
+          activity.value.latitude = coordinates.lat;
+          activity.value.longitude = coordinates.lng;
 
           const response = await axios.put(
             `/activities/${props.id}`,
@@ -603,6 +660,8 @@ export default defineComponent({
       isMedium,
       isHard,
       durationDisplay,
+
+      getCoordinates,
 
       onSelectedImage,
       onRemoveImage,

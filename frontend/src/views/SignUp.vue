@@ -25,8 +25,6 @@
           placeholder="Etternavn"
           v-model="user.surname"
         />
-        <!-- TODO: fiks sånn at option vises i dropdown. Er ikke mulig nå
-        pga select bruker v-model, så må trolig fikses i js -->
         <div id="sign-up-form-birthday-container">
           <h4>Fødselsdato</h4>
           <div id="sign-up-form-birthday">
@@ -72,14 +70,18 @@
         <div class="fitness-form">
           <h4>Treningsnivå</h4>
           <div id="fitness-form-boxes">
-          <label v-for="(trainingLevel, index) in trainingLevels" :key="index">
-            <input id="fitness-form-input"
-              type="radio"
-              :value="trainingLevel.value"
-              :checked="trainingLevel.value === selectedTrainingLevel"
-              @change="changeTrainingLevel(trainingLevel.value)"
-            />{{ trainingLevel.title }}
-          </label>
+            <label
+              v-for="(trainingLevel, index) in trainingLevels"
+              :key="index"
+            >
+              <input
+                id="fitness-form-input"
+                type="radio"
+                :value="trainingLevel.value"
+                :checked="trainingLevel.value === selectedTrainingLevel"
+                @change="changeTrainingLevel(trainingLevel.value)"
+              />{{ trainingLevel.title }}
+            </label>
           </div>
         </div>
       </div>
@@ -588,9 +590,9 @@ h5 {
 
 #sign-up {
   margin: 35px;
-  top:0px;
-  height:90%;
-  overflow:scroll;
+  top: 0px;
+  height: 90%;
+  overflow: scroll;
   text-align: left;
   color: $primary-color;
   padding-bottom: 100px;
@@ -644,7 +646,7 @@ h5 {
 }
 
 .fitness-form {
-  margin-top:10px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -654,7 +656,7 @@ h5 {
 }
 
 #fitness-form-input {
-  margin:10px
+  margin: 10px;
 }
 
 select {

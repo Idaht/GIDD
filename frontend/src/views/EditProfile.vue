@@ -1,10 +1,10 @@
 <template>
   <div id="edit-profile">
     <div class="nav">
-    <button @click="profile" class="back-button">
-      <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      Gå tilbake
-    </button>
+      <button @click="profile" class="back-button">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Gå tilbake
+      </button>
     </div>
     <h2>Instillinger</h2>
     <h3>Endre profilbilde</h3>
@@ -211,7 +211,6 @@ export default defineComponent({
       return oldPassword.value.trim() !== "";
     });
 
-    //TODO check this with backend?
     const oldPasswordWasCorrect = ref(true);
 
     //Email
@@ -264,7 +263,6 @@ export default defineComponent({
           }
         } catch (error) {
           router.push("/error");
-          //TODO add errorhandling
         }
       }
     };
@@ -339,8 +337,6 @@ export default defineComponent({
       passwordNotChanged.value = false;
       if (isValidForm.value) {
         try {
-          //TODO: change to redirect to something went wrong site
-          //TODO: handle bug where _ctx.user is undefined
           userDTO.userId = user.value.userId;
           userDTO.email = user.value.email;
           userDTO.forename = user.value.forename;
@@ -372,7 +368,6 @@ export default defineComponent({
           }
           isProfileChanged.value = true;
         } catch (error) {
-          //TODO fix bug with error.response is undefined
           if (error.response.status === 400) {
             oldPasswordWasCorrect.value = false;
           } else {
@@ -383,9 +378,8 @@ export default defineComponent({
     };
 
     const profile = (): void => {
-    router.back();
+      router.back();
     };
-
 
     return {
       user,
@@ -528,5 +522,4 @@ label {
 .back-button:hover {
   color: $secondary-color;
 }
-
 </style>

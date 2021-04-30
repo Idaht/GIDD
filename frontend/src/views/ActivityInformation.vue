@@ -7,7 +7,6 @@
     </button>
     </div>
     <div id="map">
-      <!--TODO: Fiks så API key hentes fra fil-->
       <img
         id="map-img"
         :src="
@@ -22,7 +21,7 @@
           '&key=' +
           apiKey
         "
-        alt="Map"
+        alt="Illustrasjon som viser et utsnitt fra google maps der aktiviteten skal være"
       />
     </div>
     <h2 id="activity-title">{{ activity.title }}</h2>
@@ -233,7 +232,7 @@ export default defineComponent({
      * Button to edit activity
      */
     const edit = () => {
-      router.push(`/edit-activity/${activity.value.activityId}`); ///TODO: endre denne til edit activity siden
+      router.push(`/edit-activity/${activity.value.activityId}`);
     };
 
     const checkServerForUpdate = async () => {
@@ -272,13 +271,12 @@ export default defineComponent({
     onBeforeMount(async () => {
       try {
         await checkServerForUpdate();
-        if(activity.value.organizerId > 0){
+        if (activity.value.organizerId > 0) {
           const organizerResponse = await axios.get(
             `/users/${activity.value.organizerId}`
           );
           activityOrganizer.value = organizerResponse.data;
-        }
-        else{
+        } else {
           activity.value.organizerForename = "Gidd";
         }
         dataReceived.value = true;
@@ -307,7 +305,6 @@ export default defineComponent({
     const durationFormatter = computed(() => {
       if (activity.value.durationMinutes > 60) {
         const timeHour = ref(Math.floor(activity.value.durationMinutes / 60));
-        console.log(timeHour);
         const extraMin = ref(activity.value.durationMinutes % 60);
         if (activity.value.durationMinutes % 60 === 0) {
           return timeHour.value + " timer";

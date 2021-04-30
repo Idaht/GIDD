@@ -57,11 +57,12 @@ export default defineComponent({
           }
 
           if (i < response.data["properties"]["timeseries"].length) {
-            temperature.value = Math.round(
-              response.data["properties"]["timeseries"][i]["data"]["instant"][
-                "details"
-              ]["air_temperature"]
-            ).toString() + "°C";
+            temperature.value =
+              Math.round(
+                response.data["properties"]["timeseries"][i]["data"]["instant"][
+                  "details"
+                ]["air_temperature"]
+              ).toString() + "°C";
             let symbol =
               response.data["properties"]["timeseries"][i]["data"][
                 "next_1_hours"
@@ -71,7 +72,8 @@ export default defineComponent({
               ".png");
           }
         } catch (error) {
-          console.error(error);
+          //Can't send to error page, to avoid error
+          //when there is no weather data in the api
         }
       }
     });

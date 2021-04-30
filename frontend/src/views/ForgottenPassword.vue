@@ -9,11 +9,12 @@
     </p>
     <input v-model="email" type="email" placeholder="E-post" id="email" />
     <div class="send-btn">
-    <button @click="sendMailForgotPassword"
-      alt="Knapp for å sende e-post når passord er glemt"
-    >
-      Send
-    </button>
+      <button
+        @click="sendMailForgotPassword"
+        alt="Knapp for å sende e-post når passord er glemt"
+      >
+        Send
+      </button>
     </div>
     <p id="feedback" v-if="emailIsNotEmpty">{{ makeEmailFeedback }}</p>
   </div>
@@ -34,7 +35,6 @@ export default defineComponent({
       return email.value.trim() !== "";
     });
 
-    //TODO Må ha en sjekk om at e-postadresse eksisterer
     const sendMailForgotPassword = (): void => {
       if (validEmail.value && emailIsNotEmpty.value) {
         router.push("/log-in");

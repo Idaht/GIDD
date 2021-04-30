@@ -222,8 +222,6 @@ export default defineComponent({
   components: { ImageSelector, Map },
   props: { id: { required: true } },
 
-  //TODO: fiks sletting av arrangement
-
   setup(props) {
     const router = useRouter();
     const apiKey = data.googleAPIKey;

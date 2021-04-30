@@ -1,5 +1,12 @@
 <template>
   <div id="absence-registration">
+     <div id="nav">
+    <button @click="goBack" class="back-button">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      Gå tilbake
+    </button>
+    </div>
+
     <h2>Registrer fravær</h2>
     <h4>
       Kryss av for alle som ikke møtte opp til aktiviteten, og trykk på
@@ -110,4 +117,29 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+
+$primary-color: #282828;
+$secondary-color: #ea4b4b;
+$padding: 0.6rem 1rem 0.6rem 1rem;
+
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 10px 0px 10px 0px;
+  display: block;
+}
+
+.back-button:hover {
+  color: $secondary-color;
+}
+
+
+</style>

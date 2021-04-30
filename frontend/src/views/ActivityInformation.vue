@@ -1,8 +1,10 @@
 <template>
   <div id="activity-information">
-    <div @click="goBack" id="nav-back">
+     <div id="nav">
+    <button @click="goBack" class="back-button">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      Tilbake
+      Gå tilbake
+    </button>
     </div>
     <div id="map">
       <!--TODO: Fiks så API key hentes fra fil-->
@@ -439,5 +441,22 @@ button {
 
 .details-wrapper {
   margin: 20px 0px 20px 0px;
+}
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 10px 0px 10px 0px;
+  display: block;
+}
+
+.back-button:hover {
+  color: $secondary-color;
 }
 </style>

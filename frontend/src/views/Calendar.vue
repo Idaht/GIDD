@@ -1,5 +1,11 @@
 <template>
   <div id="activity-feed">
+     <div id="nav">
+    <button @click="goBack" class="back-button">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      Gå tilbake
+    </button>
+    </div>
     <div id="header-title">
       <h2>Mine aktiviteter</h2>
     </div>
@@ -97,6 +103,13 @@ export default defineComponent({
       return stage.value === 1;
     });
 
+     /**
+     * Routes user to the previous page
+     */
+    const goBack = () => {
+      router.back();
+    };
+
     return {
       toParicipant,
       toOrganizer,
@@ -104,6 +117,7 @@ export default defineComponent({
       disableButtons,
       activitiesParticipant,
       activitiesOrganizer,
+      goBack,
     };
   },
 });
@@ -183,5 +197,22 @@ li {
   @media only screen and (min-width: 800px) {
     width: 50%;
   }
+}
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 10px 0px 10px 0px;
+  display: block;
+}
+
+.back-button:hover {
+  color: $secondary-color;
 }
 </style>

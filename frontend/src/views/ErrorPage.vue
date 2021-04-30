@@ -1,4 +1,5 @@
 <template>
+<div>
   <h1>Ops! Noe gikk galt!</h1>
   <button @click="backToFeed" alt="Knapp for å gå tilbake til applikasjonen">
     Gå tilbake og prøv igjen
@@ -6,6 +7,7 @@
   <button class="error-logout" @click="logout" alt="Knapp for å logge ut">
     <i class="fa fa-power-off" aria-hidden="true"></i>Logg ut
   </button>
+</div>
 </template>
 
 <script lang="ts">

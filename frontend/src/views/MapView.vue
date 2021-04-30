@@ -19,20 +19,6 @@
         <div class="header" id="lower-header">
           <div id="test">
             <div>
-              <select
-                class="dropdown lower-header-item"
-                v-model="sortingType"
-                @change="sortClicked"
-              >
-                <option selected hidden>Sortering</option>
-                <option value="DATE">Startdato</option>
-                <option value="DISTANCE">Avstand</option>
-                <option value="PARTICIPANT_AMOUNT">Antall deltakere</option>
-                <option value="REMOVE_SORT">Nullstill</option>
-              </select>
-            </div>
-
-            <div>
               <input
                 type="text"
                 id="search"

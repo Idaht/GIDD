@@ -95,6 +95,7 @@
     </div>
     <div>
       <h3>Oppgi varighet</h3>
+      <h5>Oppgi tid i antall timer</h5>
       <input
         v-model="durationHour"
         type="durationHour"

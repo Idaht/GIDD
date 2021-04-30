@@ -112,9 +112,9 @@ import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import data from "@/../config.json";
 import { store } from "../store";
+import IActivity from "@/interfaces/IActivity.interface";
 import getActivityDifficultyName from "../utils/getActivityDifficultyName";
 import Weather from "../components/Weather.vue";
-import IActivity from "../interfaces/Activity/IActivity.interface";
 import User from "../interfaces/User/User.interface";
 
 export default defineComponent({
@@ -195,6 +195,9 @@ export default defineComponent({
       }
     };
 
+    const getChatId = computed(() => {
+      return activity.value.chatId;
+    });
     /**
      * Method for signing up to an activity
      */
@@ -296,7 +299,8 @@ export default defineComponent({
      */
     const durationFormatter = computed(() => {
       if (activity.value.durationMinutes > 60) {
-        const timeHour = ref(activity.value.durationMinutes / 60);
+        const timeHour = ref(Math.floor(activity.value.durationMinutes / 60));
+        console.log(timeHour);
         const extraMin = ref(activity.value.durationMinutes % 60);
         if (activity.value.durationMinutes % 60 === 0) {
           return timeHour.value + " timer";

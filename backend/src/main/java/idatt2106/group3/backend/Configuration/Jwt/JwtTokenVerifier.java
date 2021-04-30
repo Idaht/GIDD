@@ -1,10 +1,7 @@
 package idatt2106.group3.backend.Configuration.Jwt;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,6 +27,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        LOGGER.info("doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) is called");
 
         // If request tries to create user, it will not try to verify token, but continue the through filters until it gets to registration endpoint
         if((request.getRequestURI().equals("/api/v1/users") && request.getMethod().equals("POST")) || Pattern.matches("/api/v1/websocket/.+", request.getRequestURI())) { 

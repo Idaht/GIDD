@@ -154,7 +154,6 @@ public class ActivityService
             if(activity.getStartTime().plusMinutes(activity.getDurationMinutes()).isBefore(LocalDateTime.now())) {
                 return false;
             }
-    
 
             List<User> activityUsers = new ArrayList<>();
             for(User user : activity.getUsers()){

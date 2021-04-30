@@ -3,32 +3,17 @@ package idatt2106.group3.backend.Web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import idatt2106.group3.backend.Model.*;
 
-import idatt2106.group3.backend.Repository.ActivityRepository;
 import idatt2106.group3.backend.Repository.ChatRepository;
 import idatt2106.group3.backend.Repository.MessageRepository;
 import idatt2106.group3.backend.Repository.UserRepository;
-import idatt2106.group3.backend.Service.ActivityService;
-import idatt2106.group3.backend.Service.ChatService;
-import idatt2106.group3.backend.Service.MessageService;
 
-import idatt2106.group3.backend.Service.UserService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -37,16 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @SpringBootTest

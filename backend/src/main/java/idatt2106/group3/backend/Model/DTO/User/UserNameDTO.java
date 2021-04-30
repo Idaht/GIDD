@@ -2,6 +2,10 @@ package idatt2106.group3.backend.Model.DTO.User;
 
 import idatt2106.group3.backend.Model.User;
 
+/**
+ * DTO class that only sends minimal information
+ * about a user to frontend
+ */
 public class UserNameDTO {
     private long userId;
     private String forename;

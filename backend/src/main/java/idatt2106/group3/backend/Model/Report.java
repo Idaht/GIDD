@@ -7,6 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+/**
+ * Entity class for storing information about a report
+ * with reportId as primary key
+ */
 @Entity
 public class Report {
     @Id

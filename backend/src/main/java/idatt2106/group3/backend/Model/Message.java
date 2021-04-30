@@ -13,6 +13,10 @@ import idatt2106.group3.backend.Model.DTO.MessageDTO;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity class for storing information about a message
+ * with messageId as primary key
+ */
 @Entity
 public class Message {
     @Id

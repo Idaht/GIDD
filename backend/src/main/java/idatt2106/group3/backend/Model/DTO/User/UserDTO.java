@@ -73,6 +73,11 @@ public class UserDTO extends UserSuperclassDTO {
         this.trusted = trusted;
     }
 
+    /**
+     * Checks if user is verified to have "Trusted"-badge
+     * @param user
+     * @return true if user is trusted, false otherwise
+     */
     private boolean isTrusted(User user) {
         if(user == null) return false;
 

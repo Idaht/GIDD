@@ -17,6 +17,10 @@ import javax.persistence.OneToMany;
 
 import idatt2106.group3.backend.Enum.Difficulty;
 
+/**
+ * Entity class for storing information about a user
+ * with userId as primary key
+ */
 @Entity
 public class User {
     @Id

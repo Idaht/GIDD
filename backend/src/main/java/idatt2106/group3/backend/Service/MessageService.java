@@ -27,6 +27,12 @@ public class MessageService
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Save a new message in the database, and add it to the chat.
+     * @param chatId
+     * @param message
+     * @return created message
+     */
     public Message createMessage(long chatId, Message message)
     {
         LOGGER.info("createMessage(Chat chat, Message message) was called with chatId: {}, and messageId: {}", chatId, message.getMessageId());
@@ -39,15 +45,21 @@ public class MessageService
         return messageRepository.save(message);
     }
 
+    /**
+     * Creates new message based on information 
+     * from messageDTO and saves it in the database.
+     * @param messageDTO
+     * @return messageDTO
+     */
     public MessageDTO createMessageDTO(MessageDTO messageDTO){
         LOGGER.info("createMessageDTO(MessageDTO messageDTO) was called with chatId: {}", messageDTO.getChatId());
         Optional<Chat> chat = chatRepository.findById(messageDTO.getChatId());
         Optional<User> user = userRepository.findById(messageDTO.getUserId());
-        if (!chat.isPresent() && !user.isPresent())
+        if (!chat.isPresent() || !user.isPresent())
         {
             return null;
         }
-        messageRepository.save(new Message(messageDTO,chat.get(),user.get()));
+        messageRepository.save(new Message(messageDTO, chat.get(), user.get()));
         return messageDTO;
     }
 }

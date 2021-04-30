@@ -19,6 +19,10 @@ import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * Entity class for storing information about an activity
+ * with activityId as primary key
+ */
 @Entity(name = "activity")
 public class Activity {
     @Id
@@ -96,6 +100,12 @@ public class Activity {
         this.activityPicture = activityPicture;
     }
 
+    /**
+     * Activity constructor used for creating a new activity based on
+     * information from ActivityRegistration DTO and organizer.
+     * @param activityRegistrationDTO
+     * @param organizeUser
+     */
     public Activity(ActivityRegistrationDTO activityRegistrationDTO, User organizeUser){
         this.title = activityRegistrationDTO.getTitle();
         this.type = activityRegistrationDTO.getType();

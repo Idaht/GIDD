@@ -18,22 +18,39 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import idatt2106.group3.backend.Component.JWTHandler;
 
+/**
+ * Configuration for WebSockets, used for chat features in the application
+ */
 @Configuration
 @Profile("!test")
 @EnableWebSocketMessageBroker
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
+    /**
+     * Method that configures MessageBroker to our chat endpoints
+     * Setting up broker is important for secure and reliable messaging.
+     * @param config
+     */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/api/v1/chat");
         config.setApplicationDestinationPrefixes("/api/v1/chat");
     }
 
+    /**
+     * Integrates support for Stomp (Simple Text Orientated Messaging Protocol)
+     * One of the main components of Spring messaging framework
+     * @param registry
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/api/v1/websocket").setAllowedOrigins("http://localhost:3000").withSockJS();
     }
 
+    /**
+     * Configures MessageChannel class so that authorised users are able to send messages
+     * @param registration
+     */
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {

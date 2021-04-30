@@ -5,6 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Entity class for storing information about a feedback
+ * with feedbackId as primary key
+ */
 @Entity
 public class Feedback {
     @Id

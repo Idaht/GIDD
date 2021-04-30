@@ -12,10 +12,14 @@ import idatt2106.group3.backend.Model.Activity;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long>
 {
+    // Returns a list of activities with start time in the future from now
     @Query(value = "SELECT * FROM activity WHERE activity.start_time > NOW()", nativeQuery = true)
     public List<Activity> findAllFromNow();
+
+    // Returns userId based on if the user is participant of a specific activity determined by activityId
     @Query(value = "SELECT user_activity.user_id FROM user_activity WHERE user_activity.user_id=?1 AND user_activity.activity_id=?2", nativeQuery = true)
     public Optional<Integer> findIfUserIsParticipantOfActivity(Long userId, Long activityId);
+
     // Returns your activities that will happen later
     @Query(value = "SELECT activity.* FROM activity JOIN user_activity ON (activity.activity_id = user_activity.activity_id AND user_activity.user_id=?1 AND activity.start_time > NOW())", nativeQuery = true)
     public List<Activity> findFutureUserActivities(Long userId);

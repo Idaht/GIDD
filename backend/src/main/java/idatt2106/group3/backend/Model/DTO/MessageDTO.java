@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import idatt2106.group3.backend.Model.Message;
 
+/**
+ * DTO class for messages
+ */
 public class MessageDTO {
     private long userId;
     private String forename;

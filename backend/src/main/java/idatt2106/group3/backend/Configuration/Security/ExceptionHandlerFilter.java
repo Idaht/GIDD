@@ -19,9 +19,15 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter{
 
     @Autowired
     private ObjectMapper objectMapper;
+
     /**
-     * Tries to continue through the filters, next step will be to the controller/endpoint
-     * If exception it will send error
+     * Method that tries to continue through the filters, next step will be to the controller/endpoint
+     * If exception it will send an error
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

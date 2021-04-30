@@ -12,6 +12,10 @@ import javax.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Entity class for storing information about a chat
+ * with chatId as primary key
+ */
 @Entity
 public class Chat {
     @Id

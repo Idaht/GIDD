@@ -1,5 +1,6 @@
 stages:
   - test
+  - package
 
 workflow:
   rules:
@@ -17,3 +18,13 @@ test_1:
     - echo "$EMAIL_PASSWORD" >> src/main/resources/config.properties
     - cat src/main/resources/config.properties
     - ./mvnw test
+
+package:jdk11:
+    stage: package
+    script:
+      - mvn -DskipTests package 
+    artifacts: 
+      paths:
+        - target/*.jar
+    only:
+      - master

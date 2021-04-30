@@ -68,14 +68,20 @@ export default defineComponent({
 <style scoped>
 .container {
   text-align: center;
+  justify-items: center;
+  width: 100%;
 }
 
-label {
+#fileInput, label {
   display: block;
   text-align: left;
   font-size: 1rem;
-  font-weight: 600;
   margin-bottom: 10px;
+  width: 100%;
+}
+
+label {
+  font-weight: 600;
 }
 
 img {

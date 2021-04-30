@@ -1,32 +1,39 @@
 <template>
-  <div>
-    <div class="header">
-      <h1>{{ activity.title }}</h1>
-      <button id="backButton" @click="goBack">BACK</button>
-    </div>
-    <hr />
-    <div class="displayMessages" id="displayContainer">
-      <div v-if="messages.length > 0">
-        <div
-          class="messages"
-          v-for="(message, index) of messages"
-          :key="index"
-          :class="{ classForUserMessages: message.userId === user.userId }"
-        >
-          <Message :messageData="message" />
+  <div id="chat">
+    <div id="chat-wrapper">
+      <div class="nav">
+        <button @click="goBack" class="back-button">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          Gå tilbake
+        </button>
+      </div>
+      <div class="header">
+        <h3>{{ activity.title }}</h3>
+      </div>
+      <hr />
+      <div class="displayMessages" id="displayContainer">
+        <div v-if="messages.length > 0">
+          <div
+            class="messages"
+            v-for="(message, index) of messages"
+            :key="index"
+            :class="{ classForUserMessages: message.userId === user.userId }"
+          >
+            <Message :messageData="message" />
+          </div>
         </div>
       </div>
-    </div>
-    <hr />
-    <div class="lower">
-      <input
-        type="message"
-        id="messageInput"
-        placeholder="Skriv melding her..."
-        v-model="messageInput"
-        @keyup.enter="sendMessage"
-      />
-      <button @click="sendMessage">SEND</button>
+      <hr />
+      <div class="lower">
+        <input
+          type="message"
+          id="messageInput"
+          placeholder="Skriv melding her..."
+          v-model="messageInput"
+          @keyup.enter="sendMessage"
+        />
+        <button @click="sendMessage">SEND</button>
+      </div>
     </div>
   </div>
 </template>
@@ -177,9 +184,22 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$primary-color: #282828;
+$secondary-color: #ea4b4b;
+$padding: 0.6rem 1rem 0.6rem 1rem;
+
+#chat {
+  margin: 35px;
+  @media only screen and (min-width: 600px) {
+    width: 45%;
+    margin: auto;
+    padding: 20px;
+  }
+}
+
 #messageInput {
-  width: 90%;
+  width: 100%;
 }
 
 .messages {
@@ -195,10 +215,31 @@ export default defineComponent({
 }
 
 .displayMessages {
-  height: 140px;
+  height: 250px;
   overflow-y: scroll;
   overflow: auto;
   display: flex;
   flex-direction: column-reverse;
+}
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 0;
+  display: block;
+}
+
+.back-button:hover {
+  color: $secondary-color;
+}
+
+button {
+  margin: $padding;
 }
 </style>

@@ -1,22 +1,20 @@
 ---
 swagger: "2.0"
 info:
-  description: Api Documentation
-  version: "1.0"
-  title: Api Documentation
+  description: The REST API for the GIDD application
+  version: 1.0-SNAPSHOT
+  title: GIDD REST API
 host: localhost:8080
-basePath: "/"
+basePath: "/api/v1"
 tags:
   - name: activity-controller
     description: Activity Controller
-  - name: basic-error-controller
-    description: Basic Error Controller
   - name: chat-controller
     description: Chat Controller
   - name: user-controller
     description: User Controller
 paths:
-  "/api/v1/activities":
+  "/activities":
     get:
       tags:
         - activity-controller
@@ -66,7 +64,39 @@ paths:
           description: Forbidden
         "404":
           description: Not Found
-  "/api/v1/activities/{activity_id}":
+  "/activities/alternatives":
+    post:
+      tags:
+        - activity-controller
+      summary: getActivitiesWithFilterAndSorting
+      operationId: getActivitiesWithFilterAndSortingUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: filter
+          description: filter
+          required: true
+          schema:
+            "$ref": "#/definitions/SortFilterQueryDTO"
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/ActivityDTO"
+        "201":
+          description: Created
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+  "/activities/{activity_id}":
     get:
       tags:
         - activity-controller
@@ -152,7 +182,47 @@ paths:
           description: Unauthorized
         "403":
           description: Forbidden
-  "/api/v1/activities/{activity_id}/chat":
+  "/activities/{activity_id}/absences":
+    post:
+      tags:
+        - activity-controller
+      summary: editAbsence
+      operationId: editAbsenceUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: absenceDTO
+          description: absenceDTO
+          required: true
+          schema:
+            "$ref": "#/definitions/AbsenceDTO"
+        - name: activity_id
+          in: path
+          description: activity_id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: array
+            uniqueItems: true
+            items:
+              type: integer
+              format: int64
+        "201":
+          description: Created
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+  "/activities/{activity_id}/chat":
     get:
       tags:
         - activity-controller
@@ -178,7 +248,98 @@ paths:
           description: Forbidden
         "404":
           description: Not Found
-  "/api/v1/activities/{activity_id}/users/{user_id}":
+  "/activities/{activity_id}/organizer/{user_id}":
+    get:
+      tags:
+        - activity-controller
+      summary: isOrganizerOfActivity
+      operationId: isOrganizerOfActivityUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: activity_id
+          in: path
+          description: activity_id
+          required: true
+          type: integer
+          format: int64
+        - name: user_id
+          in: path
+          description: user_id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+  "/activities/{activity_id}/users":
+    get:
+      tags:
+        - activity-controller
+      summary: getUsersOfActivity
+      operationId: getUsersOfActivityUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: activity_id
+          in: path
+          description: activity_id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/UserNameDTO"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+  "/activities/{activity_id}/users/{user_id}":
+    get:
+      tags:
+        - activity-controller
+      summary: isUserParticipantOfActivity
+      operationId: isUserParticipantOfActivityUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: activity_id
+          in: path
+          description: activity_id
+          required: true
+          type: integer
+          format: int64
+        - name: user_id
+          in: path
+          description: user_id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
     post:
       tags:
         - activity-controller
@@ -214,7 +375,7 @@ paths:
           description: Forbidden
         "404":
           description: Not Found
-  "/api/v1/chats":
+  "/chats":
     get:
       tags:
         - chat-controller
@@ -264,7 +425,7 @@ paths:
           description: Forbidden
         "404":
           description: Not Found
-  "/api/v1/chats/{chat_id}":
+  "/chats/{chat_id}":
     get:
       tags:
         - chat-controller
@@ -350,7 +511,7 @@ paths:
           description: Unauthorized
         "403":
           description: Forbidden
-  "/api/v1/chats/{chat_id}/messages":
+  "/chats/{chat_id}/messages":
     get:
       tags:
         - chat-controller
@@ -370,9 +531,8 @@ paths:
           description: OK
           schema:
             type: array
-            uniqueItems: true
             items:
-              "$ref": "#/definitions/MessageRes"
+              "$ref": "#/definitions/MessageDTO"
         "401":
           description: Unauthorized
         "403":
@@ -400,12 +560,12 @@ paths:
           description: message
           required: true
           schema:
-            "$ref": "#/definitions/MessageReq"
+            "$ref": "#/definitions/Message"
       responses:
         "200":
           description: OK
           schema:
-            "$ref": "#/definitions/MessageRes"
+            "$ref": "#/definitions/Message"
         "201":
           description: Created
         "401":
@@ -414,7 +574,7 @@ paths:
           description: Forbidden
         "404":
           description: Not Found
-  "/api/v1/users":
+  "/users":
     post:
       tags:
         - user-controller
@@ -444,7 +604,7 @@ paths:
           description: Forbidden
         "404":
           description: Not Found
-  "/api/v1/users/{user_id}":
+  "/users/{user_id}":
     get:
       tags:
         - user-controller
@@ -530,7 +690,7 @@ paths:
           description: Unauthorized
         "403":
           description: Forbidden
-  "/api/v1/users/{user_id}/activities":
+  "/users/{user_id}/activities":
     get:
       tags:
         - user-controller
@@ -559,7 +719,7 @@ paths:
           description: Forbidden
         "404":
           description: Not Found
-  "/api/v1/users/{user_id}/activities/{activity_id}":
+  "/users/{user_id}/activities/{activity_id}":
     delete:
       tags:
         - user-controller
@@ -591,148 +751,73 @@ paths:
           description: Unauthorized
         "403":
           description: Forbidden
-  "/error":
+  "/users/{user_id}/my-activities":
     get:
       tags:
-        - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingGET
+        - user-controller
+      summary: getFutureActivities
+      operationId: getFutureActivitiesUsingGET
       produces:
-        - text/html
+        - "*/*"
+      parameters:
+        - name: user_id
+          in: path
+          description: user_id
+          required: true
+          type: integer
+          format: int64
       responses:
         "200":
           description: OK
           schema:
-            "$ref": "#/definitions/ModelAndView"
+            type: array
+            items:
+              "$ref": "#/definitions/Activity"
         "401":
           description: Unauthorized
         "403":
           description: Forbidden
         "404":
           description: Not Found
-    head:
+  "/users/{user_id}/organized-activities":
+    get:
       tags:
-        - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingHEAD
-      consumes:
-        - application/json
+        - user-controller
+      summary: getOrganizedActivities
+      operationId: getOrganizedActivitiesUsingGET
       produces:
-        - text/html
+        - "*/*"
+      parameters:
+        - name: user_id
+          in: path
+          description: user_id
+          required: true
+          type: integer
+          format: int64
       responses:
         "200":
           description: OK
           schema:
-            "$ref": "#/definitions/ModelAndView"
-        "204":
-          description: No Content
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-    post:
-      tags:
-        - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingPOST
-      consumes:
-        - application/json
-      produces:
-        - text/html
-      responses:
-        "200":
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-        "201":
-          description: Created
+            type: array
+            items:
+              "$ref": "#/definitions/Activity"
         "401":
           description: Unauthorized
         "403":
           description: Forbidden
         "404":
           description: Not Found
-    put:
-      tags:
-        - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingPUT
-      consumes:
-        - application/json
-      produces:
-        - text/html
-      responses:
-        "200":
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-        "201":
-          description: Created
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not Found
-    delete:
-      tags:
-        - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingDELETE
-      produces:
-        - text/html
-      responses:
-        "200":
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-        "204":
-          description: No Content
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-    options:
-      tags:
-        - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingOPTIONS
-      consumes:
-        - application/json
-      produces:
-        - text/html
-      responses:
-        "200":
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-        "204":
-          description: No Content
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-    patch:
-      tags:
-        - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingPATCH
-      consumes:
-        - application/json
-      produces:
-        - text/html
-      responses:
-        "200":
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-        "204":
-          description: No Content
-        "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
 definitions:
+  AbsenceDTO:
+    type: object
+    properties:
+      absentUsersId:
+        type: array
+        uniqueItems: true
+        items:
+          type: integer
+          format: int64
+    title: AbsenceDTO
   Activity:
     type: object
     properties:
@@ -740,17 +825,15 @@ definitions:
         type: integer
         format: int64
       activityPicture:
-        "$ref": "#/definitions/BlobRes"
+        type: string
+        format: byte
       city:
         type: string
       description:
         type: string
       difficulty:
-        type: string
-        enum:
-          - EASY
-          - HARD
-          - MEDIUM
+        type: integer
+        format: int32
       durationMinutes:
         type: integer
         format: int32
@@ -762,6 +845,8 @@ definitions:
       longitude:
         type: number
         format: double
+      markedAbsence:
+        type: boolean
       maxParticipants:
         type: integer
         format: int32
@@ -784,17 +869,17 @@ definitions:
         type: integer
         format: int64
       activityPicture:
-        "$ref": "#/definitions/BlobRes"
+        type: string
+      chatId:
+        type: integer
+        format: int64
       city:
         type: string
       description:
         type: string
       difficulty:
-        type: string
-        enum:
-          - EASY
-          - HARD
-          - MEDIUM
+        type: integer
+        format: int32
       durationMinutes:
         type: integer
         format: int32
@@ -809,9 +894,13 @@ definitions:
       maxParticipants:
         type: integer
         format: int32
+      organizerForename:
+        type: string
       organizerId:
         type: integer
         format: int64
+      organizerSurname:
+        type: string
       place:
         type: string
       privateActivity:
@@ -828,17 +917,14 @@ definitions:
     type: object
     properties:
       activityPicture:
-        "$ref": "#/definitions/BlobReq"
+        type: string
       city:
         type: string
       description:
         type: string
       difficulty:
-        type: string
-        enum:
-          - EASY
-          - HARD
-          - MEDIUM
+        type: integer
+        format: int32
       durationMinutes:
         type: integer
         format: int32
@@ -865,107 +951,6 @@ definitions:
       type:
         type: string
     title: ActivityRegistrationDTO
-  ActivityReq:
-    type: object
-    properties:
-      activityId:
-        type: integer
-        format: int64
-      activityPicture:
-        "$ref": "#/definitions/BlobReq"
-      city:
-        type: string
-      description:
-        type: string
-      difficulty:
-        type: string
-        enum:
-          - EASY
-          - HARD
-          - MEDIUM
-      durationMinutes:
-        type: integer
-        format: int32
-      equipment:
-        type: string
-      latitude:
-        type: number
-        format: double
-      longitude:
-        type: number
-        format: double
-      maxParticipants:
-        type: integer
-        format: int32
-      place:
-        type: string
-      privateActivity:
-        type: boolean
-      startTime:
-        type: string
-        format: date-time
-      title:
-        type: string
-      type:
-        type: string
-    title: ActivityReq
-  ActivityRes:
-    type: object
-    properties:
-      activityId:
-        type: integer
-        format: int64
-      activityPicture:
-        "$ref": "#/definitions/BlobRes"
-      city:
-        type: string
-      description:
-        type: string
-      difficulty:
-        type: string
-        enum:
-          - EASY
-          - HARD
-          - MEDIUM
-      durationMinutes:
-        type: integer
-        format: int32
-      equipment:
-        type: string
-      latitude:
-        type: number
-        format: double
-      longitude:
-        type: number
-        format: double
-      maxParticipants:
-        type: integer
-        format: int32
-      place:
-        type: string
-      privateActivity:
-        type: boolean
-      startTime:
-        type: string
-        format: date-time
-      title:
-        type: string
-      type:
-        type: string
-    title: ActivityRes
-  BlobReq:
-    type: object
-    properties:
-      binaryStream:
-        type: integer
-        format: int64
-    title: BlobReq
-  BlobRes:
-    type: object
-    properties:
-      binaryStream:
-        "$ref": "#/definitions/InputStream"
-    title: BlobRes
   Chat:
     type: object
     properties:
@@ -976,11 +961,8 @@ definitions:
         type: array
         uniqueItems: true
         items:
-          "$ref": "#/definitions/MessageReq"
+          "$ref": "#/definitions/Message"
     title: Chat
-  InputStream:
-    type: object
-    title: InputStream
   Message:
     type: object
     properties:
@@ -997,127 +979,23 @@ definitions:
       user:
         "$ref": "#/definitions/User"
     title: Message
-  MessageReq:
+  MessageDTO:
     type: object
     properties:
-      chat:
-        "$ref": "#/definitions/Chat"
-      message:
-        type: string
-      messageId:
+      chatId:
         type: integer
         format: int64
-      timeSent:
+      forename:
         type: string
-        format: date-time
-      user:
-        "$ref": "#/definitions/UserReq"
-    title: MessageReq
-  MessageRes:
-    type: object
-    properties:
-      chat:
-        "$ref": "#/definitions/Chat"
       message:
         type: string
-      messageId:
-        type: integer
-        format: int64
-      timeSent:
+      time:
         type: string
         format: date-time
-      user:
-        "$ref": "#/definitions/UserRes"
-    title: MessageRes
-  ModelAndView:
-    type: object
-    properties:
-      empty:
-        type: boolean
-      model:
-        type: object
-      modelMap:
-        type: object
-        additionalProperties:
-          type: object
-      reference:
-        type: boolean
-      status:
-        type: string
-        enum:
-          - ACCEPTED
-          - ALREADY_REPORTED
-          - BAD_GATEWAY
-          - BAD_REQUEST
-          - BANDWIDTH_LIMIT_EXCEEDED
-          - CHECKPOINT
-          - CONFLICT
-          - CONTINUE
-          - CREATED
-          - DESTINATION_LOCKED
-          - EXPECTATION_FAILED
-          - FAILED_DEPENDENCY
-          - FORBIDDEN
-          - FOUND
-          - GATEWAY_TIMEOUT
-          - GONE
-          - HTTP_VERSION_NOT_SUPPORTED
-          - IM_USED
-          - INSUFFICIENT_SPACE_ON_RESOURCE
-          - INSUFFICIENT_STORAGE
-          - INTERNAL_SERVER_ERROR
-          - I_AM_A_TEAPOT
-          - LENGTH_REQUIRED
-          - LOCKED
-          - LOOP_DETECTED
-          - METHOD_FAILURE
-          - METHOD_NOT_ALLOWED
-          - MOVED_PERMANENTLY
-          - MOVED_TEMPORARILY
-          - MULTIPLE_CHOICES
-          - MULTI_STATUS
-          - NETWORK_AUTHENTICATION_REQUIRED
-          - NON_AUTHORITATIVE_INFORMATION
-          - NOT_ACCEPTABLE
-          - NOT_EXTENDED
-          - NOT_FOUND
-          - NOT_IMPLEMENTED
-          - NOT_MODIFIED
-          - NO_CONTENT
-          - OK
-          - PARTIAL_CONTENT
-          - PAYLOAD_TOO_LARGE
-          - PAYMENT_REQUIRED
-          - PERMANENT_REDIRECT
-          - PRECONDITION_FAILED
-          - PRECONDITION_REQUIRED
-          - PROCESSING
-          - PROXY_AUTHENTICATION_REQUIRED
-          - REQUESTED_RANGE_NOT_SATISFIABLE
-          - REQUEST_ENTITY_TOO_LARGE
-          - REQUEST_HEADER_FIELDS_TOO_LARGE
-          - REQUEST_TIMEOUT
-          - REQUEST_URI_TOO_LONG
-          - RESET_CONTENT
-          - SEE_OTHER
-          - SERVICE_UNAVAILABLE
-          - SWITCHING_PROTOCOLS
-          - TEMPORARY_REDIRECT
-          - TOO_EARLY
-          - TOO_MANY_REQUESTS
-          - UNAUTHORIZED
-          - UNAVAILABLE_FOR_LEGAL_REASONS
-          - UNPROCESSABLE_ENTITY
-          - UNSUPPORTED_MEDIA_TYPE
-          - UPGRADE_REQUIRED
-          - URI_TOO_LONG
-          - USE_PROXY
-          - VARIANT_ALSO_NEGOTIATES
-      view:
-        "$ref": "#/definitions/View"
-      viewName:
-        type: string
-    title: ModelAndView
+      userId:
+        type: integer
+        format: int64
+    title: MessageDTO
   Report:
     type: object
     properties:
@@ -1127,13 +1005,41 @@ definitions:
         type: integer
         format: int64
       reportWriter:
-        "$ref": "#/definitions/UserRes"
+        "$ref": "#/definitions/User"
       reportedUser:
-        "$ref": "#/definitions/UserRes"
+        "$ref": "#/definitions/User"
     title: Report
+  SortFilterQueryDTO:
+    type: object
+    properties:
+      amount:
+        type: integer
+        format: int32
+      difficulty:
+        type: integer
+        format: int32
+      searchQuery:
+        type: string
+      sortingType:
+        type: string
+        enum:
+          - DATE
+          - DISTANCE
+          - NONE
+          - PARTICIPANT_AMOUNT
+      userLatitude:
+        type: number
+        format: double
+      userLongitude:
+        type: number
+        format: double
+    title: SortFilterQueryDTO
   User:
     type: object
     properties:
+      absence:
+        type: integer
+        format: int32
       activities:
         type: array
         uniqueItems: true
@@ -1144,9 +1050,6 @@ definitions:
         format: date
       email:
         type: string
-      faults:
-        type: integer
-        format: int32
       forename:
         type: string
       hash:
@@ -1162,7 +1065,8 @@ definitions:
         items:
           "$ref": "#/definitions/Activity"
       profilePicture:
-        "$ref": "#/definitions/BlobRes"
+        type: string
+        format: byte
       rating:
         type: integer
         format: int32
@@ -1180,11 +1084,14 @@ definitions:
         type: string
       salt:
         type: string
-      score:
-        type: integer
-        format: int32
       surname:
         type: string
+      trainingLevel:
+        type: string
+        enum:
+          - EASY
+          - HARD
+          - MEDIUM
       userId:
         type: integer
         format: int64
@@ -1200,17 +1107,19 @@ definitions:
       forename:
         type: string
       profilePicture:
-        "$ref": "#/definitions/BlobRes"
-      rating:
-        type: integer
-        format: int32
+        type: string
       role:
         type: string
-      score:
-        type: integer
-        format: int32
       surname:
         type: string
+      trainingLevel:
+        type: string
+        enum:
+          - EASY
+          - HARD
+          - MEDIUM
+      trusted:
+        type: boolean
       userId:
         type: integer
         format: int64
@@ -1230,10 +1139,27 @@ definitions:
       oldPassword:
         type: string
       profilePicture:
-        "$ref": "#/definitions/BlobReq"
+        type: string
       surname:
         type: string
+      trainingLevel:
+        type: string
+        enum:
+          - EASY
+          - HARD
+          - MEDIUM
     title: UserEditDTO
+  UserNameDTO:
+    type: object
+    properties:
+      forename:
+        type: string
+      surname:
+        type: string
+      userId:
+        type: integer
+        format: int64
+    title: UserNameDTO
   UserRegistrationCallbackDTO:
     type: object
     properties:
@@ -1242,122 +1168,6 @@ definitions:
       user:
         "$ref": "#/definitions/UserDTO"
     title: UserRegistrationCallbackDTO
-  UserReq:
-    type: object
-    properties:
-      activities:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/ActivityReq"
-      dateOfBirth:
-        type: string
-        format: date
-      email:
-        type: string
-      faults:
-        type: integer
-        format: int32
-      forename:
-        type: string
-      hash:
-        type: string
-      messages:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/MessageReq"
-      organizedActivities:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/ActivityReq"
-      profilePicture:
-        "$ref": "#/definitions/BlobReq"
-      rating:
-        type: integer
-        format: int32
-      reportsReceived:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/Report"
-      reportsSent:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/Report"
-      role:
-        type: string
-      salt:
-        type: string
-      score:
-        type: integer
-        format: int32
-      surname:
-        type: string
-      userId:
-        type: integer
-        format: int64
-    title: UserReq
-  UserRes:
-    type: object
-    properties:
-      activities:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/ActivityRes"
-      dateOfBirth:
-        type: string
-        format: date
-      email:
-        type: string
-      faults:
-        type: integer
-        format: int32
-      forename:
-        type: string
-      hash:
-        type: string
-      messages:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/MessageRes"
-      organizedActivities:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/ActivityRes"
-      profilePicture:
-        "$ref": "#/definitions/BlobRes"
-      rating:
-        type: integer
-        format: int32
-      reportsReceived:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/Report"
-      reportsSent:
-        type: array
-        uniqueItems: true
-        items:
-          "$ref": "#/definitions/Report"
-      role:
-        type: string
-      salt:
-        type: string
-      score:
-        type: integer
-        format: int32
-      surname:
-        type: string
-      userId:
-        type: integer
-        format: int64
-    title: UserRes
   UserWithPasswordDTO:
     type: object
     properties:
@@ -1371,13 +1181,13 @@ definitions:
       password:
         type: string
       profilePicture:
-        "$ref": "#/definitions/BlobReq"
+        type: string
       surname:
         type: string
-    title: UserWithPasswordDTO
-  View:
-    type: object
-    properties:
-      contentType:
+      trainingLevel:
         type: string
-    title: View
+        enum:
+          - EASY
+          - HARD
+          - MEDIUM
+    title: UserWithPasswordDTO

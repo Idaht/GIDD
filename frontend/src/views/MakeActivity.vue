@@ -1,15 +1,19 @@
 <template>
   <div id="make-activity">
-      <button @click="activityFeed" class="back-button">
+    <div class="nav">
+    <button @click="activityFeed" class="back-button">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
       Gå tilbake
     </button>
+    </div>
+    <div>
     <h2>Opprett en ny aktivitet</h2>
     <ImageSelector
       labelName=""
       @imageSelected="onSelectedImage"
       @removeImage="onRemoveImage"
     />
+    </div>
     <div id="host-container">
       <h3>Arrangør</h3>
       <div id="host">
@@ -629,7 +633,7 @@ export default defineComponent({
     };
 
     const activityFeed = (): void => {
-    router.push("/");
+    router.push("/activity-feed");
     };
 
     return {
@@ -664,6 +668,7 @@ export default defineComponent({
       feedbackSomethingWentWrong,
       onSelectedImage,
       onRemoveImage,
+      activityFeed,
     };
   },
 });
@@ -681,6 +686,11 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
     margin: auto;
     padding: 20px;
   }
+}
+
+.nav {
+  margin-bottom: 10px;
+  height:20px;
 }
 
 h2 {
@@ -796,12 +806,17 @@ select {
 .error-message-container {
   height: 30px;
 }
+
 .error-message {
   font-weight: 600;
   color: $secondary-color;
   font-size: 10px;
   line-height: 30px;
   margin: 0px;
+}
+
+button {
+  margin: 20px 0px 20px 0px;
 }
 
 .back-button {
@@ -815,6 +830,24 @@ select {
   text-align: left;
   padding: 0;
   float:left;
+}
+
+.back-button:hover {
+  color: $secondary-color;
+}
+
+.back-button {
+  color: $primary-color;
+  background-color: unset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  width: 130px;
+  text-align: left;
+  padding: 0;
+  display: block;
+  margin:0px;
 }
 
 .back-button:hover {

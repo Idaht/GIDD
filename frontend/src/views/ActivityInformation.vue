@@ -163,7 +163,7 @@ export default defineComponent({
       privateActivity: false,
       activityPicture: "",
       chatId: -1,
-      organizerForename: "",
+      organizerForename: "Gidd",
       organizerSurname: "",
     } as IActivity);
     const signedUp = ref(false);
@@ -270,10 +270,15 @@ export default defineComponent({
     onBeforeMount(async () => {
       try {
         await checkServerForUpdate();
-        const organizerResponse = await axios.get(
-          `/users/${activity.value.organizerId}`
-        );
-        activityOrganizer.value = organizerResponse.data;
+        if(activity.value.organizerId > 0){
+          const organizerResponse = await axios.get(
+            `/users/${activity.value.organizerId}`
+          );
+          activityOrganizer.value = organizerResponse.data;
+        }
+        else{
+          activity.value.organizerForename = "Gidd";
+        }
         dataReceived.value = true;
       } catch (error) {
         router.push("/error");

@@ -22,7 +22,6 @@
       </button>
     </div>
     <div id="participant" v-if="stage === 1">
-      <h3>Overskrift</h3>
       <div class="activities">
         <ActivityFeedItem
           v-for="activity in activitiesParticipant"
@@ -32,7 +31,6 @@
       </div>
     </div>
     <div id="organizer" v-if="stage === 2">
-      <h3>Her er dine aktiviteter</h3>
       <div class="activities">
         <li v-for="activity in activitiesOrganizer" :key="activity.activityId">
           <ActivityFeedItem :activityData="activity" />

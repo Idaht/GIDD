@@ -1,6 +1,6 @@
 <template>
   <div id="activity-information">
-    <div @click="back" id="nav-back">
+    <div @click="goBack" id="nav-back">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
       Tilbake
     </div>
@@ -24,6 +24,16 @@
       />
     </div>
     <h2 id="activity-title">{{ activity.title }}</h2>
+    <div id="host">
+      Arrangør
+      {{ activityOrganizer.forename }} {{ activityOrganizer.surname }}
+      <img
+        v-if="activityOrganizer.trusted"
+        id="verified"
+        src="../../img/verified.png"
+        height="15"
+      />
+    </div>
     <div id="weather" v-if="dataReceived">
       <Weather
         :latitude="activity.latitude"
@@ -31,10 +41,7 @@
         :time="activity.startTime"
       />
     </div>
-    <div v-else>
-      {{ "Ingen værdata" }}
-    </div>
-    <div id="host">Arrangeres av {{ activity.organizer }}</div>
+    <div v-else>Ingen værdata</div>
     <div id="information-wrapper">
       <label class="event-variable">Når</label>
       <div class="variable-value">{{ dateTimeFormatter }}</div>
@@ -47,7 +54,7 @@
       <label class="event-variable">Hva</label>
       <div class="variable-value">{{ activity.type }}</div>
       <label class="event-variable">Belastning</label>
-      <div class="variable-value">{{ difficultyString }}</div>
+      <div class="variable-value">{{ difficulty }}</div>
       <label class="event-variable">Deltakere</label>
       <div class="variable-value">
         {{ numberOfParticipants }} / {{ activity.maxParticipants }}
@@ -56,15 +63,21 @@
 
     <div id="signing-up-wrapper">
       <div id="signing-up" v-if="signedUp">
-        <div id="signing-up-conformation">Du er påmeldt!</div>
+        <div id="signing-up-conformation" v-if="!isOrganizer">
+          Du er påmeldt!
+        </div>
+        <div id="signing-up-conformation" v-else>Du er arrangør!</div>
         <button
           @click="signOffActivity"
           alt="Knapp for å melde seg av en aktivitet"
-          v-if="!isOrganizer()"
+          v-if="!isOrganizer"
         >
           Meld deg av
         </button>
-        <button @click="edit" v-else>Rediger</button>
+        <div v-else>
+          <button @click="edit">Rediger</button>
+          <button @click="toRegisterAbsence">Registrer fravær</button>
+        </div>
         <button
           @click="openChat"
           alt="Knapp for å chatte med andre på samme aktivitet"
@@ -79,6 +92,7 @@
         >
           Meld deg på
         </button>
+        <p v-if="loading">Laster inn ...</p>
       </div>
     </div>
     <div class="details-wrapper">
@@ -93,40 +107,42 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onBeforeMount,
-  Ref,
-  ref,
-  watchEffect,
-} from "vue";
+import { computed, defineComponent, onBeforeMount, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "../axiosConfig";
 import data from "@/../config.json";
 import { store } from "../store";
-import IActivity from "@/interfaces/IActivity.interface"
+import getActivityDifficultyName from "../utils/getActivityDifficultyName";
 import Weather from "../components/Weather.vue";
-import User from "@/interfaces/User/User.interface";
+import IActivity from "../interfaces/Activity/IActivity.interface";
+import User from "../interfaces/User/User.interface";
 
 export default defineComponent({
   name: "ActivityInformation",
+  props: {
+    id: {
+      required: true,
+      type: String,
+    },
+  },
   components: {
     Weather,
   },
-  props: ["id"],
   setup(props) {
-    /**
-     * TODO:
-     *  1. Hente navnet til arrangør og trusted og displaye det
-     *  2. Rute chat page - venter på merge request
-     *  3. Rute til edit activty - venter på MR
-     *  6. Fikse redigeringsknappen sånn at det ruter deg til redigering - MR
-     *  7. Lage fraværsregistrering - Nora :'(
-     */
-
     //General methods
-    const activityOrganizer = ref(""); //TODO: navnet til arrangør må hentes
+    const activityOrganizer: Ref<User> = ref({
+      userId: -1,
+      forename: "",
+      surname: "",
+      email: "",
+      score: -1,
+      rating: -1,
+      role: "",
+      dateOfBirth: "",
+      profilePicture: "",
+      trainingLevel: "",
+      trusted: false,
+    });
     const router = useRouter();
     const apiKey = data.googleAPIKey;
     const activity: Ref<IActivity> = ref({
@@ -148,8 +164,11 @@ export default defineComponent({
       activityPicture: "",
       chatId: -1,
       organizerForename: "",
-      organizerSurname: ""
+      organizerSurname: "",
     } as IActivity);
+    const signedUp = ref(false);
+    const loading = ref(false);
+
     const participants = ref([]); //list with all participants
     const dataReceived = ref(false);
 
@@ -162,72 +181,80 @@ export default defineComponent({
     });
 
     /**
-     * Button back
-     */
-    const back = (): void => {
-      router.back();
-    };
-
-    //User methods
-    const userId = ref(); //the logged in users ID
-    const signedUp = ref(); //boolean, tells if the logged in user is signed op to that activity
-
-    /**
-     * Method for signing off an activity. Gives an alert window
-     * when you sign off
+     * Method for signing off an activity
      */
     const signOffActivity = async (): Promise<void> => {
-      signedUp.value = false;
-      window.alert("Du er nå meldt av");
       try {
         await axios.delete(
           `users/${store.getters.user.userId}/activities/${props.id}`
         );
+        signedUp.value = false;
+        await checkServerForUpdate();
       } catch (error) {
         router.push("/error");
       }
     };
 
-    const getChatId = computed(() => {
-      return activity.value.chatId;
-    })
+    /**
+     * Method for signing up to an activity
+     */
+    const signUpActivity = async (): Promise<void> => {
+      try {
+        await axios.post(
+          `/activities/${props.id}/users/${store.getters.user.userId}`
+        );
+        signedUp.value = true;
+        await checkServerForUpdate();
+      } catch (error) {
+        router.push("/error");
+      }
+    };
 
     /**
      * Opens chat
      */
     const openChat = (): void => {
-      router.push(`/activity/${getChatId.value}/chat`);
-    }
-      //TODO check chat router
-    //Organizer methods
-    const organizerId = ref(); //id of the organizer
+      router.push(`/activity/${activity.value.activityId}/chat`);
+    };
 
     /**
      * Checks if the loggen on user is the organizer of an activity
      */
-    const isOrganizer = ref((): boolean => {
-      if (organizerId.value) {
-        signedUp.value = true;
-      }
-      return organizerId.value;
+    const isOrganizer = computed((): boolean => {
+      return store.getters.user.userId === activity.value.organizerId;
     });
 
     /**
      * Button to edit activity
      */
-    const edit = ref(() => {
-      router.push("/#"); ///TODO: endre denne til edit activity siden
-    });
+    const edit = () => {
+      router.push(`/edit-activity/${activity.value.activityId}`); ///TODO: endre denne til edit activity siden
+    };
 
-    /**
-     * Method for signing up to an activity
-     */
-    const signUpActivity = async (): Promise<void> => {
-      signedUp.value = true;
+    const checkServerForUpdate = async () => {
+      //eve
       try {
-        await axios.post(
+        loading.value = true;
+        //gets the info from backend
+        const response = axios.get(`/activities/${props.id}`);
+        const participantResponse = axios.get(`/activities/${props.id}/users`);
+        const signedUpResponse = axios.get(
           `/activities/${props.id}/users/${store.getters.user.userId}`
         );
+
+        //collects all the data and collects in array
+
+        const res = await Promise.all([
+          response,
+          participantResponse,
+          signedUpResponse,
+        ]);
+
+        //assignes the data to the right value
+        activity.value = res[0].data;
+        participants.value = res[1].data;
+        signedUp.value = res[2].data;
+        loading.value = false;
       } catch (error) {
         router.push("/error");
       }
@@ -239,40 +266,30 @@ export default defineComponent({
      */
     onBeforeMount(async () => {
       try {
-        //gets the info from backend
-        const response = await axios.get(`/activities/${props.id}`);
-        activity.value = response.data;
-        const participantResponse = axios.get(`/activities/${props.id}/users`);
-        const organizerResponse = axios.get(
-          `/activities/${props.id}/organizer/${store.getters.user.userId}`
+        await checkServerForUpdate();
+        const organizerResponse = await axios.get(
+          `/users/${activity.value.organizerId}`
         );
-        const userResponse = axios.get(`users/${store.getters.user.userId}`);
-        const signedUpResponse = axios.get(
-          `/activities/${props.id}/users/${store.getters.user.userId}`
-        );
-
-        //collects all the data and collects in array
-
-        const res = await Promise.all([
-          response,
-          participantResponse,
-          organizerResponse,
-          userResponse,
-          signedUpResponse,
-        ]);
-
-        //assignes the data to the right value
-        activity.value = res[0].data;
-        participants.value = res[1].data;
-        organizerId.value = res[2].data;
-        userId.value = res[3].data;
-        signedUp.value = res[4].data;
-
+        activityOrganizer.value = organizerResponse.data;
         dataReceived.value = true;
       } catch (error) {
         router.push("/error");
       }
     });
+
+    /**
+     * Routes the owner of the activity to register absence
+     */
+    const toRegisterAbsence = (): void => {
+      router.push(`/activity/${props.id}/register-absence`);
+    };
+
+    /**
+     * Routes user to the previous page
+     */
+    const goBack = () => {
+      router.back();
+    };
 
     /**
      * Formats the duration to show hours and minutes
@@ -301,57 +318,30 @@ export default defineComponent({
     });
 
     /**
-     * Gets the activity difficulty
+     * Calculates the difficulty of the activity as a string
      */
-    const difficultyString = computed(() => {
-      let string = "";
-      switch (activity.value.difficulty) {
-        case 1:
-          string = "Lett";
-          break;
-        case 2:
-          string = "Middels";
-          break;
-        case 3:
-          string = "Lett, Middels";
-          break;
-        case 4:
-          string = "Krevende";
-          break;
-        case 5:
-          string = "Lett, Krevende";
-          break;
-        case 6:
-          string = "Middels, Krevende";
-          break;
-        case 7:
-          string = "Lett, Middels, Krevende";
-          break;
-        default:
-          string = "Fant ikke belastning";
-      }
-      return string;
+    const difficulty = computed(() => {
+      return getActivityDifficultyName(activity.value.difficulty || 0);
     });
 
     return {
-      activityOrganizer,
-      numberOfParticipants,
-      signedUp,
+      durationFormatter,
+      dateTimeFormatter,
+      toRegisterAbsence,
       signUpActivity,
       signOffActivity,
-      back,
-      openChat,
-      activity,
-      apiKey,
-      isOrganizer,
+      difficulty,
       edit,
-      dateTimeFormatter,
-      durationFormatter,
-      difficultyString,
+      isOrganizer,
+      activity,
+      openChat,
+      goBack,
+      activityOrganizer,
+      apiKey,
+      numberOfParticipants,
+      loading,
+      signedUp,
       dataReceived,
-
-      //dette skla fjernes
-      organizerId,
     };
   },
 });
@@ -406,6 +396,9 @@ $secondary-color: #ea4b4b;
   width: 100%;
   text-align: left;
   align-items: center;
+  img {
+    margin: -2px auto;
+  }
 }
 
 .event-variable {

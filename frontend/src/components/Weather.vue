@@ -85,15 +85,23 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#container {
-  display: flex;
+.container {
+  display: grid;
+  align-content: center;
+  width: 10%;
+  grid-template-columns: 1fr 1fr;
 }
+
 p {
   display: inline;
-  font-size: 20px;
+  font-size: 1rem;
+  line-height: 5px;
 }
+
 #img {
-  width: 10vh;
-  display: inline-block;
+  width: 40px;
+  height: 40px;
+  display: block;
+  margin-right: 10px;
 }
 </style>

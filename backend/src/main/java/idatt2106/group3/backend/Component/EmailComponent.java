@@ -43,7 +43,11 @@ public class EmailComponent {
         message.setText("Aktivitet " + activity.getTitle() + " som skulle foregå " +
         getTimeAndDateString(activity.getStartTime(), activity.getDurationMinutes()) +
         " er blitt avlyst");
-        emailSender.send(message);
+        try{
+            emailSender.send(message);
+        }catch(Exception ex){
+            //
+        }
     }
 
     /**

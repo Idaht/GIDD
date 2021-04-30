@@ -67,6 +67,7 @@ export default defineComponent({
 <style scoped>
 #container{
     display: flex;
+    flex-direction: row;
 }
 p{
     display: inline;

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <img id="img" :src="iconPath" alt="Ingen værdata" />
-    <p>{{ temperature }}°C</p>
+    <p>{{ temperature }}</p>
   </div>
 </template>
 
@@ -61,7 +61,7 @@ export default defineComponent({
               response.data["properties"]["timeseries"][i]["data"]["instant"][
                 "details"
               ]["air_temperature"]
-            ).toString();
+            ).toString() + "°C";
             let symbol =
               response.data["properties"]["timeseries"][i]["data"][
                 "next_1_hours"

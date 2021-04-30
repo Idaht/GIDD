@@ -1,7 +1,12 @@
 <template>
   <div id="activity" @click="activityClicked">
     <div id="map">
-      <img id="feed-img" v-if="activityHasImage" :src="getImagesFromDb" />
+      <img
+        id="feed-img"
+        v-if="activityHasImage"
+        :src="getImagesFromDb"
+        alt="Aktivitetsbilde for å vise på framsiden for aktiviteter"
+      />
       <img
         v-else
         id="map-img"
@@ -17,7 +22,7 @@
           '&key=' +
           apiKey
         "
-        alt="Map"
+        alt="Kart vises av plassering hvis aktivitet ikke har bilde"
       />
     </div>
     <div>
@@ -59,9 +64,7 @@ export default defineComponent({
     });
 
     const activityClicked = (): void => {
-      //TODO: Route til siden som viser aktiviteten
       router.push("/activity/" + props.activityData.activityId);
-      console.log("Activity clicked: " + props.activityData.activityId);
     };
 
     const getImagesFromDb = computed(() => {

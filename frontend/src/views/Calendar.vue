@@ -79,13 +79,10 @@ export default defineComponent({
           `/users/${userId}/my-activities`
         );
         activitiesParticipant.value = participantResponse.data as IActivity[];
-        console.log(activitiesParticipant.value);
-        //TODO: Fikse slik at det er arrangør og ikke påmeldt her
         const organizerResponse = await axios.get(
           `/users/${userId}/organized-activities`
         );
         activitiesOrganizer.value = organizerResponse.data as IActivity[];
-        console.log(userId);
       } catch (error) {
         router.push("/error");
       }

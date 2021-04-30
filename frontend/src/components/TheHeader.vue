@@ -2,13 +2,11 @@
   <div class="the-header">
     <span id="login-check" class="logo-nav" v-if="loggedIn">
       <router-link to="/activity-feed">
-        <!-- Add proper link -->
         <img src="../../img/logo.png" alt="Logo" height="20" />
       </router-link>
     </span>
     <span v-else class="logo-nav">
       <router-link to="/">
-        <!-- Add proper link -->
         <img src="../../img/logo.png" alt="Logo" height="20" />
       </router-link>
     </span>
@@ -17,13 +15,11 @@
         <a href="#" class="icon" @click="toggleMenu">
           <i class="fa fa-bars"></i>
         </a>
-        <!--Change to logged in menu img-->
       </span>
       <span v-else>
         <a href="#" class="icon" @click="toggleMenu">
           <i class="fa fa-bars"></i>
         </a>
-        <!--Changed to logged out menu img-->
       </span>
     </div>
     <div id="menu-toggle" v-if="menuVisible">

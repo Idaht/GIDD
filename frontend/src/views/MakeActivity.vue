@@ -1,25 +1,25 @@
 <template>
   <div id="make-activity">
     <div class="nav">
-    <button @click="activityFeed" class="back-button">
-      <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      Gå tilbake
-    </button>
+      <button @click="activityFeed" class="back-button">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Gå tilbake
+      </button>
     </div>
     <div>
-    <h2>Opprett en ny aktivitet</h2>
-    <ImageSelector
-      labelName=""
-      @imageSelected="onSelectedImage"
-      @removeImage="onRemoveImage"
-    />
+      <h2>Opprett en ny aktivitet</h2>
+      <ImageSelector
+        labelName=""
+        @imageSelected="onSelectedImage"
+        @removeImage="onRemoveImage"
+      />
     </div>
     <div id="host-container">
       <h3>Arrangør</h3>
       <div id="host">
         <img
           src="../../src/assets/placeholder-pfp.jpg"
-          alt="Logo"
+          alt="Applikasjonens logo 'Gidd'"
           height="20"
         />
         <h4>{{ user.forename }} {{ user.surname }}</h4>
@@ -154,11 +154,7 @@
       <h3>Sted</h3>
       <h5>Velg sted ved å trykke på kartet eller fyll ut info</h5>
       <div id="map-view">
-        <Map
-          id="map"
-          :getLocation="true"
-          :activityData="[]"
-        ></Map>
+        <Map id="map" :getLocation="true" :activityData="[]"></Map>
       </div>
     </div>
     <div>
@@ -232,7 +228,6 @@ export default defineComponent({
   setup() {
     const apiKey = data.googleAPIKey;
     const durationHour = ref("");
-    //TODO må fikse kart
     const isEasy = ref(false);
     const isMedium = ref(false);
     const isHard = ref(false);
@@ -413,7 +408,6 @@ export default defineComponent({
         activity.latitude = coordinates.lat;
         activity.longitude = coordinates.lng;
       }
-      console.log(activity);
       try {
         if (!isActivityInvalid.value) {
           const response = await axios.post("/activities", activity);
@@ -632,7 +626,7 @@ export default defineComponent({
     };
 
     const activityFeed = (): void => {
-    router.push("/activity-feed");
+      router.push("/activity-feed");
     };
 
     return {
@@ -689,7 +683,7 @@ $padding: 0.6rem 1rem 0.6rem 1rem;
 
 .nav {
   margin-bottom: 10px;
-  height:20px;
+  height: 20px;
 }
 
 h2 {
@@ -828,7 +822,7 @@ button {
   width: 130px;
   text-align: left;
   padding: 0;
-  float:left;
+  float: left;
 }
 
 .back-button:hover {
@@ -846,7 +840,7 @@ button {
   text-align: left;
   padding: 0;
   display: block;
-  margin:0px;
+  margin: 0px;
 }
 
 .back-button:hover {

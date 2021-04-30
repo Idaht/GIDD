@@ -102,7 +102,7 @@ export default defineComponent({
           );
         },
         (err) => {
-          console.log(err);
+          router.push("/error");
         }
       );
     });

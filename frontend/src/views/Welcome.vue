@@ -2,7 +2,6 @@
   <div id="welcome">
     <div id="welcome-bg-container"></div>
     <div id="welcome-container">
-      <!-- TODO legg til navn her -->
       <h1>Velkommen til gidd, {{ user.forename }}</h1>
 
       <div id="welcome-text">
@@ -32,8 +31,8 @@ export default defineComponent({
     };
 
     const store = useStore();
-    
-    const user:Ref<User> = ref(store.getters.user);
+
+    const user: Ref<User> = ref(store.getters.user);
 
     return {
       activityFeed,

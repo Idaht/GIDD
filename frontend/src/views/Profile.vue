@@ -1,7 +1,11 @@
 <template>
   <div id="profile">
     <h1>Min profil</h1>
-    <img id="profile-picture" :src="profilePicture" alt="profile-picture" />
+    <img
+      id="profile-picture"
+      :src="profilePicture"
+      alt="Brukerens profilbilde"
+    />
     <div id="profile-wrapper">
       <div id="profile-name-wrapper">
         <div id="profile-name">
@@ -11,6 +15,7 @@
             id="verified"
             src="../../img/verified.png"
             height="20"
+            alt="Lite ikon for å vise om en bruker er verifisert eller ikke"
           />
         </div>
       </div>
@@ -69,7 +74,6 @@ export default defineComponent({
         const response = await axios.get(`/users/${props.id}`);
         user.value = response.data;
         trusted.value = user.value.trusted;
-        console.log(trusted.value);
       } catch {
         router.push("/error");
       }

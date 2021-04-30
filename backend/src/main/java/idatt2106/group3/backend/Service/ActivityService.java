@@ -190,6 +190,11 @@ public class ActivityService
             return false;
         }
 
+        if(activityOptional.get().getUsers().size() >= activityOptional.get().getMaxParticipants()){
+            LOGGER.warn("This acitivity is already full: {}. Returning false", activityId);
+            return false;
+        }
+
         Optional<User> userOptional = userRepository.findById(userId);
         if(!userOptional.isPresent()) {
             LOGGER.warn("Did not find user with userId: {}. Returning false", userId);

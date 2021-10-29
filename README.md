@@ -8,5 +8,5 @@ Denne prosjektet omhandler en full-stack web-applikasjon som ble utviklet ved hj
 Applikasjonen kalles "Gidd", og har fokus på å lettere koble sammen mennesker ved hjelp av sosiale aktiviteter. Brukere kan enkelt arrangere aktiviteter eller bli med på allerede eksisterende aktiviteter. Slik kan brukeren finne nye hobbyer, nye venner eller nye opplevelser!
 
 ## Installasjon og kjøring
-Henvend dere til [Installasjonsmanual](https://gitlab.stud.idi.ntnu.no/martsha/idatt2106_2021_3/-/wikis/Installasjon).
+Henvend dere til [Installasjonsmanual](https://github.com/Idaht/GIDD/wiki).
 
